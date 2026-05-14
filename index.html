@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>DUMBASS STRETCH — Stretch like you mean it</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-title" content="DUMBASS STRETCH">
+<meta name="application-name" content="DUMBASS STRETCH">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --bg-deep:#F5F5F5;
+  --orange:#FF6B00; --orange-bright:#FF8533; --orange-deep:#E55A00; --orange-glow:rgba(255,107,0,.18);
+  --steel:#F4F4F4; --steel-mid:#E8E8E8; --steel-light:#DDD; --steel-dark:#FAFAFA;
+  --border:#D8D8D8;
+  --text:#0a0a0a; --text-mid:#555; --text-dim:#888; --text-faint:#BBB;
+  --green:#0a8a3d; --yellow:#C28800; --red:#C03030;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+button{cursor:pointer;font-family:inherit}
+input,textarea,button{font-family:inherit}
+input,textarea{user-select:text}
+
+/* HEADER */
+.header{padding:22px 20px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:rgba(255,255,255,.96);backdrop-filter:blur(24px);z-index:50;border-bottom:1px solid var(--border)}
+.logo{display:inline-flex;align-items:center;font-family:'Inter',sans-serif;font-weight:900;font-size:20px;letter-spacing:-.02em;color:#000}
+.logo-mark{width:26px;height:26px;display:inline-block;vertical-align:-5px;margin-right:8px;flex-shrink:0}
+.logo .ver{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-faint);letter-spacing:.3em;font-weight:400;margin-left:8px}
+.avatar{width:38px;height:38px;background:#000;color:#FFF;border:1px solid #000;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;cursor:pointer;border-radius:0}
+
+/* APP CONTAINER */
+.app{max-width:480px;margin:0 auto}
+.view{padding:20px;display:none}
+.view.active{display:block}
+
+/* TYPOGRAPHY */
+.eyebrow{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.35em;color:var(--text-faint);text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.title{font-family:'Inter',sans-serif;font-weight:900;letter-spacing:-.04em;font-size:64px;line-height:.92;color:#000;text-wrap:balance;margin-bottom:4px}
+.title .accent{color:var(--orange)}
+.subtitle{font-size:12px;color:var(--text-dim);font-family:'Oswald',sans-serif;letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px}
+.daily-quote{margin:14px 0 22px;padding:0;font-family:'Inter',sans-serif;font-size:13px;line-height:1.45;color:var(--text-mid);font-style:italic;text-wrap:pretty}
+.daily-quote .dq-author{display:block;margin-top:4px;font-style:normal;font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--text-faint);font-family:'Oswald',sans-serif;font-weight:700}
+.daily-quote:empty{display:none}
+
+/* BUTTONS */
+.btn-primary{width:100%;background:#000;color:#FFF;border:1px solid #000;padding:16px 0;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;font-weight:700}
+.btn-primary:active{background:var(--orange);border-color:var(--orange)}
+.btn-primary:disabled{background:var(--steel-mid);border-color:var(--steel-mid);color:var(--text-faint);cursor:not-allowed}
+.btn-secondary{width:100%;background:#FFF;color:#000;border:1px solid #000;padding:14px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;font-weight:600}
+.btn-secondary:active{background:var(--steel-mid)}
+.btn-ghost{background:transparent;border:none;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:var(--text-mid);padding:8px 12px;cursor:pointer}
+
+/* PROGRAM ROW (top) */
+.prog-row{display:flex;gap:10px;margin-bottom:18px}
+.program-btn{flex:1;background:#FFF;border:1px solid #000;padding:14px;text-align:left;cursor:pointer;font-family:inherit}
+.program-btn .label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.3em;color:var(--orange);text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.program-btn .current{font-family:'Inter',sans-serif;font-size:14px;font-weight:600;color:#000;line-height:1.3}
+.program-btn .current .num{color:var(--orange);font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.05em;margin-right:6px;display:inline-block;min-width:42px}
+.volume-btn{flex:0 0 100px;background:#FFF;border:1px solid #000;padding:14px;text-align:center;cursor:pointer;font-family:inherit}
+.volume-btn .label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.3em;color:var(--orange);text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.volume-btn .v{font-family:'Inter',sans-serif;font-size:18px;font-weight:900;letter-spacing:-.02em;color:#000}
+.volume-btn .icon{margin-top:4px;color:var(--orange)}
+.volume-btn .icon svg{width:14px;height:14px}
+
+/* SECTION HEAD */
+.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.section-head .t{font-family:'JetBrains Mono',monospace;font-size:11px;color:#000;letter-spacing:.18em;text-transform:uppercase}
+.section-head .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint);letter-spacing:.15em}
+
+/* STRETCH CARD */
+.stretch{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);background:#FFF;margin-bottom:8px;cursor:pointer;transition:background .12s}
+.stretch:active{background:var(--steel-mid)}
+.stretch.current{background:#000;color:#FFF;border-color:#000}
+.stretch.current .st-name{color:#FFF}
+.stretch.current .st-meta{color:var(--orange-bright)}
+.stretch.current .st-target{color:var(--orange-bright)}
+.stretch.done{opacity:.6}
+.stretch.done .st-name{text-decoration:line-through;color:var(--text-faint)}
+.st-check{width:24px;height:24px;border:1.5px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.stretch.current .st-check{border-color:var(--orange)}
+.stretch.done .st-check{background:#000;color:#FFF;border-color:#000}
+.st-info{flex:1;min-width:0}
+.st-name{font-family:'Inter',sans-serif;font-weight:700;font-size:14px;color:#000;letter-spacing:-.005em;margin-bottom:4px;text-transform:uppercase}
+.st-meta{font-family:'Oswald',sans-serif;font-size:11px;color:var(--text-dim);letter-spacing:.06em;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.st-target{color:var(--orange);font-weight:700}
+.hold-dots{display:inline-flex;gap:6px;align-items:center;padding:2px 0}
+.hold-dot{width:18px;height:18px;border-radius:50%;background:transparent;border:2px solid var(--steel-light);cursor:pointer;flex-shrink:0;transition:background .12s,border-color .12s}
+.hold-dot.filled{background:var(--orange);border-color:var(--orange)}
+.stretch.current .hold-dot{border-color:var(--orange-bright)}
+.stretch.current .hold-dot.filled{background:#FFF;border-color:#FFF}
+.st-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint)}
+.st-remove{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:transparent;border:1px solid var(--steel-light);color:var(--text-faint);font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.55;padding:0}
+.stretch:hover .st-remove,.stretch:focus-within .st-remove{opacity:1}
+
+.add-row{margin-top:10px;display:flex;gap:8px}
+.add-stretch-btn{flex:1;border:1px dashed var(--border);background:transparent;padding:14px;color:var(--orange);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;font-weight:700;cursor:pointer}
+.complete-btn{margin-top:14px;width:100%;background:#000;color:#FFF;border:1px solid #000;padding:18px 0;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;font-weight:700}
+.complete-btn:disabled{background:var(--steel-mid);border-color:var(--steel-mid);color:var(--text-faint);cursor:not-allowed}
+
+/* DETAIL VIEW + TIMER */
+.det-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.det-head .back{color:var(--orange);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.25em;font-weight:700;background:none;border:none;cursor:pointer;padding:8px 0}
+.det-hero{background:#000;color:#FFF;padding:22px;margin-bottom:14px}
+.det-hero .name{font-family:'Inter',sans-serif;font-weight:900;font-size:32px;letter-spacing:-.03em;line-height:.95;margin-bottom:8px;text-transform:uppercase}
+.det-hero .meta{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.18em;color:var(--orange-bright);text-transform:uppercase;font-weight:700}
+.det-cues{background:#FFF;border:1px solid var(--border);padding:14px 16px;margin-bottom:14px}
+.det-cues .label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:var(--orange);margin-bottom:8px}
+.det-cues .cue{font-family:'Inter',sans-serif;font-size:13px;color:#000;line-height:1.4;margin-bottom:5px;padding-left:14px;position:relative}
+.det-cues .cue::before{content:'·';position:absolute;left:0;color:var(--orange);font-weight:900}
+
+.timer-card{background:#FFF;border:1px solid #000;padding:24px 18px;margin-bottom:14px;text-align:center}
+.timer-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;color:var(--orange);text-transform:uppercase;font-weight:700;margin-bottom:14px}
+.timer-display{font-family:'Inter',sans-serif;font-weight:900;font-size:96px;letter-spacing:-.05em;color:#000;line-height:.95;margin-bottom:18px;font-variant-numeric:tabular-nums}
+.timer-display.running{color:var(--orange)}
+.timer-progress{height:6px;background:var(--steel-mid);margin-bottom:18px;overflow:hidden}
+.timer-progress .fill{height:100%;background:var(--orange);width:0;transition:width .25s linear}
+.timer-actions{display:flex;gap:8px}
+.timer-btn{flex:1;padding:16px 0;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.25em;text-transform:uppercase;font-weight:700;border:1px solid #000;background:#FFF;color:#000;cursor:pointer}
+.timer-btn.primary{background:#000;color:#FFF}
+.timer-btn.primary:active{background:var(--orange);border-color:var(--orange)}
+.timer-btn.log{background:var(--orange);color:#FFF;border-color:var(--orange)}
+
+.det-progress{background:var(--steel-dark);border:1px solid var(--border);padding:14px;text-align:center;margin-bottom:14px}
+.det-progress .label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:6px}
+.det-progress .holds{font-family:'Inter',sans-serif;font-weight:900;font-size:24px;letter-spacing:-.02em;color:#000}
+.det-progress .holds .of{color:var(--text-faint);font-weight:600}
+
+/* VOLUME PAGE */
+.vol-summary{display:flex;gap:8px;margin-bottom:14px}
+.vol-summary .stat{flex:1;background:#FFF;border:1px solid #000;padding:14px 8px;text-align:center}
+.vol-summary .stat .l{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.25em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.vol-summary .stat .v{font-family:'Inter',sans-serif;font-weight:900;font-size:28px;letter-spacing:-.02em;color:#000}
+.vol-summary .stat.below .v{color:var(--orange)}
+.vol-summary .stat.in .v{color:var(--green)}
+.vol-summary .stat.over .v{color:var(--red)}
+
+.vol-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.vol-tabs button{flex:0 0 auto;padding:8px 14px;background:#FFF;border:1px solid #000;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:#000;cursor:pointer;white-space:nowrap}
+.vol-tabs button.active{background:#000;color:#FFF}
+
+.vol-card{background:#FFF;border:1px solid var(--border);padding:14px 16px;margin-bottom:8px;border-radius:0}
+.vol-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.vol-head .name{font-family:'Inter',sans-serif;font-size:18px;font-weight:600;color:#000;text-transform:uppercase}
+.vol-head .min{font-family:'Inter',sans-serif;font-weight:900;font-size:24px;letter-spacing:-.02em;color:#000}
+.vol-head .min .u{font-size:11px;color:var(--text-faint);letter-spacing:.15em;font-family:'Oswald',sans-serif;font-weight:700;margin-left:6px}
+.vol-bar{height:6px;background:var(--steel-mid);overflow:hidden;position:relative;margin-bottom:6px}
+.vol-bar .fill{height:100%;background:var(--orange);width:0}
+.vol-card.in .fill{background:var(--green)}
+.vol-card.below .fill{background:var(--orange)}
+.vol-card.over .fill{background:var(--red)}
+.vol-foot{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.15em;color:var(--text-dim);display:flex;justify-content:space-between;text-transform:uppercase}
+.vol-foot .status{font-weight:700}
+.vol-card.in .status{color:var(--green)}
+.vol-card.below .status{color:var(--orange)}
+.vol-card.over .status{color:var(--red)}
+
+.vol-legend{margin-top:14px;background:var(--steel);border:1px solid var(--border);padding:12px 14px;font-size:11px;color:var(--text-mid);line-height:1.6}
+.vol-legend p{margin-bottom:4px}
+.vol-legend p:last-child{margin-bottom:0}
+.vol-legend b{color:#000;font-weight:700;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+
+/* PROFILE */
+.profile-card{background:#FFF;border:1px solid var(--border);padding:16px 18px;margin-bottom:14px}
+.field-label{font-family:'Inter',sans-serif;font-size:14px;color:#000;font-weight:600;margin-bottom:10px}
+.profile-input{width:100%;background:var(--steel-dark);border:1px solid var(--border);outline:none;color:#000;font-family:'Inter',sans-serif;font-weight:700;font-size:22px;padding:10px 12px;text-align:center}
+.profile-input:focus{border-color:var(--orange)}
+.profile-input::placeholder{color:var(--text-faint)}
+.ds-hint{color:var(--text-dim);font-family:'Inter',sans-serif;font-size:12px;line-height:1.5}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);border-top:1px solid var(--border);padding:12px 0 calc(8px + env(safe-area-inset-bottom));display:flex;justify-content:center;gap:48px;z-index:50;backdrop-filter:blur(24px)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.2em;color:var(--text-faint);text-transform:uppercase;font-weight:700;cursor:pointer;background:none;border:none;padding:4px}
+.nav-item.active{color:var(--orange)}
+.nav-item svg{width:22px;height:22px}
+
+/* TOAST */
+.toast{position:fixed;top:84px;left:50%;transform:translateX(-50%) translateY(-8px);background:#000;color:#FFF;padding:12px 22px;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;border:1px solid #000;max-width:90vw;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.with-action{pointer-events:auto}
+.toast .toast-action{display:inline-block;margin-left:14px;padding:4px 10px;background:var(--orange);border:1px solid var(--orange);cursor:pointer;letter-spacing:.18em;font-weight:800}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex;animation:fadeIn .2s ease}
+.modal{width:100%;max-width:480px;max-height:88vh;background:#FFF;border-top:1px solid #000;padding:20px;overflow-y:auto;animation:slideUp .25s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideUp{from{transform:translateY(40px)}to{transform:translateY(0)}}
+.modal h2{font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.02em;margin-bottom:6px;text-transform:uppercase}
+.modal p{font-size:12px;color:var(--text-mid);line-height:1.5;margin-bottom:14px}
+.modal .close-x{position:absolute;top:14px;right:14px;background:transparent;border:none;font-size:24px;cursor:pointer;color:#000;padding:4px 10px}
+.lib-row{display:flex;justify-content:space-between;align-items:center;padding:14px 12px;border:1px solid var(--border);background:#FFF;margin-bottom:6px;cursor:pointer}
+.lib-row:hover{background:var(--steel)}
+.lib-row .info{flex:1;min-width:0}
+.lib-row .nm{font-family:'Inter',sans-serif;font-weight:700;font-size:13px;color:#000;text-transform:uppercase;margin-bottom:2px}
+.lib-row .meta{font-family:'Oswald',sans-serif;font-size:10px;color:var(--text-dim);letter-spacing:.1em}
+.lib-row .add{color:var(--orange);font-size:22px;font-weight:700}
+.lib-search{width:100%;background:var(--steel-dark);border:1px solid var(--border);padding:12px 14px;font-family:'Inter',sans-serif;font-size:14px;outline:none;margin-bottom:14px}
+.lib-search:focus{border-color:var(--orange)}
+
+/* DAY CARD (program/switch view) */
+.day-card{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--border);background:#FFF;margin-bottom:8px;cursor:pointer}
+.day-card.today{background:#000;color:#FFF;border-color:#000}
+.day-card.today .d-name,.day-card.today .d-muscles{color:#FFF}
+.day-card.today .d-label{color:var(--orange)}
+.day-card.rest{opacity:.5}
+.day-card .num{font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:0;color:#000;min-width:50px;text-align:center}
+.day-card.today .num{color:#FFF}
+.day-card.rest .num{color:var(--text-faint)}
+.day-info{flex:1;min-width:0}
+.d-label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.3em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:2px}
+.d-name{font-family:'Inter',sans-serif;font-size:18px;font-weight:700;color:#000;line-height:1;margin-bottom:3px;text-transform:uppercase}
+.d-muscles{font-family:'Oswald',sans-serif;font-size:10px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
+.play-btn{width:34px;height:34px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.play-btn svg{width:14px;height:14px;fill:#000}
+.day-card.today .play-btn{background:#FFF;border-color:#FFF}
+.day-card.today .play-btn svg{fill:#000}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.15em;text-transform:uppercase}
+
+/* INTRO */
+.intro{position:fixed;inset:0;background:#FFF;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 30px;text-align:center}
+.intro.hidden{display:none}
+.intro-mark{width:64px;height:64px;margin-bottom:16px}
+.intro .logo-big{font-family:'Inter',sans-serif;font-weight:900;letter-spacing:-.04em;font-size:84px;color:#000;line-height:.95;margin-bottom:6px}
+.intro-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.4em;color:var(--orange);text-transform:uppercase;margin-bottom:50px;font-weight:700}
+.intro-title{font-family:'Inter',sans-serif;font-weight:900;font-size:44px;letter-spacing:-.03em;line-height:.95;margin-bottom:24px;color:#000}
+.intro-title .accent{color:var(--orange)}
+.intro-quote{font-family:'Inter',sans-serif;font-size:14px;font-style:italic;color:var(--text-mid);margin-bottom:8px;text-wrap:balance;max-width:340px}
+.intro-quote-author{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.25em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:50px}
+.intro .btn-primary{max-width:300px}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="intro" id="intro">
+  <svg class="intro-mark" viewBox="0 0 24 24" aria-hidden="true">
+    <rect width="24" height="24" fill="#000"/>
+    <path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/>
+  </svg>
+  <div class="logo-big">DUMBASS</div>
+  <div class="intro-tag">v1.0 · STRETCH · For people who want to bend</div>
+  <div class="intro-title">SUPPLE <span class="accent">BODY</span></div>
+  <div class="intro-quote">"A flexible body is the price of admission for everything else."</div>
+  <div class="intro-quote-author">— Kelly Starrett</div>
+  <button class="btn-primary" onclick="dismissIntro()">Begin Stretching</button>
+</div>
+
+<!-- APP -->
+<div class="app">
+  <div class="header">
+    <div class="logo"><svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>DUMBASS<span class="ver">v1.0·STR</span></div>
+    <div class="avatar" onclick="avatarTap()" id="avatar-btn">J</div>
+  </div>
+
+  <!-- TODAY -->
+  <div class="view active" id="view-today">
+    <div class="prog-row">
+      <div class="program-btn" onclick="showView('program')">
+        <div class="label">DUMBASS Mobility</div>
+        <div class="current" id="program-current-day"><span class="num">MON</span> · Lower Body</div>
+      </div>
+      <div class="volume-btn" onclick="showView('volume')">
+        <div class="label">Weekly</div>
+        <div class="v">MIN</div>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/></svg></div>
+      </div>
+    </div>
+
+    <button class="btn-ghost" onclick="openProgramPicker()" style="color:var(--orange);font-weight:700;letter-spacing:.25em;padding:6px 0 14px;width:100%;text-align:left">⇆ SWITCH SPLIT</button>
+
+    <div class="eyebrow" id="today-eyebrow">Monday</div>
+    <div class="title" id="today-title">LOWER <span class="accent">BODY</span></div>
+
+    <div class="daily-quote" id="daily-quote"></div>
+
+    <div class="section-head">
+      <span class="t">Today's Stretches</span>
+      <span class="c" id="today-count">0 / 0</span>
+    </div>
+
+    <div id="stretch-list"></div>
+
+    <div class="add-row">
+      <button class="add-stretch-btn" onclick="openLibPicker()">+ Add Stretch</button>
+    </div>
+
+    <button class="complete-btn" id="complete-btn" disabled onclick="completeSession()">Complete Session (0/0)</button>
+  </div>
+
+  <!-- DETAIL -->
+  <div class="view" id="view-detail">
+    <div class="det-head">
+      <button class="back" onclick="showView('today')">‹ BACK</button>
+      <button class="back" onclick="removeCurrentStretch()" style="color:var(--text-faint)">REMOVE</button>
+    </div>
+    <div class="det-hero">
+      <div class="name" id="det-name">Stretch</div>
+      <div class="meta" id="det-meta">2 × 60s · HAMSTRINGS</div>
+    </div>
+    <div class="det-cues" id="det-cues"></div>
+    <div class="det-progress">
+      <div class="label">Holds completed</div>
+      <div class="holds" id="det-holds">0 <span class="of">/ 2</span></div>
+    </div>
+    <div class="timer-card">
+      <div class="timer-label">Hold timer</div>
+      <div class="timer-display" id="timer-display">60</div>
+      <div class="timer-progress"><div class="fill" id="timer-fill"></div></div>
+      <div class="timer-actions">
+        <button class="timer-btn primary" id="timer-start" onclick="startOrPauseTimer()">Start</button>
+        <button class="timer-btn" id="timer-reset" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+    <button class="complete-btn log" id="log-hold-btn" onclick="logHold()" style="background:var(--orange);color:#FFF;border-color:var(--orange)">+ Log a hold manually</button>
+  </div>
+
+  <!-- PROGRAM -->
+  <div class="view" id="view-program">
+    <div class="det-head">
+      <button class="back" onclick="showView('today')">‹ BACK</button>
+      <button class="back" onclick="openProgramPicker()">SWITCH SPLIT</button>
+    </div>
+    <div id="program-head"></div>
+    <div id="day-list"></div>
+  </div>
+
+  <!-- VOLUME -->
+  <div class="view" id="view-volume">
+    <div class="det-head">
+      <button class="back" onclick="showView('today')">‹ BACK</button>
+    </div>
+    <div class="eyebrow">Weekly Stretching</div>
+    <div class="title"><span class="accent">MINUTES</span></div>
+    <div class="subtitle">Where your mobility lives · MIN · SONE · TAK</div>
+
+    <div class="vol-summary" id="vol-summary"></div>
+    <div class="vol-tabs" id="vol-tabs"></div>
+    <div id="vol-list"></div>
+    <div class="vol-legend">
+      <p><b>MIN</b> Minimum — under this you stiffen up over weeks.</p>
+      <p><b>SONE</b> Productive zone — here you actually gain mobility.</p>
+      <p><b>TAK</b> Ceiling — past it, time is better spent elsewhere.</p>
+      <p style="margin-top:8px;color:var(--text-faint);font-size:10px"><b>How it counts</b> Total seconds held per muscle, summed across all stretches in your week, converted to minutes.</p>
+    </div>
+  </div>
+
+  <!-- PROGRESS / HISTORY -->
+  <div class="view" id="view-progress">
+    <div class="eyebrow">Where the work shows</div>
+    <div class="title"><span class="accent">HISTORY</span></div>
+    <div id="progress-content"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="view" id="view-profile">
+    <div class="det-head">
+      <button class="back" onclick="showView('today')">‹ BACK</button>
+    </div>
+    <div class="eyebrow">Who's stretching</div>
+    <div class="title"><span class="accent">PROFILE</span></div>
+
+    <div class="profile-card">
+      <div class="field-label">Your Name</div>
+      <input class="profile-input" id="profile-name" type="text" placeholder="—" maxlength="24" oninput="saveProfileName(this.value)">
+    </div>
+
+    <div class="profile-card">
+      <div class="field-label">Daily Reminder</div>
+      <p class="ds-hint" style="margin:6px 0 12px">A daily 12:00 nudge with today's stretching session, straight to your phone. Free, no account.</p>
+      <button class="btn-secondary" onclick="downloadReminders()">⏰ ACTIVATE DAILY REMINDER</button>
+      <p class="ds-hint" style="margin-top:10px;font-size:11px">Tap → opens your Calendar app → tap "Add". Re-activate if you switch split.</p>
+    </div>
+
+    <div class="profile-card">
+      <div class="field-label">Backup</div>
+      <p class="ds-hint" style="margin:6px 0 12px">Your stretch history is stored on this device only. Export to keep it forever.</p>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" onclick="exportData()" style="flex:1">⇩ EXPORT</button>
+        <label class="btn-secondary" style="flex:1;cursor:pointer;text-align:center;display:flex;align-items:center;justify-content:center">
+          ⇧ IMPORT
+          <input type="file" accept="application/json,.json" onchange="importDataFromFile(this)" style="display:none">
+        </label>
+      </div>
+    </div>
+
+    <button class="btn-ghost" onclick="resetAllData()" style="color:var(--red);width:100%;margin-top:6px">Reset All Data · Requires Typing DELETE</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-item active" data-view="today" onclick="showView('today')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12L12 3l9 9"/><path d="M5 10v10h14V10"/></svg>
+    Today
+  </button>
+  <button class="nav-item" data-view="progress" onclick="showView('progress')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    Progress
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODALS -->
+<div class="modal-bg" id="lib-modal">
+  <div class="modal">
+    <button class="close-x" onclick="closeModal('lib-modal')">×</button>
+    <h2>Add Stretch</h2>
+    <input class="lib-search" placeholder="Search stretches..." id="lib-search" oninput="renderLibrary(this.value)">
+    <div id="lib-list"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="prog-modal">
+  <div class="modal">
+    <button class="close-x" onclick="closeModal('prog-modal')">×</button>
+    <h2>Choose Your <span style="color:var(--orange)">Split</span></h2>
+    <p>Pick a routine. Run it 4 weeks. Then judge.</p>
+    <div id="prog-list"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DUMBASS STRETCH — single-file mobility tracker
+// Same architecture as DUMBASS LIFT, adapted for stretching
+// ============================================================
+
+// MUSCLE TARGETS — minutes per week (MIN / SONE-low / SONE-high / TAK)
+const MUSCLE_TARGETS={
+  hamstrings:{min:8,sone:[12,25],tak:40,name:'Hamstrings'},
+  quads:{min:5,sone:[10,20],tak:35,name:'Quads'},
+  glutes:{min:8,sone:[12,25],tak:40,name:'Glutes'},
+  'hip-flexors':{min:8,sone:[15,30],tak:45,name:'Hip Flexors'},
+  adductors:{min:5,sone:[10,20],tak:30,name:'Adductors'},
+  hips:{min:6,sone:[12,25],tak:35,name:'Hips'},
+  calves:{min:4,sone:[8,15],tak:25,name:'Calves'},
+  ankles:{min:3,sone:[5,10],tak:15,name:'Ankles'},
+  chest:{min:5,sone:[10,20],tak:30,name:'Chest'},
+  shoulders:{min:5,sone:[8,15],tak:25,name:'Shoulders'},
+  'rear-delts':{min:4,sone:[8,15],tak:25,name:'Rear Delts'},
+  'rotator-cuff':{min:3,sone:[5,10],tak:15,name:'Rotator Cuff'},
+  lats:{min:4,sone:[8,15],tak:25,name:'Lats'},
+  spine:{min:5,sone:[10,20],tak:30,name:'Spine'},
+  neck:{min:3,sone:[5,10],tak:15,name:'Neck'},
+  triceps:{min:3,sone:[5,10],tak:15,name:'Triceps'},
+  forearms:{min:3,sone:[5,10],tak:15,name:'Forearms'},
+};
+const MUSCLE_GROUPS={
+  Lower:['hamstrings','quads','glutes','hip-flexors','adductors','hips','calves','ankles'],
+  Upper:['chest','shoulders','rear-delts','rotator-cuff','lats','triceps','forearms'],
+  Spine:['spine','neck'],
+};
+
+// STRETCH LIBRARY — name, muscle, default holdSec, default holds (sets), cues
+const LIBRARY=[
+  // Hamstrings
+  {id:'ham-floor',name:'Floor Hamstring Stretch',muscle:'hamstrings',holdSec:60,holds:2,equipment:'BODYWEIGHT',cues:['Sit, one leg straight, other bent','Hinge at hips, reach toward foot','Don\'t round the lower back','Breathe out as you sink deeper']},
+  {id:'ham-stand',name:'Standing Hamstring Stretch',muscle:'hamstrings',holdSec:45,holds:2,equipment:'BODYWEIGHT',cues:['Stand tall, one heel on a low surface','Hinge at hips, keep back flat','Reach hands toward your toes','Hold, then switch sides']},
+  {id:'ham-strap',name:'Lying Hamstring Stretch',muscle:'hamstrings',holdSec:60,holds:2,equipment:'STRAP',cues:['Lie on your back','Loop strap around foot, leg straight up','Pull leg toward face, knee straight','Keep other leg flat']},
+  // Quads
+  {id:'quad-stand',name:'Standing Quad Stretch',muscle:'quads',holdSec:45,holds:2,equipment:'BODYWEIGHT',cues:['Stand on one leg, grab opposite ankle','Pull heel to butt, knees together','Tuck pelvis, squeeze glute','Don\'t arch the back']},
+  {id:'quad-couch',name:'Couch Stretch',muscle:'quads',holdSec:60,holds:2,equipment:'BODYWEIGHT',cues:['Knee on floor, shin up against wall/couch','Other foot forward in lunge','Squeeze glute, tuck pelvis','Lean torso upright as you adapt']},
+  // Glutes
+  {id:'pigeon',name:'Pigeon Pose',muscle:'glutes',holdSec:60,holds:2,equipment:'BODYWEIGHT',cues:['Front shin parallel to mat','Back leg long behind','Lower hips down evenly','Fold forward when ready']},
+  {id:'figure4',name:'Figure 4 Stretch',muscle:'glutes',holdSec:45,holds:2,equipment:'BODYWEIGHT',cues:['Lie on back, ankle on opposite knee','Pull bottom thigh toward chest','Push top knee gently away','Keep head and shoulders relaxed']},
+  {id:'glute-90-90',name:'90/90 Hip Stretch',muscle:'hips',holdSec:60,holds:2,equipment:'BODYWEIGHT',cues:['Sit, both knees at 90°, one in front, one behind','Square hips, sit tall','Lean forward over front leg for glute','Switch sides']},
+  // Hip flexors
+  {id:'hf-lunge',name:'Hip Flexor Lunge',muscle:'hip-flexors',holdSec:45,holds:2,equipment:'BODYWEIGHT',cues:['Half-kneeling lunge position','Squeeze the back glute hard','Tuck pelvis under, ribs down','Reach same-side arm overhead']},
+  {id:'hf-couch',name:'Couch Stretch (Hip Flexor focus)',muscle:'hip-flexors',holdSec:90,holds:2,equipment:'BODYWEIGHT',cues:['Back knee on ground, shin up','Front foot planted forward','Squeeze back glute, lean torso up','Brutal but works']},
+  // Adductors
+  {id:'frog',name:'Frog Pose',muscle:'adductors',holdSec:60,holds:2,equipment:'BODYWEIGHT',cues:['Knees wide, ankles in line with knees','Hips back over heels','Forearms or chest down','Breathe and settle']},
+  {id:'butterfly',name:'Butterfly Stretch',muscle:'adductors',holdSec:60,holds:2,equipment:'BODYWEIGHT',cues:['Sit, soles of feet together','Pull heels toward groin','Sit tall, hinge forward at hips','Knees drop with gravity']},
+  // Calves
+  {id:'calf-wall',name:'Wall Calf Stretch',muscle:'calves',holdSec:45,holds:2,equipment:'WALL',cues:['Hands on wall, one leg back','Back leg straight, heel down','Drive hips forward gently','Hits gastrocnemius']},
+  {id:'calf-soleus',name:'Bent-Knee Calf Stretch',muscle:'calves',holdSec:45,holds:2,equipment:'WALL',cues:['Same as above but bend the back knee','Heel still down','Hits soleus instead of gastroc','Both are needed']},
+  // Ankles
+  {id:'ankle-circles',name:'Ankle Circles',muscle:'ankles',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Sit or stand, lift one foot','Slow circles, 10 each direction','Then switch sides','Loosens stiff ankles']},
+  // Chest
+  {id:'chest-doorway',name:'Doorway Pec Stretch',muscle:'chest',holdSec:45,holds:2,equipment:'WALL',cues:['Forearm on doorway, elbow at 90°','Step forward through the door','Feel stretch across chest','Adjust elbow height to vary fibers']},
+  {id:'chest-wall',name:'Wall Pec Stretch',muscle:'chest',holdSec:45,holds:2,equipment:'WALL',cues:['Stand sideways to wall','Arm extended back, palm on wall','Rotate body away from wall','Open the chest']},
+  // Shoulders
+  {id:'sh-cross',name:'Cross-Body Shoulder Stretch',muscle:'rear-delts',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Pull arm across body','Other hand pulls elbow gently','Shoulders down and back','Hits rear delt']},
+  {id:'sh-eagle',name:'Eagle Arms',muscle:'rear-delts',holdSec:45,holds:2,equipment:'BODYWEIGHT',cues:['Cross arms, elbow under elbow','Wrap forearms, palms together','Lift elbows up, away from chest','Hits rear delts and upper back']},
+  {id:'sh-sleeper',name:'Sleeper Stretch',muscle:'rotator-cuff',holdSec:45,holds:2,equipment:'BODYWEIGHT',cues:['Lie on side, arm at 90°','Forearm pointing up','Press forearm toward floor gently','Critical for shoulder health']},
+  // Back / Lats
+  {id:'childs',name:'Child\'s Pose',muscle:'lats',holdSec:60,holds:1,equipment:'BODYWEIGHT',cues:['Knees wide, big toes touch','Hips to heels, arms reach forward','Forehead to floor','Breathe into the back']},
+  {id:'lat-overhead',name:'Overhead Lat Stretch',muscle:'lats',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Reach one arm overhead','Lean torso to opposite side','Other hand on hip for stability','Long line through the side body']},
+  // Spine
+  {id:'cat-cow',name:'Cat-Cow',muscle:'spine',holdSec:30,holds:3,equipment:'BODYWEIGHT',cues:['On hands and knees','Round spine up, then arch down','Slow flow with breath','Mobilizes the whole spine']},
+  {id:'spine-twist',name:'Seated Spinal Twist',muscle:'spine',holdSec:45,holds:2,equipment:'BODYWEIGHT',cues:['Sit with one leg crossed over','Twist torso toward bent knee','Use elbow as a lever','Inhale tall, exhale deeper']},
+  // Neck
+  {id:'neck-side',name:'Side Neck Stretch',muscle:'neck',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Drop ear toward shoulder','Other shoulder stays low','Add hand on top of head for more','Switch sides']},
+  {id:'chin-tuck',name:'Chin Tucks',muscle:'neck',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Sit tall','Pull chin straight back (double-chin)','Hold, release','Counters forward head posture']},
+  // Triceps
+  {id:'tri-overhead',name:'Tricep Overhead Stretch',muscle:'triceps',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Reach arm overhead, bend elbow','Hand reaches down behind back','Other hand pulls elbow back','Switch sides']},
+  // Forearms
+  {id:'wrist-flex',name:'Wrist Flexor Stretch',muscle:'forearms',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Arm out, palm up','Other hand pulls fingers down','Stretches inside of forearm','Easy for desk workers']},
+  {id:'wrist-ext',name:'Wrist Extensor Stretch',muscle:'forearms',holdSec:30,holds:2,equipment:'BODYWEIGHT',cues:['Arm out, palm down','Other hand pushes fingers down','Stretches top of forearm','Switch sides']},
+];
+
+// PROGRAMS — splits with weekday-locked schedule (slot 0 = Mon, ... 6 = Sun)
+const PROGRAMS=[
+  {
+    id:'full-body-mobility',
+    name:'Full Body Mobility',
+    author:'DUMBASS House',
+    schedule:[
+      {dayNum:1,name:'LOWER BODY',muscles:'Hamstrings · Glutes · Calves',type:'train',exercises:[
+        {libId:'ham-floor',targetSets:2,targetReps:'60s'},
+        {libId:'ham-stand',targetSets:2,targetReps:'45s'},
+        {libId:'pigeon',targetSets:2,targetReps:'60s'},
+        {libId:'figure4',targetSets:2,targetReps:'45s'},
+        {libId:'calf-wall',targetSets:2,targetReps:'45s'},
+        {libId:'calf-soleus',targetSets:2,targetReps:'45s'},
+      ]},
+      {dayNum:2,name:'UPPER BODY',muscles:'Chest · Shoulders · Lats',type:'train',exercises:[
+        {libId:'chest-doorway',targetSets:2,targetReps:'45s'},
+        {libId:'chest-wall',targetSets:2,targetReps:'45s'},
+        {libId:'sh-cross',targetSets:2,targetReps:'30s'},
+        {libId:'sh-eagle',targetSets:2,targetReps:'45s'},
+        {libId:'sh-sleeper',targetSets:2,targetReps:'45s'},
+        {libId:'lat-overhead',targetSets:2,targetReps:'30s'},
+        {libId:'childs',targetSets:1,targetReps:'60s'},
+      ]},
+      {dayNum:3,name:'HIP MOBILITY',muscles:'Hip Flexors · Adductors',type:'train',exercises:[
+        {libId:'hf-couch',targetSets:2,targetReps:'90s'},
+        {libId:'hf-lunge',targetSets:2,targetReps:'45s'},
+        {libId:'frog',targetSets:2,targetReps:'60s'},
+        {libId:'butterfly',targetSets:2,targetReps:'60s'},
+        {libId:'glute-90-90',targetSets:2,targetReps:'60s'},
+      ]},
+      {dayNum:4,name:'LOWER BODY',muscles:'Quads · Glutes · Calves',type:'train',exercises:[
+        {libId:'quad-stand',targetSets:2,targetReps:'45s'},
+        {libId:'quad-couch',targetSets:2,targetReps:'60s'},
+        {libId:'ham-strap',targetSets:2,targetReps:'60s'},
+        {libId:'pigeon',targetSets:2,targetReps:'60s'},
+        {libId:'calf-wall',targetSets:2,targetReps:'45s'},
+        {libId:'ankle-circles',targetSets:2,targetReps:'30s'},
+      ]},
+      {dayNum:5,name:'UPPER BODY',muscles:'Chest · Shoulders · Arms',type:'train',exercises:[
+        {libId:'chest-doorway',targetSets:2,targetReps:'45s'},
+        {libId:'sh-cross',targetSets:2,targetReps:'30s'},
+        {libId:'sh-sleeper',targetSets:2,targetReps:'45s'},
+        {libId:'tri-overhead',targetSets:2,targetReps:'30s'},
+        {libId:'wrist-flex',targetSets:2,targetReps:'30s'},
+        {libId:'wrist-ext',targetSets:2,targetReps:'30s'},
+      ]},
+      {dayNum:6,name:'SPINE & NECK',muscles:'Spine · Neck · Lats',type:'train',exercises:[
+        {libId:'cat-cow',targetSets:3,targetReps:'30s'},
+        {libId:'spine-twist',targetSets:2,targetReps:'45s'},
+        {libId:'childs',targetSets:1,targetReps:'60s'},
+        {libId:'neck-side',targetSets:2,targetReps:'30s'},
+        {libId:'chin-tuck',targetSets:2,targetReps:'30s'},
+        {libId:'lat-overhead',targetSets:2,targetReps:'30s'},
+      ]},
+      {dayNum:7,name:'REST',muscles:'Recovery',type:'rest',exercises:[]},
+    ],
+  },
+  {
+    id:'office-worker',
+    name:'Office Worker',
+    author:'For people who sit all day',
+    schedule:[
+      {dayNum:1,name:'HIPS & HAMS',muscles:'Hip Flexors · Hamstrings',type:'train',exercises:[
+        {libId:'hf-couch',targetSets:2,targetReps:'90s'},
+        {libId:'ham-floor',targetSets:2,targetReps:'60s'},
+        {libId:'pigeon',targetSets:2,targetReps:'60s'},
+        {libId:'figure4',targetSets:2,targetReps:'45s'},
+      ]},
+      {dayNum:2,name:'NECK & SHOULDERS',muscles:'Neck · Rear Delts',type:'train',exercises:[
+        {libId:'neck-side',targetSets:2,targetReps:'30s'},
+        {libId:'chin-tuck',targetSets:2,targetReps:'30s'},
+        {libId:'sh-cross',targetSets:2,targetReps:'30s'},
+        {libId:'chest-doorway',targetSets:2,targetReps:'45s'},
+        {libId:'lat-overhead',targetSets:2,targetReps:'30s'},
+      ]},
+      {dayNum:3,name:'WRISTS & SPINE',muscles:'Forearms · Spine',type:'train',exercises:[
+        {libId:'wrist-flex',targetSets:2,targetReps:'30s'},
+        {libId:'wrist-ext',targetSets:2,targetReps:'30s'},
+        {libId:'cat-cow',targetSets:3,targetReps:'30s'},
+        {libId:'spine-twist',targetSets:2,targetReps:'45s'},
+      ]},
+      {dayNum:4,name:'HIPS & HAMS',muscles:'Hip Flexors · Hamstrings',type:'train',exercises:[
+        {libId:'hf-lunge',targetSets:2,targetReps:'45s'},
+        {libId:'ham-stand',targetSets:2,targetReps:'45s'},
+        {libId:'butterfly',targetSets:2,targetReps:'60s'},
+        {libId:'glute-90-90',targetSets:2,targetReps:'60s'},
+      ]},
+      {dayNum:5,name:'NECK & SHOULDERS',muscles:'Neck · Shoulders',type:'train',exercises:[
+        {libId:'sh-eagle',targetSets:2,targetReps:'45s'},
+        {libId:'sh-sleeper',targetSets:2,targetReps:'45s'},
+        {libId:'chest-wall',targetSets:2,targetReps:'45s'},
+        {libId:'neck-side',targetSets:2,targetReps:'30s'},
+      ]},
+      {dayNum:6,name:'FULL RESET',muscles:'Spine · Lats · Glutes',type:'train',exercises:[
+        {libId:'cat-cow',targetSets:3,targetReps:'30s'},
+        {libId:'childs',targetSets:1,targetReps:'60s'},
+        {libId:'pigeon',targetSets:2,targetReps:'60s'},
+        {libId:'spine-twist',targetSets:2,targetReps:'45s'},
+      ]},
+      {dayNum:7,name:'REST',muscles:'Recovery',type:'rest',exercises:[]},
+    ],
+  },
+];
+
+// Daily quotes
+const DAILY_QUOTES=[
+  {q:'A flexible body is the price of admission for everything else.',a:'Kelly Starrett'},
+  {q:'You don\'t lose mobility from getting old. You lose it from sitting still.',a:''},
+  {q:'Tension you save today is range you keep tomorrow.',a:''},
+  {q:'Stretching is not weakness. Tightness is.',a:''},
+  {q:'Slow holds beat hard yanks. Every time.',a:''},
+  {q:'Breathe out. Sink deeper. Repeat.',a:''},
+  {q:'Mobility is the difference between strong and useful.',a:''},
+  {q:'Discipline equals freedom.',a:'Jocko Willink'},
+  {q:'A short stretch beats a perfect plan you don\'t do.',a:''},
+  {q:'Stretch the side that\'s tight, twice as long as the side that isn\'t.',a:''},
+  {q:'You stiffen up exactly as fast as you stop.',a:''},
+  {q:'The body grows on the off day. Mobility grows on every day.',a:''},
+  {q:'Your hips remember every hour you sat. Show them you remember too.',a:''},
+  {q:'Most people quit at 70%. Don\'t.',a:''},
+  {q:'Today\'s 10 minutes is tomorrow\'s squat depth.',a:''},
+  {q:'Rigid body, rigid life.',a:''},
+  {q:'Range of motion is range of options.',a:''},
+];
+
+// Weekday helpers
+const WEEKDAYS=['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
+const WEEKDAYS_SHORT=['MON','TUE','WED','THU','FRI','SAT','SUN'];
+function weekdayLabel(idx){return WEEKDAYS[((idx%7)+7)%7];}
+function weekdayShort(idx){return WEEKDAYS_SHORT[((idx%7)+7)%7];}
+function todayScheduleIdx(){const d=new Date().getDay();return (d+6)%7;}
+function ymd(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dailyQuote(){
+  const d=new Date();
+  const start=new Date(d.getFullYear(),0,0);
+  const day=Math.floor((d-start)/86400000);
+  return DAILY_QUOTES[day % DAILY_QUOTES.length];
+}
+
+// Parse hold seconds from "60s" or "60" → 60
+function parseHoldSec(reps){
+  if(!reps)return 60;
+  const m=String(reps).match(/(\d+)/);
+  return m?parseInt(m[1]):60;
+}
+
+// STATE
+let state={
+  activeProgramId:'full-body-mobility',
+  programs:{},
+  currentDayIdx:0,
+  today:null,
+  history:[],
+  currentStretchIdx:null,
+  introSeen:false,
+  userName:'',
+  lastOpenDate:'',
+};
+
+function getProgramDef(id){return PROGRAMS.find(p=>p.id===id)||PROGRAMS[0];}
+function getActiveProgram(){return getProgramDef(state.activeProgramId);}
+function getActiveSchedule(){
+  const id=state.activeProgramId;
+  if(state.programs&&state.programs[id])return state.programs[id];
+  const def=getProgramDef(id);
+  const clone=JSON.parse(JSON.stringify(def.schedule));
+  state.programs[id]=clone;
+  return clone;
+}
+
+function loadDay(idx){
+  state.currentDayIdx=idx;
+  const sched=getActiveSchedule();
+  const t=sched[idx];
+  if(!t)return;
+  state.today={
+    dayNum:t.dayNum,name:t.name,muscles:t.muscles,type:t.type,
+    exercises:t.exercises.map(ex=>{
+      const lib=LIBRARY.find(l=>l.id===ex.libId);
+      return {
+        libId:ex.libId,
+        name:lib?lib.name:'Unknown',
+        targetSets:ex.targetSets,
+        targetReps:ex.targetReps,
+        completedSets:0,
+        done:false,
+      };
+    }),
+  };
+  save();
+}
+
+function switchToDay(idx){
+  const hasLogged=state.today&&state.today.exercises.some(e=>e.completedSets>0);
+  if(hasLogged&&idx!==state.currentDayIdx){
+    if(!confirm('You have logged holds. Switching resets progress. Continue?'))return;
+  }
+  loadDay(idx);
+  showView('today');
+}
+
+function syncTodayToSchedule(){
+  if(!state.today)return;
+  const id=state.activeProgramId;
+  if(!state.programs[id])getActiveSchedule();
+  const day=state.programs[id][state.currentDayIdx];
+  if(!day)return;
+  day.exercises=state.today.exercises.map(e=>({libId:e.libId,targetSets:e.targetSets,targetReps:e.targetReps}));
+}
+
+// PERSISTENCE
+function save(){try{localStorage.setItem('dumbass_stretch_state',JSON.stringify(state));}catch(e){}}
+function load(){
+  try{
+    const raw=localStorage.getItem('dumbass_stretch_state');
+    if(raw){
+      const parsed=JSON.parse(raw);
+      state=Object.assign(state,parsed);
+    }
+  }catch(e){}
+  if(!state.activeProgramId)state.activeProgramId='full-body-mobility';
+  if(!state.programs)state.programs={};
+  if(!state.today)loadDay(state.currentDayIdx||0);
+  // Auto-snap to today's weekday on a new day with no progress
+  const today=ymd();
+  if(state.lastOpenDate!==today){
+    const hasProgress=state.today&&state.today.exercises.some(e=>e.completedSets>0||e.done);
+    if(!hasProgress){
+      const slot=todayScheduleIdx();
+      if(slot!==state.currentDayIdx)loadDay(slot);
+    }
+    state.lastOpenDate=today;
+    save();
+  }
+}
+
+// ROUTING
+function showView(name){
+  if(name==='today'&&state.today&&state.today.type==='rest'){
+    // Rest day: still show today but render as rest message
+  }
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const v=document.getElementById('view-'+name);
+  if(v)v.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  const navName=name==='detail'||name==='program'||name==='volume'||name==='profile'?'today':name;
+  const btn=document.querySelector('.nav-item[data-view="'+navName+'"]');
+  if(btn)btn.classList.add('active');
+  if(name==='today')renderToday();
+  else if(name==='volume')renderVolume();
+  else if(name==='program')renderProgram();
+  else if(name==='profile')renderProfile();
+  else if(name==='progress')renderProgress();
+  window.scrollTo(0,0);
+}
+
+function dismissIntro(){
+  state.introSeen=true;
+  save();
+  document.getElementById('intro').classList.add('hidden');
+  renderToday();
+}
+
+function avatarTap(){showView('profile');}
+
+// TODAY RENDER
+function renderToday(){
+  if(!state.today)loadDay(state.currentDayIdx||0);
+  const t=state.today;
+  const prog=getActiveProgram();
+  document.getElementById('program-current-day').innerHTML=`<span class="num">${weekdayShort(t.dayNum-1)}</span> · ${t.name}`;
+  if(t.type==='rest'){
+    document.getElementById('today-eyebrow').textContent=weekdayLabel(t.dayNum-1)+' · TODAY';
+    document.getElementById('today-title').innerHTML='<span class="accent">REST</span>';
+    document.getElementById('daily-quote').innerHTML='Recover. The body adapts when you give it space.';
+    document.getElementById('stretch-list').innerHTML='<div class="empty-state">Rest day · Eat. Sleep. Stretch lightly if you want.</div>';
+    document.getElementById('today-count').textContent='—';
+    document.getElementById('complete-btn').style.display='none';
+    return;
+  }
+  const wd=weekdayLabel(t.dayNum-1);
+  const isRealToday=(state.currentDayIdx===todayScheduleIdx());
+  document.getElementById('today-eyebrow').textContent=isRealToday?wd+' · TODAY':wd;
+  // Accent the last word; if name contains "&", keep "& " glued to the previous word
+  let titleHtml;
+  if(t.name.indexOf(' & ')>=0){
+    const ampParts=t.name.split(' & ');
+    titleHtml=`<span style="white-space:nowrap">${ampParts[0]} &amp;</span> <span class="accent">${ampParts[1]}</span>`;
+  }else{
+    const words=t.name.split(' ');
+    if(words.length>=2){
+      const last=words.pop();
+      titleHtml=words.join(' ')+' <span class="accent">'+last+'</span>';
+    }else{
+      titleHtml='<span class="accent">'+t.name+'</span>';
+    }
+  }
+  document.getElementById('today-title').innerHTML=titleHtml;
+  const dq=document.getElementById('daily-quote');
+  if(dq){
+    const quote=dailyQuote();
+    dq.innerHTML=isRealToday?`"${quote.q}"${quote.a?`<span class="dq-author">— ${quote.a}</span>`:''}`:'';
+  }
+  const exs=t.exercises;
+  exs.forEach(ex=>{
+    if(ex.completedSets>(ex.targetSets||0))ex.completedSets=ex.targetSets||0;
+    ex.done=ex.completedSets>=(ex.targetSets||0)&&(ex.targetSets||0)>0;
+  });
+  const doneCount=exs.filter(e=>e.done).length;
+  document.getElementById('today-count').textContent=doneCount+' / '+exs.length;
+  const currentIdx=exs.findIndex(e=>!e.done);
+  document.getElementById('stretch-list').innerHTML=exs.map((ex,i)=>{
+    let cls='stretch';
+    if(ex.done)cls+=' done';
+    else if(i===currentIdx)cls+=' current';
+    let dotsHtml='';
+    for(let d=0;d<(ex.targetSets||0);d++){
+      const filled=d<ex.completedSets;
+      dotsHtml+='<span class="hold-dot'+(filled?' filled':'')+'" onclick="event.stopPropagation();toggleHold('+i+','+d+')" title="Hold '+(d+1)+'"></span>';
+    }
+    return '<div class="'+cls+'">'+
+      '<div class="st-check" onclick="event.stopPropagation();openStretch('+i+')">'+(ex.done?'✓':'')+'</div>'+
+      '<div class="st-info" onclick="openStretch('+i+')">'+
+        '<div class="st-name">'+ex.name+'</div>'+
+        '<div class="st-meta">'+
+          '<span class="st-target">'+ex.targetSets+' × '+ex.targetReps+'</span>'+
+          '<span class="hold-dots" onclick="event.stopPropagation()">'+dotsHtml+'</span>'+
+          '<span class="st-count">'+ex.completedSets+'/'+ex.targetSets+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<button class="st-remove" onclick="event.stopPropagation();removeStretch('+i+')" title="Remove">×</button>'+
+    '</div>';
+  }).join('');
+  const btn=document.getElementById('complete-btn');
+  btn.style.display='block';
+  if(exs.length>0&&exs.every(e=>e.done)){btn.disabled=false;btn.textContent='Complete Session →';}
+  else{btn.disabled=true;btn.textContent='Complete Session ('+doneCount+'/'+exs.length+')';}
+}
+
+function toggleHold(stretchIdx,holdIdx){
+  const ex=state.today.exercises[stretchIdx];
+  if(!ex)return;
+  if(holdIdx<ex.completedSets){
+    ex.completedSets=holdIdx;
+  }else{
+    ex.completedSets=holdIdx+1;
+  }
+  ex.done=ex.completedSets>=ex.targetSets;
+  save();
+  renderToday();
+}
+
+function removeStretch(i){
+  const ex=state.today.exercises[i];
+  if(!ex)return;
+  const removed=state.today.exercises.splice(i,1)[0];
+  syncTodayToSchedule();
+  save();
+  renderToday();
+  toast(ex.name+' removed',{label:'Undo',onClick:function(){
+    state.today.exercises.splice(i,0,removed);
+    syncTodayToSchedule();
+    save();
+    renderToday();
+    toast(ex.name+' restored');
+  }});
+}
+
+// STRETCH DETAIL + TIMER
+let timerInterval=null;
+let timerSecondsLeft=0;
+let timerTotalSeconds=60;
+let timerRunning=false;
+
+function openStretch(i){
+  state.currentStretchIdx=i;
+  const ex=state.today.exercises[i];
+  if(!ex)return;
+  const lib=LIBRARY.find(l=>l.id===ex.libId);
+  document.getElementById('det-name').textContent=ex.name;
+  const targetMuscle=lib?(MUSCLE_TARGETS[lib.muscle]?MUSCLE_TARGETS[lib.muscle].name:lib.muscle):'';
+  document.getElementById('det-meta').textContent=ex.targetSets+' × '+ex.targetReps+' · '+targetMuscle.toUpperCase();
+  const cuesEl=document.getElementById('det-cues');
+  if(lib&&lib.cues&&lib.cues.length){
+    cuesEl.innerHTML='<div class="label">Form</div>'+lib.cues.map(c=>'<div class="cue">'+c+'</div>').join('');
+    cuesEl.style.display='block';
+  }else{
+    cuesEl.style.display='none';
+  }
+  document.getElementById('det-holds').innerHTML=ex.completedSets+' <span class="of">/ '+ex.targetSets+'</span>';
+  // Set timer to default for this stretch
+  timerTotalSeconds=parseHoldSec(ex.targetReps);
+  resetTimer();
+  showView('detail');
+}
+
+function startOrPauseTimer(){
+  if(timerRunning){
+    pauseTimer();
+  }else{
+    startTimer();
+  }
+}
+
+function startTimer(){
+  if(timerSecondsLeft<=0)timerSecondsLeft=timerTotalSeconds;
+  timerRunning=true;
+  document.getElementById('timer-start').textContent='Pause';
+  document.getElementById('timer-display').classList.add('running');
+  const start=Date.now();
+  const initial=timerSecondsLeft;
+  timerInterval=setInterval(function(){
+    const elapsed=(Date.now()-start)/1000;
+    timerSecondsLeft=Math.max(0,initial-elapsed);
+    updateTimerDisplay();
+    if(timerSecondsLeft<=0){
+      clearInterval(timerInterval);
+      timerInterval=null;
+      timerRunning=false;
+      timerSecondsLeft=0;
+      onTimerComplete();
+    }
+  },100);
+}
+
+function pauseTimer(){
+  if(timerInterval){clearInterval(timerInterval);timerInterval=null;}
+  timerRunning=false;
+  document.getElementById('timer-start').textContent='Start';
+  document.getElementById('timer-display').classList.remove('running');
+}
+
+function resetTimer(){
+  pauseTimer();
+  timerSecondsLeft=timerTotalSeconds;
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay(){
+  const display=document.getElementById('timer-display');
+  if(!display)return;
+  display.textContent=Math.ceil(timerSecondsLeft);
+  const fill=document.getElementById('timer-fill');
+  if(fill){
+    const pct=timerTotalSeconds>0?(1-timerSecondsLeft/timerTotalSeconds)*100:0;
+    fill.style.width=pct+'%';
+  }
+}
+
+function onTimerComplete(){
+  document.getElementById('timer-start').textContent='Start';
+  document.getElementById('timer-display').classList.remove('running');
+  // Vibrate if supported
+  try{if(navigator.vibrate)navigator.vibrate([200,100,200]);}catch(e){}
+  // Auto-log this hold
+  logHold();
+}
+
+function logHold(){
+  const i=state.currentStretchIdx;
+  if(i==null)return;
+  const ex=state.today.exercises[i];
+  if(!ex)return;
+  if(ex.completedSets<ex.targetSets){
+    ex.completedSets+=1;
+    ex.done=ex.completedSets>=ex.targetSets;
+    save();
+    document.getElementById('det-holds').innerHTML=ex.completedSets+' <span class="of">/ '+ex.targetSets+'</span>';
+    toast('Hold '+ex.completedSets+'/'+ex.targetSets+' logged');
+    if(ex.done){
+      toast(ex.name+' done');
+      setTimeout(function(){showView('today');},800);
+    }
+  }else{
+    toast('Already done');
+  }
+  resetTimer();
+}
+
+function removeCurrentStretch(){
+  const i=state.currentStretchIdx;
+  if(i==null)return;
+  removeStretch(i);
+  showView('today');
+}
+
+// COMPLETE SESSION
+function completeSession(){
+  const exs=state.today.exercises;
+  if(exs.length===0){toast('No stretches');return;}
+  if(!exs.every(e=>e.done)){toast('Finish all stretches');return;}
+  const totalSec=exs.reduce(function(sum,e){return sum+e.completedSets*parseHoldSec(e.targetReps);},0);
+  const session={
+    date:new Date().toISOString(),
+    dayNum:state.today.dayNum,
+    name:state.today.name,
+    exercises:exs.map(function(e){return{libId:e.libId,name:e.name,sets:e.completedSets,sec:parseHoldSec(e.targetReps)};}),
+    totalSec:totalSec,
+  };
+  state.history.push(session);
+  save();
+  const nextIdx=(state.currentDayIdx+1)%getActiveSchedule().length;
+  loadDay(nextIdx);
+  showView('today');
+  toast('Session locked · '+Math.round(totalSec/60)+' min total');
+}
+
+// VOLUME
+function computeWeeklyMinutes(){
+  // Sum total seconds per muscle from this week's scheduled stretches
+  const counts={};
+  getActiveSchedule().forEach(function(day){
+    if(day.type==='rest'||!day.exercises)return;
+    day.exercises.forEach(function(ex){
+      const lib=LIBRARY.find(function(l){return l.id===ex.libId;});
+      if(!lib)return;
+      const sec=(parseInt(ex.targetSets)||0)*parseHoldSec(ex.targetReps);
+      counts[lib.muscle]=(counts[lib.muscle]||0)+sec;
+    });
+  });
+  // Convert to minutes (rounded to 1 decimal)
+  const out={};
+  for(const m in counts){out[m]=Math.round(counts[m]/60*10)/10;}
+  return out;
+}
+
+let volumeFilter='all';
+
+function renderVolume(){
+  const counts=computeWeeklyMinutes();
+  let below=0,inZone=0,over=0;
+  Object.keys(MUSCLE_TARGETS).forEach(function(m){
+    const target=MUSCLE_TARGETS[m];
+    const v=counts[m]||0;
+    if(v<target.min)below++;
+    else if(v>=target.sone[0]&&v<=target.sone[1])inZone++;
+    else if(v>target.tak)over++;
+  });
+  document.getElementById('vol-summary').innerHTML=
+    '<div class="stat below"><div class="l">Under MIN</div><div class="v">'+below+'</div></div>'+
+    '<div class="stat in"><div class="l">In SONE</div><div class="v">'+inZone+'</div></div>'+
+    '<div class="stat over"><div class="l">Over TAK</div><div class="v">'+over+'</div></div>';
+  const groups=Object.keys(MUSCLE_GROUPS);
+  const tabs=['<button class="'+(volumeFilter==='all'?'active':'')+'" onclick="setVolFilter(\'all\')">All</button>'].concat(
+    groups.map(function(g){return '<button class="'+(volumeFilter===g?'active':'')+'" onclick="setVolFilter(\''+g+'\')">'+g+'</button>';})
+  );
+  document.getElementById('vol-tabs').innerHTML=tabs.join('');
+  let visibleMuscles=Object.keys(MUSCLE_TARGETS);
+  if(volumeFilter!=='all'){visibleMuscles=MUSCLE_GROUPS[volumeFilter]||[];}
+  document.getElementById('vol-list').innerHTML=visibleMuscles.map(function(m){
+    const target=MUSCLE_TARGETS[m];
+    const v=counts[m]||0;
+    let cls='vol-card',status='In SONE';
+    if(v<target.min){cls+=' below';status='Under MIN';}
+    else if(v>target.tak){cls+=' over';status='Over TAK';}
+    else if(v>=target.sone[0]&&v<=target.sone[1]){cls+=' in';status='In SONE';}
+    else if(v>=target.min&&v<target.sone[0]){cls+=' below';status='At MIN';}
+    else if(v>target.sone[1]&&v<=target.tak){cls+=' in';status='Over SONE';}
+    const pct=Math.min(100,(v/target.tak)*100);
+    return '<div class="'+cls+'">'+
+      '<div class="vol-head"><div class="name">'+target.name+'</div><div class="min">'+v+'<span class="u">MIN</span></div></div>'+
+      '<div class="vol-bar"><div class="fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="vol-foot"><span>MIN '+target.min+' · SONE '+target.sone[0]+'–'+target.sone[1]+' · TAK '+target.tak+'</span><span class="status">'+status+'</span></div>'+
+    '</div>';
+  }).join('');
+}
+
+function setVolFilter(g){volumeFilter=g;renderVolume();}
+
+// PROGRAM VIEW
+function renderProgram(){
+  const sched=getActiveSchedule();
+  const prog=getActiveProgram();
+  const trainDays=sched.filter(function(d){return d.type==='train';}).length;
+  const restDays=sched.filter(function(d){return d.type==='rest';}).length;
+  document.getElementById('program-head').innerHTML=
+    '<div class="eyebrow">'+trainDays+'-Day Mobility · '+restDays+' Rest</div>'+
+    '<h1 style="font-family:Inter;font-weight:900;font-size:36px;letter-spacing:-.03em;text-transform:uppercase;margin-bottom:6px">'+prog.name+'</h1>'+
+    '<div style="font-family:Oswald;font-size:11px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px">'+prog.author+' · Tap a day to stretch it</div>';
+  const realToday=todayScheduleIdx();
+  document.getElementById('day-list').innerHTML=sched.map(function(day,i){
+    const isToday=i===state.currentDayIdx;
+    const isRealToday=i===realToday;
+    const cls='day-card'+(isToday?' today':'')+(day.type==='rest'?' rest':'');
+    const icon=day.type==='rest'?'<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>':'<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+    const labelTxt=isToday?(isRealToday?'TODAY':'SELECTED'):(isRealToday?weekdayLabel(i)+' · TODAY':weekdayLabel(i));
+    return '<div class="'+cls+'" onclick="switchToDay('+i+')"><div class="num">'+weekdayShort(i)+'</div><div class="day-info"><div class="d-label">'+labelTxt+'</div><div class="d-name">'+day.name+'</div><div class="d-muscles">'+day.muscles+'</div></div><div class="play-btn">'+icon+'</div></div>';
+  }).join('');
+}
+
+// PROGRAM PICKER
+function openProgramPicker(){
+  document.getElementById('prog-list').innerHTML=PROGRAMS.map(function(p){
+    const isActive=p.id===state.activeProgramId;
+    const trainCount=p.schedule.filter(function(d){return d.type==='train';}).length;
+    return '<div class="lib-row" onclick="switchProgram(\''+p.id+'\')">'+
+      '<div class="info">'+
+        '<div class="nm">'+p.name+(isActive?' · ACTIVE':'')+'</div>'+
+        '<div class="meta">'+p.author+' · '+trainCount+' days</div>'+
+      '</div>'+
+      '<div class="add">'+(isActive?'✓':'+')+'</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('prog-modal').classList.add('open');
+}
+
+function switchProgram(id){
+  if(!getProgramDef(id))return;
+  state.activeProgramId=id;
+  state.programs={};
+  state.currentDayIdx=Math.min(todayScheduleIdx(),getActiveSchedule().length-1);
+  loadDay(state.currentDayIdx);
+  document.getElementById('prog-modal').classList.remove('open');
+  showView('today');
+  toast('Loaded '+getProgramDef(id).name);
+}
+
+// LIBRARY PICKER
+function openLibPicker(){
+  document.getElementById('lib-search').value='';
+  renderLibrary('');
+  document.getElementById('lib-modal').classList.add('open');
+}
+
+function renderLibrary(q){
+  q=(q||'').toLowerCase();
+  const filtered=LIBRARY.filter(function(s){
+    if(!q)return true;
+    return s.name.toLowerCase().indexOf(q)>=0||s.muscle.toLowerCase().indexOf(q)>=0;
+  });
+  document.getElementById('lib-list').innerHTML=filtered.map(function(s){
+    const muscleName=MUSCLE_TARGETS[s.muscle]?MUSCLE_TARGETS[s.muscle].name:s.muscle;
+    return '<div class="lib-row" onclick="addStretch(\''+s.id+'\')">'+
+      '<div class="info">'+
+        '<div class="nm">'+s.name+'</div>'+
+        '<div class="meta">'+muscleName+' · '+s.holdSec+'s default</div>'+
+      '</div>'+
+      '<div class="add">+</div>'+
+    '</div>';
+  }).join('');
+}
+
+function addStretch(libId){
+  const lib=LIBRARY.find(function(l){return l.id===libId;});
+  if(!lib)return;
+  if(state.today.type==='rest'){toast('Not a training day');return;}
+  state.today.exercises.push({
+    libId:lib.id,
+    name:lib.name,
+    targetSets:lib.holds||2,
+    targetReps:lib.holdSec+'s',
+    completedSets:0,
+    done:false,
+  });
+  syncTodayToSchedule();
+  save();
+  document.getElementById('lib-modal').classList.remove('open');
+  renderToday();
+  showView('today');
+  toast(lib.name+' added');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// PROGRESS
+function renderProgress(){
+  const c=document.getElementById('progress-content');
+  if(state.history.length===0){
+    c.innerHTML='<div class="empty-state">No sessions yet · Stretch and complete one to see history.</div>';
+    return;
+  }
+  const sessions=[].concat(state.history).reverse();
+  c.innerHTML='<div class="section-head"><span class="t">Sessions</span><span class="c">'+sessions.length+' total</span></div>'+
+    sessions.map(function(s){
+      const d=new Date(s.date);
+      const dateStr=d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+      const min=Math.round(s.totalSec/60);
+      return '<div class="day-card"><div class="num" style="font-size:14px">'+dateStr+'</div><div class="day-info"><div class="d-label">'+weekdayLabel(s.dayNum-1)+'</div><div class="d-name">'+s.name+'</div><div class="d-muscles">'+s.exercises.length+' stretches · '+min+' MIN</div></div></div>';
+    }).join('');
+}
+
+// PROFILE
+function renderProfile(){
+  document.getElementById('profile-name').value=state.userName||'';
+}
+function saveProfileName(v){state.userName=v;save();const a=document.getElementById('avatar-btn');if(a)a.textContent=(v||'J')[0].toUpperCase();}
+
+// TOAST
+let toastTimeout;
+let _toastAction=null;
+function toast(msg,action){
+  const t=document.getElementById('toast');
+  _toastAction=action&&typeof action.onClick==='function'?action:null;
+  if(_toastAction){
+    t.innerHTML='<span>'+msg+'</span><span class="toast-action" onclick="window._handleToastAction()">'+(action.label||'Undo').toUpperCase()+'</span>';
+    t.classList.add('with-action');
+  }else{
+    t.textContent=msg;
+    t.classList.remove('with-action');
+  }
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  const dur=_toastAction?5000:2500;
+  toastTimeout=setTimeout(function(){t.classList.remove('show');_toastAction=null;},dur);
+}
+window._handleToastAction=function(){
+  if(!_toastAction)return;
+  const fn=_toastAction.onClick;_toastAction=null;
+  document.getElementById('toast').classList.remove('show');
+  clearTimeout(toastTimeout);
+  fn();
+};
+
+// EXPORT / IMPORT
+function exportData(){
+  try{
+    const payload={_exportedAt:new Date().toISOString(),_app:'dumbass-stretch',state:state};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='dumbass-stretch-backup-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},200);
+    toast('Backup downloaded');
+  }catch(e){toast('Export failed');}
+}
+
+function importDataFromFile(input){
+  const file=input&&input.files&&input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const obj=JSON.parse(e.target.result);
+      if(obj.state){state=obj.state;save();toast('Backup restored · reloading');setTimeout(function(){location.reload();},700);}
+      else toast('Bad backup file');
+    }catch(err){toast('Couldn\'t read file');}
+  };
+  reader.readAsText(file);
+}
+
+function resetAllData(){
+  const confirm1=prompt('Type DELETE to wipe all stretching data. This cannot be undone.');
+  if(confirm1!=='DELETE'){toast('Cancelled');return;}
+  try{localStorage.removeItem('dumbass_stretch_state');}catch(e){}
+  location.reload();
+}
+
+// DAILY REMINDER (.ics calendar)
+function _icsEscape(s){return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');}
+function _icsLocal(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'T120000';}
+function _icsLocalEnd(d){return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'T120100';}
+
+function buildRemindersIcs(){
+  const sched=getActiveSchedule();
+  const lines=[
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//DUMBASS STRETCH//Daily Reminder//EN',
+    'CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:DUMBASS STRETCH · Daily Reminder',
+    'X-WR-TIMEZONE:Europe/Oslo','X-WR-CALDESC:Daily nudge with today\'s stretching session.',
+  ];
+  const today=new Date(); today.setHours(12,0,0,0);
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d+/,'');
+  for(let i=0;i<365;i++){
+    const d=new Date(today.getTime()+i*86400000);
+    const wkIdx=(d.getDay()+6)%7;
+    const slot=sched[wkIdx];
+    const isRest=!slot||slot.type==='rest';
+    const trainingName=isRest?'HVILE':(slot.name||'STRETCH');
+    const wd=weekdayShort(wkIdx);
+    const title=isRest?'DUMBASS STRETCH · '+wd+': HVILE · La kroppen puste':'DUMBASS STRETCH · '+wd+': '+trainingName;
+    const quote=DAILY_QUOTES[i % DAILY_QUOTES.length];
+    const desc=isRest?'Hviledag fra tøying. Eller bare 5 min lett om du vil.\n\n"'+quote.q+'"'+(quote.a?' — '+quote.a:''):
+      'I dag: '+trainingName+'\nMuskler: '+(slot.muscles||'')+'\n\n"'+quote.q+'"'+(quote.a?' — '+quote.a:'')+'\n\nÅpne appen: https://istadjacob-png.github.io/dumbass-stretch/';
+    const ymdStr=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    lines.push('BEGIN:VEVENT','UID:dumbass-stretch-'+ymdStr+'@dumbass-stretch','DTSTAMP:'+stamp,'DTSTART:'+_icsLocal(d),'DTEND:'+_icsLocalEnd(d),'SUMMARY:'+_icsEscape(title),'DESCRIPTION:'+_icsEscape(desc),'TRANSP:TRANSPARENT','BEGIN:VALARM','TRIGGER:PT0M','ACTION:DISPLAY','DESCRIPTION:'+_icsEscape(title),'END:VALARM','END:VEVENT');
+  }
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+function downloadReminders(){
+  try{
+    const ics=buildRemindersIcs();
+    const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='dumbass-stretch-reminders-'+new Date().getFullYear()+'.ics';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(url);},300);
+    toast('Reminders downloaded · open in Calendar');
+  }catch(e){toast('Couldn\'t generate reminders');}
+}
+
+// INIT
+load();
+if(state.introSeen)document.getElementById('intro').classList.add('hidden');
+const a=document.getElementById('avatar-btn');
+if(a)a.textContent=(state.userName||'J')[0].toUpperCase();
+renderToday();
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{"ts":"2026-05-14T19:50:47.328Z","cmd":"viewport","args":"390x844","origin":"about:blank","durationMs":7,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:50:47.669Z","cmd":"goto","args":"file:///tmp/dumbass-stretch-test.html","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":293,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:50:48.306Z","cmd":"wait","args":"--networkidle","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":587,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:50:48.356Z","cmd":"js","args":"var s=document.getElementById('intro');if(s)s.classList.add('hidden')","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":1,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:50:48.494Z","cmd":"screenshot","args":"/tmp/stretch-1-today.png","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":89,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:51:51.769Z","cmd":"goto","args":"file:///tmp/dumbass-stretch-test.html","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":104,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:51:52.262Z","cmd":"wait","args":"--networkidle","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":439,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:51:52.312Z","cmd":"js","args":"var s=document.getElementById('intro');if(s)s.classList.add('hidden')","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":1,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:51:52.409Z","cmd":"screenshot","args":"/tmp/stretch-2-fixed-title.png","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":47,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:52:16.818Z","cmd":"js","args":"openStretch(0)","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":4,"status":"ok","hasCookies":false,"mode":"launched"}
+{"ts":"2026-05-14T19:52:16.921Z","cmd":"screenshot","args":"/tmp/stretch-3-detail.png","origin":"file:///tmp/dumbass-stretch-test.html","durationMs":48,"status":"ok","hasCookies":false,"mode":"launched"}
