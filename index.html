@@ -57,6 +57,25 @@ button{cursor:pointer;font-family:inherit}
 .routine-item .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);width:22px;font-weight:700}
 .routine-item .nm{flex:1;color:var(--text);font-weight:500}
 .routine-item .t{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.1em}
+.info-btn{flex-shrink:0;width:24px;height:24px;border:1px solid var(--border);background:#FFF;color:var(--text-mid);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;font-style:italic;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;transition:background .12s,color .12s,border-color .12s}
+.info-btn:active{background:var(--orange);color:#FFF;border-color:var(--orange)}
+
+/* INFO MODAL */
+.info{position:fixed;inset:0;background:#FFF;display:none;flex-direction:column;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);z-index:102;overflow-y:auto;animation:fadeUp .25s ease-out}
+.info.active{display:flex}
+.info-top{display:flex;justify-content:space-between;align-items:center;padding:18px 0 4px}
+.info-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--text-faint);font-weight:700;text-transform:uppercase}
+.info-close{background:none;border:none;color:var(--text);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:8px 0}
+.info-name{font-family:'Inter',sans-serif;font-weight:900;font-size:38px;letter-spacing:-.035em;line-height:.95;color:#000;text-wrap:balance;margin:8px 0 4px}
+.info-area{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:18px}
+.info-figure{width:100%;background:var(--steel);border:1px solid var(--border);padding:24px;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.info-figure svg{width:100%;max-width:280px;height:auto}
+.info-section{margin-bottom:20px}
+.info-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.32em;color:var(--text-faint);font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.info-text{font-family:'Inter',sans-serif;font-size:15px;line-height:1.55;color:var(--text);text-wrap:balance}
+.info-text b{color:var(--orange);font-weight:700}
+.info-back{margin:8px 0 12px;width:100%;background:#000;color:#FFF;border:none;padding:20px 0;font-family:'Inter',sans-serif;font-size:16px;font-weight:900;letter-spacing:-.01em;cursor:pointer}
+.info-back:active{background:var(--orange)}
 
 .begin{width:100%;background:#000;color:#FFF;border:none;padding:24px 0;font-family:'Inter',sans-serif;font-size:22px;letter-spacing:-.01em;font-weight:900;cursor:pointer;transition:transform .12s,background .15s;position:relative;overflow:hidden}
 .begin:active{transform:scale(.98);background:var(--orange)}
@@ -169,6 +188,26 @@ button{cursor:pointer;font-family:inherit}
   </div>
 </div>
 
+<!-- INFO MODAL -->
+<div class="info" id="info">
+  <div class="info-top">
+    <div class="info-eyebrow">Stretch Detail</div>
+    <button class="info-close" onclick="closeInfo()">CLOSE ✕</button>
+  </div>
+  <div class="info-name" id="info-name">—</div>
+  <div class="info-area" id="info-area">—</div>
+  <div class="info-figure" id="info-figure"></div>
+  <div class="info-section">
+    <div class="info-label">What it does</div>
+    <p class="info-text" id="info-what">—</p>
+  </div>
+  <div class="info-section">
+    <div class="info-label">How to do it</div>
+    <p class="info-text" id="info-how">—</p>
+  </div>
+  <button class="info-back" onclick="closeInfo()">GOT IT</button>
+</div>
+
 <!-- DONE -->
 <div class="done" id="done">
   <div class="done-body">
@@ -204,6 +243,102 @@ const STRETCHES = [
   { name:"Child's Pose with Reach", cue:"Knees wide. Hips back to heels. Arms long, walk the fingertips away.",                          area:"Lats · Low back",            side:null  },
 ];
 const HOLD_SECONDS = 30;
+
+// Per-stretch detail: pose illustration + plain-English explanation.
+// Keyed by stretch name (sides share the same info).
+const STRETCH_INFO = {
+  "Standing Forward Fold": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="118" y1="146" x2="118" y2="76" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="118" y1="76" x2="150" y2="92" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="156" cy="104" r="10" fill="#0a0a0a"/>
+      <line x1="148" y1="94" x2="138" y2="132" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+    </svg>`,
+    what:"Lengthens the <b>hamstrings</b> and lets the spine decompress. The classic antidote to a day in a chair.",
+    how:"Stand with your feet hip-width apart. Soft bend in the knees — they don't need to lock. Hinge from the hips and let your upper body hang heavy. Let the head drop. Don't force the hands to the floor — gravity does the work."
+  },
+  "World's Greatest Stretch": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="60" y1="146" x2="115" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="150" y1="146" x2="150" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="115" y1="108" x2="150" y2="108" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="132" y1="108" x2="132" y2="60" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="132" cy="50" r="10" fill="#0a0a0a"/>
+      <line x1="132" y1="60" x2="132" y2="20" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+      <line x1="132" y1="60" x2="148" y2="120" stroke="#0a0a0a" stroke-width="5" stroke-linecap="round"/>
+    </svg>`,
+    what:"Opens the <b>hips</b> and rotates the <b>upper back</b> — one move, two big wins. Best bang for your 30 seconds.",
+    how:"Step into a deep lunge. Plant the same-side hand on the floor inside the front foot. Rotate and reach the other arm to the ceiling — chest open, eyes follow the hand. Keep the back leg long and the back hip pushing forward."
+  },
+  "Couch Stretch": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="60" y1="20" x2="60" y2="146" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="155" y1="146" x2="155" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="155" y1="108" x2="115" y2="100" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="115" y1="100" x2="92" y2="138" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="92" y1="138" x2="65" y2="108" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="115" y1="100" x2="118" y2="56" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="120" cy="46" r="10" fill="#0a0a0a"/>
+    </svg>`,
+    what:"Hits the <b>hip flexor</b> and <b>quad</b> on the back leg — the muscles that get short from sitting all day.",
+    how:"Half-kneel with your back foot up against a wall or couch (toes pointing up, shin against the wall). Front foot planted firmly. Squeeze the glute of the back leg and stand the torso tall. Tilt the pelvis under — don't arch the lower back to fake it."
+  },
+  "90 / 90 Hip Switch": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="120" y1="140" x2="60" y2="140" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="60" y1="140" x2="60" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="120" y1="140" x2="180" y2="140" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="180" y1="140" x2="180" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="120" y1="140" x2="120" y2="70" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="120" cy="60" r="10" fill="#0a0a0a"/>
+      <line x1="120" y1="80" x2="98" y2="115" stroke="#0a0a0a" stroke-width="5" stroke-linecap="round"/>
+      <line x1="120" y1="80" x2="142" y2="115" stroke="#0a0a0a" stroke-width="5" stroke-linecap="round"/>
+    </svg>`,
+    what:"Unlocks the <b>hip rotators</b> — internal rotation on one side, external on the other. Fixes hips that feel \"stuck.\"",
+    how:"Sit on the floor with one leg in front of you bent at 90° (shin parallel to your torso), and the other leg out to the side also bent at 90°. Sit tall. Slowly switch which leg is in front. Try to press the back knee gently toward the floor."
+  },
+  "Doorway Pec Stretch": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="80" y1="20" x2="80" y2="148" stroke="#D8D8D8" stroke-width="3"/>
+      <line x1="140" y1="146" x2="140" y2="76" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="140" y1="76" x2="140" y2="46" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="140" cy="36" r="10" fill="#0a0a0a"/>
+      <line x1="140" y1="76" x2="85" y2="62" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+      <line x1="85" y1="62" x2="80" y2="36" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+    </svg>`,
+    what:"Opens the <b>chest</b> and <b>front of the shoulder</b>. Counteracts the rounded-forward posture from phones and keyboards.",
+    how:"Stand in a doorway. Place your forearms on the frame at about shoulder height (or higher for upper chest). Step one foot through the doorway and lean your chest forward. Ribs down — don't flare them. You should feel a stretch across the chest, not in the shoulder joint."
+  },
+  "Thread the Needle": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="60" y1="146" x2="60" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="60" y1="108" x2="150" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="150" y1="100" x2="150" y2="138" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="150" y1="100" x2="195" y2="140" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="170" cy="138" r="9" fill="#0a0a0a"/>
+    </svg>`,
+    what:"Rotates the <b>upper back</b> (thoracic spine) and stretches the <b>rear shoulder</b>. Huge for anyone who lifts or sits.",
+    how:"Start on all fours. Take one arm and thread it under your body, palm up, reaching as far as you can to the opposite side. Let that same-side shoulder and ear lower toward the floor. Keep the other hand pressing into the ground. Exhale to sink deeper."
+  },
+  "Child's Pose with Reach": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="50" y1="146" x2="80" y2="125" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="80" y1="125" x2="60" y2="138" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="80" y1="125" x2="170" y2="142" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="180" cy="143" r="9" fill="#0a0a0a"/>
+      <line x1="170" y1="142" x2="215" y2="146" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+    </svg>`,
+    what:"Stretches the <b>lats</b> and the <b>lower back</b>. A rest position that's still doing work — the perfect cooldown.",
+    how:"Kneel down, knees wide, big toes touching. Sit your hips back onto your heels and walk your hands forward along the floor. Let your forehead rest down. Reach the fingertips as far away as you can, opening the armpits."
+  },
+};
 
 const QUOTES = [
   ["Suppleness is the price of admission for everything else.", "Kelly Starrett"],
@@ -271,6 +406,7 @@ function renderHome(){
     return `<div class="routine-item">
       <span class="n">${String(i+1).padStart(2,"0")}</span>
       <span class="nm">${s.name}${sideTag}</span>
+      <button class="info-btn" onclick="openInfo(${i})" aria-label="How to do ${s.name}">i</button>
       <span class="t">${HOLD_SECONDS}s</span>
     </div>`;
   }).join("");
@@ -286,6 +422,25 @@ function renderHome(){
   } else {
     $last.textContent = "Your first session — let's go.";
   }
+}
+
+// ============================================================
+// INFO MODAL
+// ============================================================
+function openInfo(i){
+  const s = STRETCHES[i];
+  const info = STRETCH_INFO[s.name];
+  if(!info) return;
+  document.getElementById("info-name").textContent = s.name + (s.side ? " — " + s.side : "");
+  document.getElementById("info-area").textContent = s.area;
+  document.getElementById("info-figure").innerHTML = info.svg;
+  document.getElementById("info-what").innerHTML = info.what;
+  document.getElementById("info-how").textContent = info.how;
+  document.getElementById("info").classList.add("active");
+  document.getElementById("info").scrollTop = 0;
+}
+function closeInfo(){
+  document.getElementById("info").classList.remove("active");
 }
 
 // ============================================================
