@@ -315,7 +315,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.9</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v5.0</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -547,20 +547,21 @@ const MUSCLE_NAMES = {
 
 // Weekly minutes-in-stretched-position landmarks. RP/Israetel idea applied to mobility.
 // mev = floor for ROM gain · mav = productive band · mrv = past it = irritation, not gains.
-// Numbers are house defaults — calibrated so a daily routine that includes a muscle lands MAV.
+// Calibrated so every routine × 7 days lands each of its target muscles at the LOW end of
+// MAV. Daily practice = productive ROM gains, not just maintenance.
 const MUSCLE_LANDMARKS = {
-  "hip-flexors":  {mev:5, mav:[8,16], mrv:25},
-  "t-spine":      {mev:5, mav:[8,16], mrv:25},
-  "hamstrings":   {mev:3, mav:[5,12], mrv:20},
-  "quads":        {mev:2, mav:[4,10], mrv:18},
-  "chest":        {mev:3, mav:[5,12], mrv:20},
-  "hip-rotators": {mev:3, mav:[5,12], mrv:20},
-  "glutes":       {mev:2, mav:[4,10], mrv:18},
-  "adductors":    {mev:2, mav:[4,8],  mrv:14},
-  "calves":       {mev:2, mav:[4,10], mrv:18},
-  "lats":         {mev:2, mav:[4,10], mrv:18},
-  "shoulders":    {mev:2, mav:[4,10], mrv:18},
-  "lower-back":   {mev:1, mav:[3,7],  mrv:12},
+  "hip-flexors":  {mev:3,   mav:[6,16],   mrv:25},
+  "t-spine":      {mev:4,   mav:[7,16],   mrv:25},
+  "hamstrings":   {mev:2,   mav:[5,16],   mrv:22},
+  "quads":        {mev:1,   mav:[3,10],   mrv:18},
+  "chest":        {mev:2,   mav:[3,12],   mrv:20},
+  "hip-rotators": {mev:1.5, mav:[3,12],   mrv:20},
+  "glutes":       {mev:1.5, mav:[3,10],   mrv:18},
+  "adductors":    {mev:1.5, mav:[3,8],    mrv:14},
+  "calves":       {mev:1.5, mav:[3,14],   mrv:20},
+  "lats":         {mev:1.5, mav:[3,10],   mrv:18},
+  "shoulders":    {mev:1.5, mav:[3,10],   mrv:18},
+  "lower-back":   {mev:0.5, mav:[1.5,7],  mrv:12},
 };
 // Priority order — desk-shortened first, then leg-day muscles, then upper.
 const MUSCLE_ORDER = ["hip-flexors","t-spine","hamstrings","quads","glutes","hip-rotators","calves","adductors","chest","shoulders","lats","lower-back"];
