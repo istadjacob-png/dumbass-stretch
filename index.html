@@ -169,19 +169,6 @@ button{cursor:pointer;font-family:inherit}
 .week-cell.today.done .bar{background:var(--orange)}
 .week-cell.today.done .m{color:var(--orange)}
 
-/* WEEKLY PROGRESS VERDICT — "will I gain ROM this week?" */
-.week-verdict{margin-top:10px;padding:14px;background:#FFF;border:1px solid #000;display:flex;align-items:center;gap:14px}
-.week-verdict .big{font-family:'Inter',sans-serif;font-weight:900;font-size:30px;letter-spacing:-.03em;line-height:1;color:#000;white-space:nowrap}
-.week-verdict .big .accent{color:var(--orange)}
-.week-verdict .body{flex:1;min-width:0;border-left:1px solid var(--border);padding-left:14px}
-.week-verdict .status{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;margin-bottom:3px}
-.week-verdict.progressing .status{color:var(--orange)}
-.week-verdict.maintaining .status{color:var(--text-mid)}
-.week-verdict.under .status{color:var(--text-faint)}
-.week-verdict.over .status{color:var(--red)}
-.week-verdict .detail{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.04em;line-height:1.45}
-.week-verdict .detail b{color:#000;font-family:'Inter',sans-serif;font-weight:900;font-size:13px}
-.week-verdict .detail b.orange{color:var(--orange)}
 
 /* LIFT-APP BANNER (only renders if dumbass_state present) */
 .lift-banner{background:#000;color:#FFF;padding:12px 14px;margin:18px 0 6px;display:flex;align-items:center;gap:12px;font-family:'Inter',sans-serif}
@@ -260,7 +247,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.2</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.3</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -283,10 +270,9 @@ button{cursor:pointer;font-family:inherit}
     <!-- WEEKLY 7-DAY STRIP — minutes per day -->
     <div class="section-head">
       <span class="t">This week</span>
-      <span class="c" id="week-total-c">Will I progress?</span>
+      <span class="c" id="week-total-c">0 min</span>
     </div>
     <div class="week-strip" id="week-strip"></div>
-    <div class="week-verdict" id="week-verdict"></div>
 
     <!-- ROUTINE PICKER -->
     <div class="section-head">
@@ -503,200 +489,264 @@ function getLiftDay(){
 
 // Per-stretch detail: pose illustration + plain-English explanation.
 // Keyed by stretch name (sides share the same info).
-// SVG style: viewBox 240×180, floor at y=170, orange = stretched part, head = circle r=11.
+//
+// SVG style system (poseSvg helper):
+//   • viewBox 240×180, clean floor bar at y=170
+//   • Body: chunky black rounded strokes (stroke-width ~14)
+//   • Head: filled circle r=13 with a small white "nose" dot showing facing direction
+//   • Stretched part: orange (#FF6B00), thicker stroke (18), soft glow filter
+//   • Label: small orange arrow + boxed muscle name pointing at the orange area
+//   • Wall/doorframe: dashed grey vertical bar where relevant
+const POSE_DEFS = `<defs>
+  <filter id="poseGlow" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur stdDeviation="3.5"/>
+  </filter>
+  <marker id="poseArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 Z" fill="#FF6B00"/>
+  </marker>
+</defs>`;
+function poseSvg(body, label, opts){
+  opts = opts || {};
+  const wall = opts.wall ? `<line x1="${opts.wall}" y1="8" x2="${opts.wall}" y2="170" stroke="#C0C0C0" stroke-width="4" stroke-dasharray="6,4"/>` : '';
+  const floor = `<line x1="6" y1="170" x2="234" y2="170" stroke="#B8B8B8" stroke-width="3" stroke-linecap="round"/>
+    <line x1="10" y1="175" x2="230" y2="175" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="3,5"/>`;
+  return `<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">${POSE_DEFS}${floor}${wall}<g class="pose-body">${body}</g>${label||''}</svg>`;
+}
+function poseLabel(tx,ty,ax,ay,text){
+  const w = text.length*7 + 8;
+  return `<line x1="${tx + w/2}" y1="${ty - 7}" x2="${ax}" y2="${ay}" stroke="#FF6B00" stroke-width="2" marker-end="url(#poseArrow)"/>
+    <rect x="${tx-4}" y="${ty-15}" width="${w}" height="16" fill="#FFFFFF" stroke="#FF6B00" stroke-width="1.5" rx="3"/>
+    <text x="${tx}" y="${ty-3}" fill="#FF6B00" font-family="Oswald, sans-serif" font-size="11" font-weight="700" letter-spacing="0.05em">${text}</text>`;
+}
+
 const STRETCH_INFO = {
   "Standing Forward Fold": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="100" y1="170" x2="100" y2="78" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
-      <line x1="140" y1="170" x2="140" y2="78" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
-      <line x1="95" y1="78" x2="145" y2="78" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="120" y1="82" x2="120" y2="130" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="108" y1="130" x2="132" y2="130" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="120" cy="148" r="11" fill="#0a0a0a"/>
-      <line x1="108" y1="132" x2="100" y2="158" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <line x1="132" y1="132" x2="140" y2="158" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="105" y1="170" x2="105" y2="95" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="135" y1="170" x2="135" y2="95" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="105" y1="170" x2="105" y2="95" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="135" y1="170" x2="135" y2="95" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="98" y1="95" x2="142" y2="95" stroke="#0a0a0a" stroke-width="16" stroke-linecap="round"/>
+       <line x1="120" y1="95" x2="120" y2="140" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="120" cy="155" r="13" fill="#0a0a0a"/>
+       <circle cx="120" cy="161" r="2" fill="#FFFFFF"/>
+       <line x1="108" y1="100" x2="100" y2="160" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <line x1="132" y1="100" x2="140" y2="160" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
+      poseLabel(165, 130, 142, 130, "HAMSTRING")
+    ),
     what:"Lengthens the <b>hamstrings</b> and decompresses the spine. The classic antidote to a day in a chair.",
     how:"Stand feet hip-width. Soft bend in the knees — never lock them. Hinge from the hips, let the upper body hang heavy. Head drops fully. Don't force the hands to the floor — gravity does the work. For <b>extra ROM</b>, bend the knees more on the way down, then slowly try to straighten them while staying folded."
   },
   "World's Greatest Stretch": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="55" y1="170" x2="135" y2="110" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="170" y1="170" x2="170" y2="135" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="170" y1="135" x2="138" y2="108" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="138" y1="108" x2="155" y2="55" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="158" cy="45" r="11" fill="#0a0a0a"/>
-      <line x1="150" y1="80" x2="155" y2="130" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <line x1="160" y1="60" x2="205" y2="22" stroke="#FF6B00" stroke-width="9" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="155" y1="170" x2="120" y2="115" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="120" y1="115" x2="80" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="120" y1="115" x2="200" y2="155" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="120" y1="115" x2="200" y2="155" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="120" y1="115" x2="135" y2="65" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="138" cy="52" r="13" fill="#0a0a0a"/>
+       <circle cx="144" cy="51" r="2" fill="#FFFFFF"/>
+       <line x1="128" y1="78" x2="105" y2="138" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <line x1="145" y1="68" x2="200" y2="22" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="145" y1="68" x2="200" y2="22" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>`,
+      poseLabel(15, 165, 165, 155, "HIP FLEXOR") + poseLabel(140, 18, 195, 24, "REACH UP")
+    ),
     what:"Opens the <b>hip flexors</b> and rotates the <b>upper back</b> — one move, two huge wins. The all-time best bang for your 30 seconds.",
     how:"Step into a deep lunge. Plant the same-side hand on the floor inside the front foot. Rotate and reach the other arm to the ceiling — chest open, eyes follow the hand. Keep the back leg long and the back hip driving forward. For <b>extra hip flexor</b>, drop the back knee and posterior-tilt the pelvis."
   },
   "Couch Stretch": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="40" y1="20" x2="40" y2="170" stroke="#D8D8D8" stroke-width="4"/>
-      <line x1="50" y1="120" x2="50" y2="170" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="50" y1="120" x2="115" y2="108" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="115" y1="108" x2="155" y2="160" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="155" y1="160" x2="190" y2="170" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="115" y1="108" x2="125" y2="50" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="115" y1="50" x2="140" y2="50" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-      <circle cx="128" cy="32" r="11" fill="#0a0a0a"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="55" y1="170" x2="55" y2="115" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="55" y1="115" x2="115" y2="115" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="55" y1="170" x2="55" y2="115" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="55" y1="115" x2="115" y2="115" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="115" y1="115" x2="155" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="155" y1="170" x2="195" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="115" y1="115" x2="125" y2="55" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="115" y1="55" x2="142" y2="55" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="130" cy="35" r="13" fill="#0a0a0a"/>
+       <circle cx="138" cy="35" r="2" fill="#FFFFFF"/>`,
+      poseLabel(155, 90, 95, 118, "QUAD + HIP"),
+      {wall: 42}
+    ),
     what:"Loaded stretch for the <b>hip flexors</b> and <b>quad</b> on the back leg — the muscles that get short from sitting all day. The single highest-leverage move for desk life.",
     how:"Half-kneel with the back foot up against a wall (toes pointing up, shin against the wall). Front foot planted firmly. <b>Squeeze the back-leg glute hard</b> — that's what makes it work. Tuck the tailbone under and stand the torso tall. Never arch the lower back to fake range."
   },
   "90 / 90 Hip Switch": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="65" y1="155" x2="120" y2="155" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="65" y1="155" x2="50" y2="125" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="120" y1="155" x2="175" y2="155" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="175" y1="155" x2="190" y2="125" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="120" y1="155" x2="120" y2="80" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="108" y1="80" x2="132" y2="80" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="120" cy="62" r="11" fill="#0a0a0a"/>
-      <line x1="108" y1="82" x2="92" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <line x1="132" y1="82" x2="148" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="70" y1="155" x2="135" y2="155" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="135" y1="155" x2="115" y2="118" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="70" y1="155" x2="135" y2="155" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="135" y1="155" x2="115" y2="118" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="135" y1="155" x2="200" y2="155" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="200" y1="155" x2="180" y2="118" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="135" y1="155" x2="135" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="122" y1="75" x2="148" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="135" cy="58" r="13" fill="#0a0a0a"/>
+       <circle cx="135" cy="64" r="2" fill="#FFFFFF"/>
+       <line x1="124" y1="80" x2="105" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <line x1="146" y1="80" x2="165" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
+      poseLabel(15, 145, 70, 158, "HIP ROTATORS")
+    ),
     what:"Unlocks the <b>hip rotators</b> — internal on one side, external on the other. Fixes hips that feel \"stuck\" and improves squat depth.",
     how:"Sit on the floor with one leg in front bent at 90° (shin parallel to your torso) and the other leg out to the side also bent at 90°. Sit tall — don't slouch. Slowly switch which leg is in front. Press the back knee gently toward the floor. For <b>extra ROM</b>, fold forward over the front shin."
   },
   "Doorway Pec Stretch": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="65" y1="15" x2="65" y2="170" stroke="#D8D8D8" stroke-width="4"/>
-      <line x1="115" y1="170" x2="115" y2="125" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="140" y1="170" x2="135" y2="125" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="113" y1="125" x2="140" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="125" y1="125" x2="125" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="110" y1="78" x2="142" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="125" cy="58" r="11" fill="#0a0a0a"/>
-      <line x1="110" y1="78" x2="73" y2="55" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
-      <line x1="73" y1="55" x2="66" y2="22" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
-      <line x1="142" y1="80" x2="160" y2="105" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="120" y1="170" x2="120" y2="125" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="145" y1="170" x2="138" y2="125" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="115" y1="125" x2="143" y2="125" stroke="#0a0a0a" stroke-width="16" stroke-linecap="round"/>
+       <line x1="129" y1="125" x2="129" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="116" y1="75" x2="142" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="129" cy="58" r="13" fill="#0a0a0a"/>
+       <circle cx="121" cy="58" r="2" fill="#FFFFFF"/>
+       <line x1="116" y1="75" x2="75" y2="58" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="116" y1="75" x2="75" y2="58" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="75" y1="58" x2="62" y2="22" stroke="#0a0a0a" stroke-width="13" stroke-linecap="round"/>
+       <line x1="142" y1="78" x2="162" y2="108" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
+      poseLabel(155, 50, 110, 73, "CHEST"),
+      {wall: 55}
+    ),
     what:"Opens the <b>chest</b> and the <b>front of the shoulder</b>. The direct counter to the rounded posture from phones, keyboards, and bench pressing.",
     how:"Stand in a doorway. Forearm on the frame, elbow at shoulder height (or higher for upper chest). Step one foot through the doorway and lean your chest forward. <b>Ribs DOWN</b> — never let them flare. Stretch is across the chest, not in the shoulder joint."
   },
   "Thread the Needle": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="175" y1="170" x2="180" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="210" y1="170" x2="205" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="180" y1="125" x2="205" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="190" y1="128" x2="115" y2="155" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="115" y1="155" x2="138" y2="170" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-      <line x1="115" y1="155" x2="55" y2="165" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="103" cy="158" r="11" fill="#0a0a0a"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="170" y1="170" x2="180" y2="120" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="210" y1="170" x2="205" y2="120" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="180" y1="120" x2="205" y2="120" stroke="#0a0a0a" stroke-width="16" stroke-linecap="round"/>
+       <line x1="190" y1="125" x2="115" y2="150" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="190" y1="125" x2="115" y2="150" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="115" y1="150" x2="138" y2="170" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+       <line x1="115" y1="150" x2="50" y2="160" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="103" cy="155" r="13" fill="#0a0a0a"/>
+       <circle cx="97" cy="153" r="2" fill="#FFFFFF"/>`,
+      poseLabel(110, 100, 155, 132, "SHOULDER + T-SPINE")
+    ),
     what:"Rotates the <b>thoracic spine</b> and stretches the <b>rear shoulder</b>. Huge for anyone who lifts heavy or sits a lot.",
     how:"Start on all fours. Take one arm and thread it under the body, palm up, reaching as far as you can to the opposite side. Let that same-side shoulder and ear sink toward the floor. Keep the other hand pressing into the ground. Exhale long to sink deeper."
   },
   "Pigeon Pose": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="220" y1="155" x2="125" y2="138" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="40" y1="150" x2="120" y2="138" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <circle cx="125" cy="130" r="15" fill="#0a0a0a"/>
-      <line x1="125" y1="120" x2="138" y2="62" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="122" y1="62" x2="152" y2="62" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="138" cy="44" r="11" fill="#0a0a0a"/>
-      <line x1="122" y1="63" x2="105" y2="105" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <line x1="152" y1="63" x2="165" y2="105" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="220" y1="160" x2="125" y2="145" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="40" y1="155" x2="120" y2="145" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="40" y1="155" x2="120" y2="145" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <ellipse cx="125" cy="140" rx="16" ry="14" fill="#0a0a0a"/>
+       <line x1="125" y1="130" x2="138" y2="65" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="122" y1="65" x2="152" y2="65" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="138" cy="48" r="13" fill="#0a0a0a"/>
+       <circle cx="130" cy="48" r="2" fill="#FFFFFF"/>
+       <line x1="122" y1="68" x2="105" y2="110" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <line x1="152" y1="68" x2="165" y2="110" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
+      poseLabel(20, 120, 85, 145, "GLUTE")
+    ),
     what:"Targets the <b>glutes</b> and <b>external hip rotators</b>. The single best counter for a tight, locked-up backside — and the most-needed post-squat stretch.",
     how:"Bring one shin across in front (front knee bent — the more parallel-to-front the deeper the stretch). Stretch the other leg straight back. <b>Square the hips</b> toward the floor first, then sink. Stay upright or fold over the front shin — only as far as feels strong, never painful."
   },
   "Lying Spinal Twist": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <rect x="105" y="48" width="32" height="65" fill="#FF6B00" rx="9"/>
-      <circle cx="98" cy="38" r="12" fill="#0a0a0a"/>
-      <line x1="105" y1="68" x2="48" y2="68" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-      <line x1="137" y1="68" x2="195" y2="68" stroke="#FF6B00" stroke-width="10" stroke-linecap="round"/>
-      <line x1="103" y1="118" x2="137" y2="118" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="132" y1="118" x2="195" y2="135" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="195" y1="135" x2="200" y2="160" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<rect x="102" y="50" width="36" height="68" fill="#FF6B00" rx="10" filter="url(#poseGlow)"/>
+       <rect x="102" y="50" width="36" height="68" fill="#FF6B00" rx="10"/>
+       <circle cx="92" cy="38" r="14" fill="#0a0a0a"/>
+       <circle cx="86" cy="38" r="2" fill="#FFFFFF"/>
+       <line x1="102" y1="68" x2="40" y2="68" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+       <line x1="138" y1="68" x2="200" y2="68" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="100" y1="118" x2="138" y2="118" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="132" y1="118" x2="200" y2="138" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="200" y1="138" x2="208" y2="162" stroke="#0a0a0a" stroke-width="13" stroke-linecap="round"/>`,
+      poseLabel(150, 35, 132, 60, "T-SPINE TWIST")
+    ),
     what:"Rotates the <b>thoracic spine</b> while gently stretching the <b>glutes</b> and obliques. Resets a stiff back without loading it.",
     how:"Lie on your back. Bend both knees, then let them drop together to one side toward the floor. Reach the opposite arm wide, palm up. Look toward the outstretched hand. <b>Keep both shoulder blades on the floor</b> — don't let the opposite shoulder lift to chase range."
   },
   "Child's Pose with Reach": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="195" y1="160" x2="160" y2="170" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <circle cx="200" cy="150" r="16" fill="#0a0a0a"/>
-      <line x1="190" y1="150" x2="100" y2="158" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <circle cx="92" cy="160" r="11" fill="#0a0a0a"/>
-      <line x1="105" y1="158" x2="40" y2="162" stroke="#FF6B00" stroke-width="10" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<ellipse cx="200" cy="148" rx="20" ry="18" fill="#0a0a0a"/>
+       <line x1="200" y1="160" x2="160" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="185" y1="148" x2="95" y2="158" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="185" y1="148" x2="95" y2="158" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="88" cy="160" r="13" fill="#0a0a0a"/>
+       <circle cx="82" cy="160" r="2" fill="#FFFFFF"/>
+       <line x1="100" y1="158" x2="35" y2="162" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>`,
+      poseLabel(95, 125, 140, 152, "LATS")
+    ),
     what:"Stretches the <b>lats</b> and the <b>lower back</b>. A rest position that's still working — the perfect cooldown after pulls or heavy ab work.",
     how:"Kneel down, knees wide, big toes touching. Sit the hips back onto the heels and walk your hands as far forward along the floor as they'll go. Forehead rests down. Reach the fingertips away from the hips — open the armpits."
   },
   "Frog Pose": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="50" y1="170" x2="100" y2="142" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="100" y1="142" x2="118" y2="110" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="190" y1="170" x2="140" y2="142" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="140" y1="142" x2="122" y2="110" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="105" y1="110" x2="135" y2="110" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="120" y1="115" x2="120" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="105" y1="78" x2="135" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="105" y1="80" x2="78" y2="130" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <line x1="135" y1="80" x2="162" y2="130" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <circle cx="120" cy="58" r="11" fill="#0a0a0a"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="50" y1="170" x2="100" y2="142" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="100" y1="142" x2="118" y2="112" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="190" y1="170" x2="140" y2="142" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="140" y1="142" x2="122" y2="112" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="50" y1="170" x2="100" y2="142" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="100" y1="142" x2="118" y2="112" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="190" y1="170" x2="140" y2="142" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="140" y1="142" x2="122" y2="112" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="105" y1="112" x2="135" y2="112" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="120" y1="115" x2="120" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="105" y1="75" x2="135" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="105" y1="78" x2="75" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <line x1="135" y1="78" x2="165" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <circle cx="120" cy="58" r="13" fill="#0a0a0a"/>
+       <circle cx="120" cy="64" r="2" fill="#FFFFFF"/>`,
+      poseLabel(15, 130, 70, 160, "ADDUCTORS")
+    ),
     what:"Opens the <b>adductors</b> (inner thighs) and the <b>hip rotators</b>. The unlock move for deep squats and ATG mobility.",
     how:"Hands and knees. Walk the knees out as wide as they'll go comfortably — toes pointed out, shins parallel to each other. Forearms drop to the floor. Slowly sit the hips back toward the heels. Stay there. <b>Move only a millimeter at a time</b> — adductors don't like fast loading."
   },
   "Wall Calf Stretch": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="40" y1="15" x2="40" y2="170" stroke="#D8D8D8" stroke-width="4"/>
-      <line x1="40" y1="148" x2="62" y2="170" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
-      <line x1="55" y1="170" x2="120" y2="98" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="190" y1="170" x2="130" y2="98" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="125" y1="98" x2="98" y2="50" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="95" cy="40" r="11" fill="#0a0a0a"/>
-      <line x1="100" y1="58" x2="50" y2="68" stroke="#0a0a0a" stroke-width="9" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="55" y1="148" x2="55" y2="170" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="55" y1="170" x2="120" y2="100" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="55" y1="148" x2="55" y2="170" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="55" y1="170" x2="120" y2="100" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="195" y1="170" x2="130" y2="100" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="125" y1="100" x2="100" y2="52" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="88" y1="52" x2="115" y2="52" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="100" cy="35" r="13" fill="#0a0a0a"/>
+       <circle cx="92" cy="35" r="2" fill="#FFFFFF"/>
+       <line x1="100" y1="58" x2="50" y2="68" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
+      poseLabel(165, 135, 100, 135, "CALF"),
+      {wall: 42}
+    ),
     what:"Loads the <b>calf</b> (gastrocnemius) and the Achilles. Tight calves shorten your squat depth and shift load to the lower back — fix them.",
     how:"Stand facing a wall. Place the ball of one foot on the wall, heel on the floor. Drive your hips forward toward the wall — keep the back leg straight. Hands support on the wall. For the deeper soleus, bend the front knee slightly while keeping the heel down."
   },
   "Half Split": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="38" y1="158" x2="120" y2="138" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="38" y1="158" x2="42" y2="138" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
-      <line x1="120" y1="138" x2="170" y2="170" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="170" y1="170" x2="210" y2="165" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="120" y1="138" x2="138" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="120" y1="78" x2="150" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="142" cy="58" r="11" fill="#0a0a0a"/>
-      <line x1="122" y1="80" x2="90" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <line x1="150" y1="80" x2="118" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="40" y1="158" x2="120" y2="140" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="40" y1="158" x2="120" y2="140" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="40" y1="158" x2="40" y2="138" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="120" y1="140" x2="170" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="170" y1="170" x2="210" y2="165" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="120" y1="140" x2="140" y2="78" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="125" y1="78" x2="155" y2="78" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="145" cy="60" r="13" fill="#0a0a0a"/>
+       <circle cx="138" cy="58" r="2" fill="#FFFFFF"/>
+       <line x1="125" y1="80" x2="90" y2="128" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <line x1="155" y1="80" x2="120" y2="128" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
+      poseLabel(25, 125, 75, 150, "HAMSTRING")
+    ),
     what:"The deepest <b>hamstring</b> stretch in the library — way past what Forward Fold can reach. Best stretch you can do post-deadlift or post-leg day.",
     how:"From a kneeling lunge, slide the front foot forward so the front leg is straight. Back knee stays on the floor (cushion it if needed). Pull the front foot's toes up. Hinge the hips back over the back heel — keep the spine long, don't round to chase your toes."
   },
   "Standing Quad Pull": {
-    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="115" y1="170" x2="118" y2="92" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="118" y1="92" x2="155" y2="135" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="155" y1="135" x2="132" y2="108" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
-      <line x1="105" y1="92" x2="135" y2="92" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-      <line x1="120" y1="95" x2="120" y2="42" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <line x1="105" y1="42" x2="135" y2="42" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-      <circle cx="120" cy="22" r="11" fill="#0a0a0a"/>
-      <line x1="134" y1="44" x2="148" y2="115" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-      <line x1="106" y1="44" x2="78" y2="62" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
-    </svg>`,
+    svg: poseSvg(
+      `<line x1="115" y1="170" x2="118" y2="92" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="118" y1="92" x2="155" y2="135" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="155" y1="135" x2="130" y2="108" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
+       <line x1="118" y1="92" x2="155" y2="135" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="155" y1="135" x2="130" y2="108" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
+       <line x1="106" y1="92" x2="136" y2="92" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="120" y1="95" x2="120" y2="42" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <line x1="106" y1="42" x2="138" y2="42" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
+       <circle cx="122" cy="22" r="13" fill="#0a0a0a"/>
+       <circle cx="128" cy="22" r="2" fill="#FFFFFF"/>
+       <line x1="136" y1="44" x2="150" y2="118" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+       <line x1="106" y1="44" x2="78" y2="62" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
+      poseLabel(185, 110, 152, 125, "QUAD")
+    ),
     what:"Isolates the <b>quad</b> (and a little hip flexor). The simplest, most accessible quad stretch you can do anywhere.",
     how:"Stand tall. Grab one ankle and pull the heel toward the butt. <b>Knees stay touching</b> — don't let the lifted knee drift out. Squeeze the glute of the lifted leg and drive the hip forward. Don't lean back to fake more range. Hold the wall lightly for balance if you need."
   },
@@ -987,56 +1037,8 @@ function renderHome(){
     </div>`;
   }).join("");
 
-  // Weekly verdict — "will I gain ROM this week?" against the selected routine's muscles.
-  const weeklyForVerdict = weeklyMuscleMinutes(state);
-  const verdictMuscles = routineMuscleSet(routine);
-  let progressing = 0, maintaining = 0, under = 0, overMRV = 0;
-  for(const m of verdictMuscles){
-    const lm = MUSCLE_LANDMARKS[m];
-    const mins = weeklyForVerdict[m] || 0;
-    const cls = classifyVolume(mins, lm);
-    if(cls === "mav") progressing++;
-    else if(cls === "over-mav") progressing++;
-    else if(cls === "mev") maintaining++;
-    else if(cls === "over") overMRV++;
-    else under++;
-  }
-  const N = verdictMuscles.length;
-  let statusKey, statusLabel, detail;
-  if(overMRV > 0){
-    statusKey = "over";
-    statusLabel = "Past MRV";
-    detail = `<b class="orange">${overMRV}</b> over the ceiling · back off ${overMRV>1?"these muscles":"this muscle"}`;
-  } else if(progressing >= Math.max(1, Math.ceil(N/2))){
-    statusKey = "progressing";
-    statusLabel = "Progressing";
-    detail = `<b class="orange">${progressing}</b> of ${N} in MAV · gaining ROM`;
-  } else if(progressing > 0){
-    statusKey = "progressing";
-    statusLabel = "Partial progress";
-    detail = `<b class="orange">${progressing}</b> gaining · ${maintaining} maintaining · ${under} under`;
-  } else if(progressing + maintaining >= N){
-    statusKey = "maintaining";
-    statusLabel = "Maintaining";
-    detail = `<b>${progressing + maintaining}</b> of ${N} past MEV · holding range`;
-  } else if(maintaining > 0){
-    statusKey = "maintaining";
-    statusLabel = "Building";
-    detail = `<b>${maintaining}</b> of ${N} at MEV · ${under} still below`;
-  } else {
-    statusKey = "under";
-    statusLabel = "Below threshold";
-    detail = `<b>${under}</b> of ${N} below MEV · won't gain yet`;
-  }
-  const $v = document.getElementById("week-verdict");
-  $v.className = "week-verdict " + statusKey;
-  $v.innerHTML = `
-    <div class="big">${fmtMin(weekTotal)}<span class="accent"> min</span></div>
-    <div class="body">
-      <div class="status">${statusLabel}</div>
-      <div class="detail">${detail}</div>
-    </div>
-  `;
+  // Section-head right side — show weekly total minutes.
+  document.getElementById("week-total-c").textContent = fmtMin(weekTotal) + " min";
 
   // Chip row
   document.getElementById("r-chips").innerHTML = ROUTINES.map(r =>
