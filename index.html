@@ -131,11 +131,70 @@ button{cursor:pointer;font-family:inherit}
 .done-back{margin:24px 0 8px;width:100%;background:#000;color:#FFF;border:none;padding:20px 0;font-family:'Inter',sans-serif;font-size:16px;font-weight:900;letter-spacing:-.01em;cursor:pointer}
 .done-back:active{background:var(--orange)}
 
+/* BOTTOM NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:rgba(255,255,255,.98);border-top:1px solid #000;display:flex;justify-content:space-around;padding:10px 10px calc(14px + env(safe-area-inset-bottom));z-index:40}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.28em;color:#000;text-transform:uppercase;font-weight:700;cursor:pointer;padding:6px 4px;background:none;border:none}
+.nav-item.active{color:var(--orange)}
+.nav-item.active svg{stroke:var(--orange)}
+.nav-item svg{width:22px;height:22px;stroke-width:1.8;stroke:#000;fill:none;stroke-linecap:square}
+.app{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+
+/* VOLUME VIEW */
+.vol-head-block{padding:18px 0 12px;border-bottom:1px solid var(--border);margin-bottom:18px}
+.vol-title{font-family:'Inter',sans-serif;font-weight:900;font-size:48px;letter-spacing:-.04em;line-height:.95;margin-bottom:6px}
+.vol-title .accent{color:var(--orange)}
+.vol-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.14em;line-height:1.6}
+.vol-window{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.32em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:18px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.vol-window .total{font-family:'JetBrains Mono',monospace;font-size:13px;color:#000;letter-spacing:.06em}
+.vol-window .total b{font-family:'Inter',sans-serif;font-weight:900;color:var(--orange);font-size:18px;letter-spacing:-.02em}
+
+.vol-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
+.vol-stat{background:#FFF;border:1px solid #000;padding:14px 8px;text-align:center;cursor:pointer}
+.vol-stat .l{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;color:var(--text-mid);text-transform:uppercase;font-weight:700;margin-bottom:6px;line-height:1.2}
+.vol-stat .v{font-family:'Inter',sans-serif;font-weight:900;font-size:32px;letter-spacing:-.04em;line-height:1;color:#000}
+.vol-stat.active{background:#000;color:#FFF}
+.vol-stat.active .l,.vol-stat.active .v{color:#FFF}
+.vol-stat.under .v{color:var(--text-faint)}
+.vol-stat.ideal .v{color:var(--orange)}
+.vol-stat.over .v{color:var(--red)}
+.vol-stat.active.under .v,.vol-stat.active.ideal .v,.vol-stat.active.over .v{color:#FFF}
+
+.vol-card{background:#FFF;border:1px solid #000;padding:14px;margin-bottom:8px}
+.vol-card .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
+.vol-card .nm{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:#000}
+.vol-card .min{font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.03em;line-height:1;color:var(--orange);white-space:nowrap}
+.vol-card .min .unit{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint);letter-spacing:.18em;margin-left:4px;font-weight:700}
+.vol-bar{position:relative;height:14px;background:var(--steel);border:1px solid var(--border);overflow:visible}
+.vol-bar .fill{height:100%;background:var(--orange);transition:width .3s}
+.vol-card.under .fill{background:#9AA0A6}
+.vol-card.mev .fill{background:var(--orange-bright)}
+.vol-card.mav .fill{background:var(--orange)}
+.vol-card.over-mav .fill{background:var(--orange-deep)}
+.vol-card.over .fill{background:var(--red)}
+.vol-bar .tick{position:absolute;top:-3px;bottom:-3px;width:1.5px;background:#000}
+.vol-bar .tick.mrv{background:var(--red)}
+.vol-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.vol-foot .range{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.06em}
+.vol-foot .status{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:3px 7px;border:1px solid var(--border)}
+.vol-foot .status.under,.vol-foot .status.mev{color:var(--text-mid);border-color:var(--text-mid)}
+.vol-foot .status.mav{color:var(--orange);border-color:var(--orange);background:rgba(255,107,0,.08)}
+.vol-foot .status.over-mav{color:var(--orange-deep);border-color:var(--orange-deep)}
+.vol-foot .status.over{color:var(--red);border-color:var(--red)}
+
+.vol-legend{margin-top:24px;padding:16px;background:var(--steel);border:1px solid var(--border)}
+.vol-legend .h{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:var(--text-mid);margin-bottom:10px}
+.vol-legend p{font-family:'Inter',sans-serif;font-size:13px;line-height:1.55;color:var(--text);margin-bottom:6px}
+.vol-legend p b{color:var(--orange);font-weight:700;letter-spacing:.02em}
+.vol-legend .note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:8px;line-height:1.5;letter-spacing:.04em}
+
+.vol-empty{text-align:center;padding:60px 20px;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:600}
+
 @media (max-width:380px){
   .title{font-size:60px}
   .r-name{font-size:36px}
   .r-timer{font-size:120px}
   .done-title{font-size:54px}
+  .vol-title{font-size:40px}
 }
 </style>
 </head>
@@ -146,7 +205,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v2.0</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.0</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -166,6 +225,41 @@ button{cursor:pointer;font-family:inherit}
     <div class="begin-sub">10 STRETCHES <span class="dot">·</span> 5 MINUTES <span class="dot">·</span> NO EXCUSES</div>
 
     <div class="last-done" id="last-done"></div>
+  </div>
+</div>
+
+<!-- VOLUME -->
+<div class="app" id="volume" style="display:none">
+  <div class="header">
+    <div class="logo">
+      <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.0</span>
+    </div>
+    <div class="streak-chip" id="streak-chip-2">
+      <span class="num" id="streak-num-2">0</span>
+      <span>DAY STREAK</span>
+    </div>
+  </div>
+
+  <div class="vol-head-block">
+    <div class="vol-title">WEEKLY <span class="accent">VOLUME</span></div>
+    <div class="vol-sub">Minutes in a stretched muscle, last 7 days.</div>
+  </div>
+
+  <div class="vol-window">
+    <span>Rolling 7-day total</span>
+    <span class="total"><b id="vol-total">0</b> min</span>
+  </div>
+
+  <div class="vol-summary" id="vol-summary"></div>
+  <div id="vol-list"></div>
+
+  <div class="vol-legend">
+    <div class="h">How to read it</div>
+    <p><b>MEV</b> Minimum effective volume. Below this you don't gain ROM.</p>
+    <p><b>MAV</b> Maximum adaptive volume — the productive band. Live here.</p>
+    <p><b>MRV</b> Maximum recoverable volume. Past this is irritation, not gains.</p>
+    <p class="note">Primary muscle = 1× hold time. Secondary = 0.5× (synergist convention).</p>
   </div>
 </div>
 
@@ -225,24 +319,72 @@ button{cursor:pointer;font-family:inherit}
   <button class="done-back" onclick="backHome()">BACK HOME</button>
 </div>
 
+<!-- BOTTOM NAV -->
+<nav class="nav" id="nav">
+  <button class="nav-item active" data-view="home" onclick="showView('home')">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 L12 4 L21 11 V20 H14 V14 H10 V20 H3 Z"/></svg>
+    <span>Today</span>
+  </button>
+  <button class="nav-item" data-view="volume" onclick="showView('volume')">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 V10 M10 20 V4 M16 20 V14 M22 20 H2"/></svg>
+    <span>Volume</span>
+  </button>
+</nav>
+
 <script>
 // ============================================================
 // DUMBASS STRETCH — daily 5-minute mobility routine
 // ============================================================
 
+// primary = full credit (1.0× hold). secondary = half credit (0.5× hold).
+// Same convention as DUMBASS LIFT — RP/Israetel synergist accounting.
 const STRETCHES = [
-  { name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hang heavy. Let the head drop.",                                  area:"Hamstrings · Low back",     side:null  },
-  { name:"World's Greatest Stretch",cue:"Lunge, hand inside the front foot. Reach the other arm to the ceiling. Open the chest.",        area:"Hips · Thoracic spine",      side:"LEFT" },
-  { name:"World's Greatest Stretch",cue:"Switch sides. Reach tall. Push the back hip forward.",                                          area:"Hips · Thoracic spine",      side:"RIGHT"},
-  { name:"Couch Stretch",           cue:"Back foot up against a wall or couch. Squeeze the glute. Stand the torso up.",                  area:"Hip flexor · Quad",          side:"LEFT" },
-  { name:"Couch Stretch",           cue:"Switch. Posterior tilt the pelvis — don't arch the lower back.",                                area:"Hip flexor · Quad",          side:"RIGHT"},
-  { name:"90 / 90 Hip Switch",      cue:"Sit with both knees at 90°. Slowly switch sides. Press the back knee down.",                    area:"Hip rotators",               side:null  },
-  { name:"Doorway Pec Stretch",     cue:"Forearms on the doorframe. Step through. Keep ribs down. Hold.",                                area:"Chest · Front delt",         side:null  },
-  { name:"Thread the Needle",       cue:"On all fours. Thread the arm under the body, shoulder to the floor. Reach.",                    area:"T-spine · Rear delt",        side:"LEFT" },
-  { name:"Thread the Needle",       cue:"Switch sides. Exhale to sink deeper.",                                                          area:"T-spine · Rear delt",        side:"RIGHT"},
-  { name:"Child's Pose with Reach", cue:"Knees wide. Hips back to heels. Arms long, walk the fingertips away.",                          area:"Lats · Low back",            side:null  },
+  { name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hang heavy. Let the head drop.",                                    area:"Hamstrings · Low back",     side:null,  primary:"hamstrings",   secondary:["lower-back"] },
+  { name:"World's Greatest Stretch",cue:"Lunge, hand inside the front foot. Reach the other arm to the ceiling. Open the chest.",        area:"Hips · Thoracic spine",     side:"LEFT", primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
+  { name:"World's Greatest Stretch",cue:"Switch sides. Reach tall. Push the back hip forward.",                                          area:"Hips · Thoracic spine",     side:"RIGHT",primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
+  { name:"Couch Stretch",           cue:"Back foot up against a wall or couch. Squeeze the glute. Stand the torso up.",                  area:"Hip flexor · Quad",         side:"LEFT", primary:"hip-flexors",  secondary:["quads"] },
+  { name:"Couch Stretch",           cue:"Switch. Posterior tilt the pelvis — don't arch the lower back.",                                area:"Hip flexor · Quad",         side:"RIGHT",primary:"hip-flexors",  secondary:["quads"] },
+  { name:"90 / 90 Hip Switch",      cue:"Sit with both knees at 90°. Slowly switch sides. Press the back knee down.",                    area:"Hip rotators",              side:null,  primary:"hip-rotators", secondary:["glutes"] },
+  { name:"Doorway Pec Stretch",     cue:"Forearms on the doorframe. Step through. Keep ribs down. Hold.",                                area:"Chest · Front delt",        side:null,  primary:"chest",        secondary:["shoulders"] },
+  { name:"Thread the Needle",       cue:"On all fours. Thread the arm under the body, shoulder to the floor. Reach.",                    area:"T-spine · Rear delt",       side:"LEFT", primary:"t-spine",      secondary:["shoulders"] },
+  { name:"Thread the Needle",       cue:"Switch sides. Exhale to sink deeper.",                                                          area:"T-spine · Rear delt",       side:"RIGHT",primary:"t-spine",      secondary:["shoulders"] },
+  { name:"Child's Pose with Reach", cue:"Knees wide. Hips back to heels. Arms long, walk the fingertips away.",                          area:"Lats · Low back",           side:null,  primary:"lats",         secondary:["lower-back"] },
 ];
 const HOLD_SECONDS = 30;
+
+// Display names for each muscle group key.
+const MUSCLE_NAMES = {
+  "hamstrings":"Hamstrings",
+  "hip-flexors":"Hip flexors",
+  "quads":"Quads",
+  "glutes":"Glutes",
+  "hip-rotators":"Hip rotators",
+  "t-spine":"Thoracic spine",
+  "chest":"Chest",
+  "shoulders":"Shoulders",
+  "lats":"Lats",
+  "lower-back":"Lower back",
+};
+
+// Weekly minutes-in-stretched-position landmarks.
+// Same idea as RP/Israetel volume landmarks for hypertrophy, but applied to mobility.
+// mev = floor for any ROM gain · mav = productive band · mrv = past it = diminishing returns + irritation.
+// House numbers — there is no peer-reviewed table for stretching the way there is for sets.
+// Calibrated so the default 5-minute daily routine, done 7 days, lands every targeted muscle in MAV.
+const MUSCLE_LANDMARKS = {
+  "hip-flexors":  {mev:5, mav:[8,16], mrv:25},
+  "t-spine":      {mev:5, mav:[8,16], mrv:25},
+  "hamstrings":   {mev:3, mav:[5,12], mrv:20},
+  "quads":        {mev:2, mav:[4,10], mrv:18},
+  "chest":        {mev:3, mav:[5,12], mrv:20},
+  "hip-rotators": {mev:3, mav:[5,12], mrv:20},
+  "lats":         {mev:2, mav:[4,10], mrv:18},
+  "shoulders":    {mev:2, mav:[4,10], mrv:18},
+  "glutes":       {mev:2, mav:[4,10], mrv:18},
+  "lower-back":   {mev:1, mav:[3,7],  mrv:12},
+};
+// Priority order — muscles most likely to get short from a desk life, listed first.
+const MUSCLE_ORDER = ["hip-flexors","t-spine","hamstrings","chest","hip-rotators","quads","shoulders","lats","glutes","lower-back"];
 
 // Per-stretch detail: pose illustration + plain-English explanation.
 // Keyed by stretch name (sides share the same info).
@@ -372,12 +514,33 @@ function daysBetween(aStr, bStr){
   const a = new Date(aStr+"T00:00:00"), b = new Date(bStr+"T00:00:00");
   return Math.round((b-a) / 86400000);
 }
+
+// Session log normalization. Two formats live in storage:
+//   legacy:  state.log = ["2026-05-19", ...]                                   (date string)
+//   current: state.sessions = [{date, completed:[{i, sec}]}]                    (per-stretch credit)
+// Legacy strings are interpreted as full completion of all stretches at HOLD_SECONDS.
+function getSessions(state){
+  const out = [];
+  if(Array.isArray(state.sessions)){
+    for(const s of state.sessions) out.push(s);
+  }
+  if(Array.isArray(state.log)){
+    const seen = new Set(out.map(s=>s.date));
+    for(const d of state.log){
+      if(typeof d !== "string" || seen.has(d)) continue;
+      out.push({date:d, completed:STRETCHES.map((_,i)=>({i, sec:HOLD_SECONDS})), legacy:true});
+    }
+  }
+  return out;
+}
+function getSessionDates(state){
+  return Array.from(new Set(getSessions(state).map(s=>s.date)));
+}
 function computeStreak(state){
-  const log = state.log || [];
-  if(!log.length) return 0;
+  const dates = getSessionDates(state);
+  if(!dates.length) return 0;
   const today = todayStr();
-  // sort desc, dedupe
-  const days = Array.from(new Set(log)).sort().reverse();
+  const days = dates.slice().sort().reverse();
   const last = days[0];
   const gap = daysBetween(last, today);
   if(gap > 1) return 0;
@@ -387,6 +550,143 @@ function computeStreak(state){
     else break;
   }
   return streak;
+}
+
+// Sum stretched-minutes per muscle across the last 7 days (rolling, inclusive of today).
+// Primary credit = sec / 60. Secondary credit = (sec / 60) * 0.5.
+function weeklyMuscleMinutes(state){
+  const totals = {};
+  for(const m of MUSCLE_ORDER) totals[m] = 0;
+  const today = todayStr();
+  for(const session of getSessions(state)){
+    const gap = daysBetween(session.date, today);
+    if(gap < 0 || gap > 6) continue;
+    for(const c of (session.completed||[])){
+      const s = STRETCHES[c.i];
+      if(!s) continue;
+      const min = (c.sec||0) / 60;
+      if(s.primary && totals.hasOwnProperty(s.primary)) totals[s.primary] += min;
+      for(const sec of (s.secondary||[])){
+        if(totals.hasOwnProperty(sec)) totals[sec] += min * 0.5;
+      }
+    }
+  }
+  return totals;
+}
+
+function classifyVolume(minutes, lm){
+  if(minutes < lm.mev) return "under";
+  if(minutes < lm.mav[0]) return "mev";
+  if(minutes <= lm.mav[1]) return "mav";
+  if(minutes <= lm.mrv) return "over-mav";
+  return "over";
+}
+const VOLUME_STATUS_LABEL = {"under":"Below MEV","mev":"At MEV","mav":"In MAV","over-mav":"Above MAV","over":"Past MRV"};
+
+// ============================================================
+// VIEW ROUTING
+// ============================================================
+let currentView = "home";
+function showView(name){
+  currentView = name;
+  document.getElementById("home").style.display   = name === "home"   ? "" : "none";
+  document.getElementById("volume").style.display = name === "volume" ? "" : "none";
+  document.querySelectorAll(".nav-item").forEach(b => {
+    b.classList.toggle("active", b.dataset.view === name);
+  });
+  if(name === "home") renderHome();
+  if(name === "volume") renderVolume();
+  window.scrollTo(0,0);
+}
+
+// ============================================================
+// VOLUME
+// ============================================================
+let volumeStatusFilter = "all"; // 'all' | 'under' | 'ideal' | 'over'
+function statusBucket(cls){
+  if(cls === "under" || cls === "mev") return "under";
+  if(cls === "mav") return "ideal";
+  return "over";
+}
+function setVolumeStatusFilter(s){
+  volumeStatusFilter = (volumeStatusFilter === s ? "all" : s);
+  renderVolume();
+}
+function fmtMin(m){
+  if(m >= 10) return Math.round(m).toString();
+  return (Math.round(m*10)/10).toFixed(1);
+}
+function renderVolume(){
+  const state = loadState();
+  const totals = weeklyMuscleMinutes(state);
+  const streak = computeStreak(state);
+  document.getElementById("streak-num-2").textContent = streak;
+  document.getElementById("streak-chip-2").classList.toggle("zero", streak === 0);
+
+  // Classify all muscles first so we can summarize regardless of filter.
+  const status = {};
+  let under = 0, ideal = 0, over = 0, grandTotal = 0;
+  for(const m of MUSCLE_ORDER){
+    const lm = MUSCLE_LANDMARKS[m];
+    const mins = totals[m] || 0;
+    grandTotal += mins;
+    const cls = classifyVolume(mins, lm);
+    const bucket = statusBucket(cls);
+    status[m] = {cls, bucket, mins};
+    if(bucket === "under") under++;
+    else if(bucket === "ideal") ideal++;
+    else over++;
+  }
+  document.getElementById("vol-total").textContent = fmtMin(grandTotal);
+
+  document.getElementById("vol-summary").innerHTML = `
+    <button class="vol-stat under${volumeStatusFilter==='under'?' active':''}" onclick="setVolumeStatusFilter('under')">
+      <div class="l">Below MEV</div><div class="v">${under}</div>
+    </button>
+    <button class="vol-stat ideal${volumeStatusFilter==='ideal'?' active':''}" onclick="setVolumeStatusFilter('ideal')">
+      <div class="l">In MAV</div><div class="v">${ideal}</div>
+    </button>
+    <button class="vol-stat over${volumeStatusFilter==='over'?' active':''}" onclick="setVolumeStatusFilter('over')">
+      <div class="l">Past MRV</div><div class="v">${over}</div>
+    </button>`;
+
+  const filtered = MUSCLE_ORDER.filter(m => {
+    return volumeStatusFilter === "all" || status[m].bucket === volumeStatusFilter;
+  });
+
+  if(!filtered.length){
+    document.getElementById("vol-list").innerHTML = `<div class="vol-empty">Nothing in this band.</div>`;
+    return;
+  }
+
+  document.getElementById("vol-list").innerHTML = filtered.map(m => {
+    const lm = MUSCLE_LANDMARKS[m];
+    const {cls, mins} = status[m];
+    const scaleMax = Math.max(lm.mrv + 4, mins + 2);
+    const fillPct = Math.min(100, (mins / scaleMax) * 100);
+    const mevPct = (lm.mev / scaleMax) * 100;
+    const mav0Pct = (lm.mav[0] / scaleMax) * 100;
+    const mav1Pct = (lm.mav[1] / scaleMax) * 100;
+    const mrvPct = (lm.mrv / scaleMax) * 100;
+    const range = `MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv} min/wk`;
+    return `<div class="vol-card ${cls}">
+      <div class="head">
+        <span class="nm">${MUSCLE_NAMES[m]}</span>
+        <span class="min">${fmtMin(mins)}<span class="unit">min</span></span>
+      </div>
+      <div class="vol-bar">
+        <div class="fill" style="width:${fillPct}%"></div>
+        ${lm.mev>0?`<div class="tick" style="left:${mevPct}%"></div>`:''}
+        <div class="tick" style="left:${mav0Pct}%"></div>
+        <div class="tick" style="left:${mav1Pct}%"></div>
+        <div class="tick mrv" style="left:${mrvPct}%"></div>
+      </div>
+      <div class="vol-foot">
+        <span class="range">${range}</span>
+        <span class="status ${cls}">${VOLUME_STATUS_LABEL[cls]}</span>
+      </div>
+    </div>`;
+  }).join("");
 }
 
 // ============================================================
@@ -449,8 +749,12 @@ function closeInfo(){
 let R = null;
 
 function startRoutine(){
-  R = { i:0, secLeft:HOLD_SECONDS, paused:false, ticker:null, wakeLock:null };
+  R = { i:0, secLeft:HOLD_SECONDS, paused:false, ticker:null, wakeLock:null,
+        completed:[], stretchStartSec:HOLD_SECONDS };
+  // The routine overlay covers everything via z-index, but make sure no
+  // background view is showing in case of paint glitches on slow devices.
   document.getElementById("home").style.display = "none";
+  document.getElementById("volume").style.display = "none";
   document.getElementById("routine").classList.add("active");
 
   // Build segment bar
@@ -503,6 +807,7 @@ function startTicker(){
     R.secLeft--;
     if(R.secLeft <= 0){
       // Mark done, move on
+      R.completed.push({i:R.i, sec:HOLD_SECONDS});
       const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
       if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
       if(R.i + 1 >= STRETCHES.length){
@@ -530,6 +835,9 @@ function togglePause(){
 
 function skipStretch(){
   if(!R) return;
+  // Credit the time actually held — skip mid-hold = partial credit.
+  const heldSec = Math.max(0, HOLD_SECONDS - R.secLeft);
+  R.completed.push({i:R.i, sec:heldSec});
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
   if(R.i + 1 >= STRETCHES.length){
@@ -544,8 +852,7 @@ function quitRoutine(){
   if(!confirm("Quit this session? Today won't count.")) return;
   cleanupRoutine();
   document.getElementById("routine").classList.remove("active");
-  document.getElementById("home").style.display = "";
-  renderHome();
+  showView("home");
 }
 
 function cleanupRoutine(){
@@ -557,12 +864,18 @@ function finishRoutine(){
   cleanupRoutine();
   document.getElementById("routine").classList.remove("active");
 
-  // Log today
+  // Log today's session with per-stretch credit.
   const state = loadState();
-  state.log = state.log || [];
+  state.sessions = state.sessions || [];
   const t = todayStr();
+  // Replace any existing session for today with the most recent one.
+  state.sessions = state.sessions.filter(s => s.date !== t);
+  state.sessions.push({date:t, completed:R.completed.slice()});
+  // Keep last 90 sessions.
+  state.sessions = state.sessions.slice(-90);
+  // Also keep legacy `log` array in sync so old streak views still work if rolled back.
+  state.log = state.log || [];
   if(!state.log.includes(t)) state.log.push(t);
-  // keep only last 365
   state.log = state.log.slice(-365);
   saveState(state);
 
@@ -580,8 +893,7 @@ function finishRoutine(){
 
 function backHome(){
   document.getElementById("done").classList.remove("active");
-  document.getElementById("home").style.display = "";
-  renderHome();
+  showView("home");
 }
 
 // Pause when the tab goes hidden so the timer doesn't run "in your pocket"
