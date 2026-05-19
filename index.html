@@ -51,7 +51,15 @@ button{cursor:pointer;font-family:inherit}
 .title .accent{color:var(--orange)}
 .lede{font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;color:var(--text-mid);max-width:340px;margin-bottom:6px}
 .lede b{color:#000;font-weight:700}
-.routine-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--text-faint);text-transform:uppercase;margin-top:24px;margin-bottom:10px;font-weight:700}
+.routine-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--text-faint);text-transform:uppercase;margin-top:24px;margin-bottom:10px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.routine-tag .sub{color:var(--text-dim);letter-spacing:.22em;font-size:9px}
+
+/* ROUTINE CHIPS */
+.r-chips{display:flex;gap:6px;margin-top:18px;margin-bottom:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.r-chips::-webkit-scrollbar{display:none}
+.r-chip{flex:0 0 auto;background:#FFF;color:#000;border:1px solid #000;padding:8px 12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .12s,color .12s}
+.r-chip:active{transform:scale(.96)}
+.r-chip.active{background:#000;color:#FFF}
 .routine-list{display:flex;flex-direction:column;gap:0;margin-bottom:32px;border-top:1px solid var(--border)}
 .routine-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}
 .routine-item .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);width:22px;font-weight:700}
@@ -205,7 +213,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.0</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.1</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -216,13 +224,14 @@ button{cursor:pointer;font-family:inherit}
   <div class="hero">
     <div class="eyebrow">Five minutes. Every day.</div>
     <div class="title">UN<span class="accent">FUCK</span> YOUR BODY.</div>
-    <p class="lede">Ten stretches. Thirty seconds each. <b>That's it.</b> No splits, no programs, no menus. Tap. Breathe. Done.</p>
+    <p class="lede">Thirty-second holds. Pick a routine. <b>That's it.</b> Tap. Breathe. Done.</p>
 
-    <div class="routine-tag">Today's routine · 5:00</div>
+    <div class="r-chips" id="r-chips"></div>
+    <div class="routine-tag"><span id="routine-tag-name">Today's routine</span><span class="sub" id="routine-tag-sub">5:00</span></div>
     <div class="routine-list" id="routine-list"></div>
 
     <button class="begin" onclick="startRoutine()">BEGIN<span class="arrow">→</span></button>
-    <div class="begin-sub">10 STRETCHES <span class="dot">·</span> 5 MINUTES <span class="dot">·</span> NO EXCUSES</div>
+    <div class="begin-sub" id="begin-sub">10 STRETCHES <span class="dot">·</span> 5 MINUTES <span class="dot">·</span> NO EXCUSES</div>
 
     <div class="last-done" id="last-done"></div>
   </div>
@@ -233,7 +242,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.0</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.1</span>
     </div>
     <div class="streak-chip" id="streak-chip-2">
       <span class="num" id="streak-num-2">0</span>
@@ -349,8 +358,26 @@ const STRETCHES = [
   { name:"Thread the Needle",       cue:"On all fours. Thread the arm under the body, shoulder to the floor. Reach.",                    area:"T-spine · Rear delt",       side:"LEFT", primary:"t-spine",      secondary:["shoulders"] },
   { name:"Thread the Needle",       cue:"Switch sides. Exhale to sink deeper.",                                                          area:"T-spine · Rear delt",       side:"RIGHT",primary:"t-spine",      secondary:["shoulders"] },
   { name:"Child's Pose with Reach", cue:"Knees wide. Hips back to heels. Arms long, walk the fingertips away.",                          area:"Lats · Low back",           side:null,  primary:"lats",         secondary:["lower-back"] },
+  // Extended library — used by Lower / Upper / Desk-reset routines.
+  { name:"Pigeon Pose",             cue:"Front shin across, back leg long. Press the front hip down. Fold forward only as far as feels good.", area:"Glutes · Hip rotators",  side:"LEFT", primary:"glutes",       secondary:["hip-rotators"] },
+  { name:"Pigeon Pose",             cue:"Switch sides. Square the hips first, then sink.",                                                      area:"Glutes · Hip rotators",  side:"RIGHT",primary:"glutes",       secondary:["hip-rotators"] },
+  { name:"Lying Spinal Twist",      cue:"On your back. Drop the bent knee across the body. Opposite shoulder stays on the floor.",              area:"T-spine · Glutes",       side:"LEFT", primary:"t-spine",      secondary:["glutes"] },
+  { name:"Lying Spinal Twist",      cue:"Switch. Look toward the open hand. Exhale to deepen.",                                                 area:"T-spine · Glutes",       side:"RIGHT",primary:"t-spine",      secondary:["glutes"] },
 ];
 const HOLD_SECONDS = 30;
+
+// Routine = a named subset of STRETCHES. The same daily app, four target moods.
+// Each entry's `indices` points into STRETCHES; the routine engine reads in order.
+// `mmss` is precomputed for the chip label so we don't recompute on every render.
+const ROUTINES = [
+  { key:"full",  name:"Full body",  sub:"All 10 · 5:00",        indices:[0,1,2,3,4,5,6,7,8,9] },
+  { key:"lower", name:"Lower",      sub:"8 stretches · 4:00",   indices:[0,1,2,3,4,5,10,11] },
+  { key:"upper", name:"Upper",      sub:"6 stretches · 3:00",   indices:[6,7,8,12,13,9] },
+  { key:"desk",  name:"Desk reset", sub:"5 stretches · 2:30",   indices:[6,1,2,7,8] },
+];
+function getRoutine(key){
+  return ROUTINES.find(r => r.key === key) || ROUTINES[0];
+}
 
 // Display names for each muscle group key.
 const MUSCLE_NAMES = {
@@ -467,6 +494,31 @@ const STRETCH_INFO = {
     </svg>`,
     what:"Rotates the <b>upper back</b> (thoracic spine) and stretches the <b>rear shoulder</b>. Huge for anyone who lifts or sits.",
     how:"Start on all fours. Take one arm and thread it under your body, palm up, reaching as far as you can to the opposite side. Let that same-side shoulder and ear lower toward the floor. Keep the other hand pressing into the ground. Exhale to sink deeper."
+  },
+  "Pigeon Pose": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="40" y1="138" x2="180" y2="138" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="180" y1="138" x2="200" y2="148" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="120" y1="138" x2="120" y2="92" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="120" y1="92" x2="150" y2="78" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="158" cy="76" r="10" fill="#0a0a0a"/>
+    </svg>`,
+    what:"Opens the <b>glutes</b> and <b>external hip rotators</b>. The single best counter for a tight, locked-up backside.",
+    how:"Bring one shin across in front of you (front knee bent ~90°, the more parallel-to-front the deeper the stretch). Stretch the other leg straight back behind you. Square the hips toward the floor. Stay upright or fold forward over the front leg — go only as far as feels strong, not painful."
+  },
+  "Lying Spinal Twist": {
+    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
+      <line x1="60" y1="140" x2="60" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="60" y1="100" x2="170" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
+      <line x1="170" y1="100" x2="200" y2="92" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="210" cy="90" r="10" fill="#0a0a0a"/>
+      <line x1="60" y1="100" x2="105" y2="138" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
+      <line x1="60" y1="100" x2="20" y2="86" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+    </svg>`,
+    what:"Rotates the <b>thoracic spine</b> while gently stretching the <b>glutes</b>. Resets a stiff back without loading it.",
+    how:"Lie on your back. Bend one knee and let it drop across the body toward the floor on the other side. Reach the same-side arm out wide, palm up. Look toward the outstretched hand. Keep both shoulders pressing down — don't let the opposite shoulder lift."
   },
   "Child's Pose with Reach": {
     svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
@@ -692,6 +744,17 @@ function renderVolume(){
 // ============================================================
 // HOME
 // ============================================================
+function setRoutine(key){
+  const state = loadState();
+  state.routine = key;
+  saveState(state);
+  renderHome();
+}
+function fmtMMSS(totalSec){
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return m + ":" + String(s).padStart(2, "0");
+}
 function renderHome(){
   const state = loadState();
   const streak = computeStreak(state);
@@ -700,21 +763,40 @@ function renderHome(){
   $num.textContent = streak;
   $chip.classList.toggle("zero", streak === 0);
 
+  const routineKey = state.routine || "full";
+  const routine = getRoutine(routineKey);
+
+  // Chip row
+  document.getElementById("r-chips").innerHTML = ROUTINES.map(r =>
+    `<button class="r-chip${r.key===routineKey?' active':''}" onclick="setRoutine('${r.key}')">${r.name}</button>`
+  ).join("");
+
+  // Tag header
+  document.getElementById("routine-tag-name").textContent = routine.name;
+  document.getElementById("routine-tag-sub").textContent = fmtMMSS(routine.indices.length * HOLD_SECONDS);
+
+  // BEGIN subtitle
+  const totalMin = Math.round(routine.indices.length * HOLD_SECONDS / 60 * 10) / 10;
+  document.getElementById("begin-sub").innerHTML =
+    `${routine.indices.length} STRETCHES <span class="dot">·</span> ${fmtMMSS(routine.indices.length * HOLD_SECONDS)} <span class="dot">·</span> NO EXCUSES`;
+
+  // Routine list
   const $list = document.getElementById("routine-list");
-  $list.innerHTML = STRETCHES.map((s,i) => {
+  $list.innerHTML = routine.indices.map((idx, i) => {
+    const s = STRETCHES[idx];
     const sideTag = s.side ? ` <span style="color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em">${s.side[0]}</span>` : "";
     return `<div class="routine-item">
       <span class="n">${String(i+1).padStart(2,"0")}</span>
       <span class="nm">${s.name}${sideTag}</span>
-      <button class="info-btn" onclick="openInfo(${i})" aria-label="How to do ${s.name}">i</button>
+      <button class="info-btn" onclick="openInfo(${idx})" aria-label="How to do ${s.name}">i</button>
       <span class="t">${HOLD_SECONDS}s</span>
     </div>`;
   }).join("");
 
   const $last = document.getElementById("last-done");
-  const log = state.log || [];
-  if(log.length){
-    const lastDay = log.slice().sort().reverse()[0];
+  const dates = getSessionDates(state);
+  if(dates.length){
+    const lastDay = dates.slice().sort().reverse()[0];
     const gap = daysBetween(lastDay, todayStr());
     if(gap === 0) $last.textContent = "Done today · come back tomorrow";
     else if(gap === 1) $last.textContent = "Last done yesterday";
@@ -749,8 +831,13 @@ function closeInfo(){
 let R = null;
 
 function startRoutine(){
+  const state = loadState();
+  const routine = getRoutine(state.routine || "full");
+  // R.list = the stretches to run for THIS session (each with its master STRETCHES index baked in).
+  // Completion records use masterIdx so volume tracking always credits the same global muscle map.
+  const list = routine.indices.map(masterIdx => ({...STRETCHES[masterIdx], masterIdx}));
   R = { i:0, secLeft:HOLD_SECONDS, paused:false, ticker:null, wakeLock:null,
-        completed:[], stretchStartSec:HOLD_SECONDS };
+        completed:[], list, routineKey:routine.key };
   // The routine overlay covers everything via z-index, but make sure no
   // background view is showing in case of paint glitches on slow devices.
   document.getElementById("home").style.display = "none";
@@ -759,7 +846,7 @@ function startRoutine(){
 
   // Build segment bar
   const $bar = document.getElementById("r-bar");
-  $bar.innerHTML = STRETCHES.map((_,i) => `<div class="seg" data-i="${i}"><div class="fill"></div></div>`).join("");
+  $bar.innerHTML = R.list.map((_,i) => `<div class="seg" data-i="${i}"><div class="fill"></div></div>`).join("");
 
   // Try to keep screen awake (best effort, iOS PWA may not support)
   try {
@@ -771,11 +858,11 @@ function startRoutine(){
 }
 
 function showStretch(i){
-  const s = STRETCHES[i];
-  document.getElementById("r-eyebrow").textContent = "Stretch " + (i+1) + " of " + STRETCHES.length;
+  const s = R.list[i];
+  document.getElementById("r-eyebrow").textContent = "Stretch " + (i+1) + " of " + R.list.length;
   document.getElementById("r-name").innerHTML = s.name + (s.side ? ` <span class="r-side">${s.side}</span>` : "");
   document.getElementById("r-cue").textContent = s.cue;
-  document.getElementById("r-counter").textContent = (i+1) + " / " + STRETCHES.length;
+  document.getElementById("r-counter").textContent = (i+1) + " / " + R.list.length;
   // Reset segment fills
   document.querySelectorAll("#r-bar .seg").forEach((seg, idx) => {
     const fill = seg.querySelector(".fill");
@@ -806,11 +893,12 @@ function startTicker(){
     if(R.paused) return;
     R.secLeft--;
     if(R.secLeft <= 0){
-      // Mark done, move on
-      R.completed.push({i:R.i, sec:HOLD_SECONDS});
+      // Mark done, move on. Credit goes to the MASTER stretch index so volume
+      // tracking treats this stretch the same regardless of which routine ran.
+      R.completed.push({i:R.list[R.i].masterIdx, sec:HOLD_SECONDS});
       const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
       if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
-      if(R.i + 1 >= STRETCHES.length){
+      if(R.i + 1 >= R.list.length){
         finishRoutine();
         return;
       }
@@ -837,10 +925,10 @@ function skipStretch(){
   if(!R) return;
   // Credit the time actually held — skip mid-hold = partial credit.
   const heldSec = Math.max(0, HOLD_SECONDS - R.secLeft);
-  R.completed.push({i:R.i, sec:heldSec});
+  R.completed.push({i:R.list[R.i].masterIdx, sec:heldSec});
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
-  if(R.i + 1 >= STRETCHES.length){
+  if(R.i + 1 >= R.list.length){
     finishRoutine();
     return;
   }
