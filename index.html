@@ -68,6 +68,47 @@ button{cursor:pointer;font-family:inherit}
 .info-btn{flex-shrink:0;width:24px;height:24px;border:1px solid var(--border);background:#FFF;color:var(--text-mid);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;font-style:italic;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;transition:background .12s,color .12s,border-color .12s}
 .info-btn:active{background:var(--orange);color:#FFF;border-color:var(--orange)}
 
+/* ADD STRETCH BUTTON + STRETCH PICKER + ALL-ROUTINES PANEL */
+.add-stretch{width:100%;background:#FFF;color:#000;border:1px dashed #000;padding:14px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;cursor:pointer;margin-top:10px;transition:background .12s,color .12s}
+.add-stretch:active{background:#000;color:#FFF}
+.routine-item.added{background:rgba(255,107,0,.05)}
+.routine-item .rm-btn{flex-shrink:0;width:24px;height:24px;border:1px solid var(--border);background:#FFF;color:var(--text-mid);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;margin-right:4px}
+.routine-item .rm-btn:active{background:var(--red);color:#FFF;border-color:var(--red)}
+.routine-item .added-tag{display:inline-block;background:var(--orange);color:#FFF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:1px 4px;margin-left:6px;letter-spacing:.04em}
+.routine-tag-line{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.06em;margin-bottom:14px}
+.browse-link{background:none;border:none;color:var(--orange);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;cursor:pointer;padding:0}
+.browse-link:active{opacity:.6}
+
+.picker,.all-routines{position:fixed;inset:0;background:#FFF;display:none;flex-direction:column;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);z-index:103;overflow-y:auto;animation:fadeUp .25s ease-out}
+.picker.active,.all-routines.active{display:flex}
+.picker-top{display:flex;justify-content:space-between;align-items:center;padding:18px 0 4px}
+.picker-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--text-faint);font-weight:700;text-transform:uppercase}
+.picker-close{background:none;border:none;color:var(--text);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:8px 0;cursor:pointer}
+.picker-title{font-family:'Inter',sans-serif;font-weight:900;font-size:48px;letter-spacing:-.04em;line-height:.95;color:#000;margin:8px 0 4px}
+.picker-title .accent{color:var(--orange)}
+.picker-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.06em;margin-bottom:20px}
+.picker-list{display:flex;flex-direction:column;border-top:1px solid #000;margin-bottom:24px}
+.picker-row{display:flex;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
+.picker-row:active{background:var(--steel)}
+.picker-row .nm{flex:1;min-width:0;font-family:'Inter',sans-serif;font-size:14px;color:#000;font-weight:600}
+.picker-row .nm .side-tag{color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;margin-left:6px}
+.picker-row .area{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.04em;margin-top:2px}
+.picker-row .add{flex-shrink:0;background:#000;color:#FFF;border:none;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:6px 10px;cursor:pointer}
+.picker-row.included .add{background:#FFF;color:var(--text-faint);border:1px solid var(--border);pointer-events:none}
+.picker-row.included .add::before{content:"✓ "}
+
+.all-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.routine-card{background:#FFF;border:1px solid #000;padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.routine-card:active{background:var(--steel)}
+.routine-card.active{background:#000;color:#FFF}
+.routine-card .info{flex:1;min-width:0}
+.routine-card .nm{font-family:'Inter',sans-serif;font-weight:900;font-size:18px;letter-spacing:-.02em;line-height:1;margin-bottom:4px;color:#000}
+.routine-card.active .nm{color:#FFF}
+.routine-card .meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-mid);letter-spacing:.06em;line-height:1.4}
+.routine-card.active .meta{color:rgba(255,255,255,.7)}
+.routine-card .pick{flex-shrink:0;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;color:var(--orange)}
+.routine-card.active .pick{color:#FFF}
+
 /* INFO MODAL */
 .info{position:fixed;inset:0;background:#FFF;display:none;flex-direction:column;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);z-index:102;overflow-y:auto;animation:fadeUp .25s ease-out}
 .info.active{display:flex}
@@ -247,7 +288,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.3</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.4</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -277,8 +318,9 @@ button{cursor:pointer;font-family:inherit}
     <!-- ROUTINE PICKER -->
     <div class="section-head">
       <span class="t">Routine</span>
-      <span class="c" id="routine-tag-sub">5:00</span>
+      <button class="browse-link" onclick="openAllRoutines()">Browse all →</button>
     </div>
+    <div class="routine-tag-line" id="routine-tag-sub">Routine · 5:00</div>
     <div class="r-chips" id="r-chips"></div>
     <div class="routine-list" id="routine-list"></div>
 
@@ -300,6 +342,28 @@ button{cursor:pointer;font-family:inherit}
 
     <div class="last-done" id="last-done"></div>
   </div>
+</div>
+
+<!-- STRETCH PICKER -->
+<div class="picker" id="picker">
+  <div class="picker-top">
+    <div class="picker-eyebrow">Add to routine</div>
+    <button class="picker-close" onclick="closeStretchPicker()">CLOSE ✕</button>
+  </div>
+  <div class="picker-title">PICK A <span class="accent">STRETCH</span></div>
+  <div class="picker-sub" id="picker-sub">Adds to today's routine</div>
+  <div class="picker-list" id="picker-list"></div>
+</div>
+
+<!-- ALL ROUTINES PANEL -->
+<div class="all-routines" id="all-routines">
+  <div class="picker-top">
+    <div class="picker-eyebrow">Browse</div>
+    <button class="picker-close" onclick="closeAllRoutines()">CLOSE ✕</button>
+  </div>
+  <div class="picker-title">ALL <span class="accent">DAYS</span></div>
+  <div class="picker-sub">Pair each lift day to its stretch routine.</div>
+  <div class="all-list" id="all-list"></div>
 </div>
 
 <!-- ROUTINE -->
@@ -958,16 +1022,101 @@ function lastSevenDays(state){
   return out;
 }
 
+// Effective indices for a routine = defaults + user-added (state.customRoutines[key].add).
+// User additions stick at the END of the routine so the curated order stays.
+function effectiveIndices(state, routine){
+  const custom = (state.customRoutines && state.customRoutines[routine.key]) || {};
+  const added = Array.isArray(custom.add) ? custom.add.filter(i => Number.isInteger(i) && i >= 0 && i < STRETCHES.length) : [];
+  // Build a Set of defaults so an "add" that's already in the default routine doesn't duplicate.
+  const defaults = new Set(routine.indices);
+  const dedupedAdds = added.filter(i => !defaults.has(i));
+  return { all: [...routine.indices, ...dedupedAdds], adds: new Set(dedupedAdds) };
+}
+
 // Build the routine's relevant muscle list — primary + secondary unions, kept in priority order.
-function routineMuscleSet(routine){
+function routineMuscleSet(routine, eff){
   const set = new Set();
-  for(const idx of routine.indices){
+  const indices = eff ? eff.all : routine.indices;
+  for(const idx of indices){
     const s = STRETCHES[idx];
     if(!s) continue;
     if(s.primary) set.add(s.primary);
     for(const sec of (s.secondary||[])) set.add(sec);
   }
   return MUSCLE_ORDER.filter(m => set.has(m));
+}
+
+// STRETCH PICKER — open / close / render
+function openStretchPicker(){
+  const state = loadState();
+  const routine = getRoutine(state.routine || "rest");
+  const eff = effectiveIndices(state, routine);
+  const included = new Set(eff.all);
+  document.getElementById("picker-sub").textContent = `Adds to ${routine.name}`;
+  document.getElementById("picker-list").innerHTML = STRETCHES.map((s, i) => {
+    const isIncluded = included.has(i);
+    const sideTag = s.side ? `<span class="side-tag">${s.side[0]}</span>` : "";
+    const click = isIncluded ? "" : `onclick="addStretchToRoutine(${i})"`;
+    return `<div class="picker-row${isIncluded ? ' included' : ''}" ${click}>
+      <div class="nm">${s.name}${sideTag}<div class="area">${s.area}</div></div>
+      <button class="add" ${isIncluded ? 'disabled' : `onclick="addStretchToRoutine(${i})"`}>${isIncluded ? 'In' : '+ Add'}</button>
+    </div>`;
+  }).join("");
+  document.getElementById("picker").classList.add("active");
+  document.getElementById("picker").scrollTop = 0;
+}
+function closeStretchPicker(){
+  document.getElementById("picker").classList.remove("active");
+}
+
+// ALL ROUTINES PANEL — open / close / render
+function openAllRoutines(){
+  const state = loadState();
+  const activeKey = state.routine || "rest";
+  document.getElementById("all-list").innerHTML = ROUTINES.map(r => {
+    const eff = effectiveIndices(state, r);
+    const holdSec = routineHoldSec(r);
+    const durSec = eff.all.length * holdSec;
+    const isActive = r.key === activeKey;
+    return `<div class="routine-card${isActive ? ' active' : ''}" onclick="pickRoutineFromBrowser('${r.key}')">
+      <div class="info">
+        <div class="nm">${r.name}</div>
+        <div class="meta">${r.muscles}</div>
+        <div class="meta">${eff.all.length} stretches · ${fmtMMSS(durSec)}</div>
+      </div>
+      <div class="pick">${isActive ? "ACTIVE" : "PICK →"}</div>
+    </div>`;
+  }).join("");
+  document.getElementById("all-routines").classList.add("active");
+  document.getElementById("all-routines").scrollTop = 0;
+}
+function closeAllRoutines(){
+  document.getElementById("all-routines").classList.remove("active");
+}
+function pickRoutineFromBrowser(key){
+  setRoutine(key);
+  closeAllRoutines();
+}
+
+// Add / remove user-added stretches.
+function addStretchToRoutine(masterIdx){
+  const state = loadState();
+  state.customRoutines = state.customRoutines || {};
+  const routineKey = state.routine || "rest";
+  state.customRoutines[routineKey] = state.customRoutines[routineKey] || {add:[]};
+  const arr = state.customRoutines[routineKey].add;
+  if(!arr.includes(masterIdx)) arr.push(masterIdx);
+  saveState(state);
+  closeStretchPicker();
+  renderHome();
+}
+function removeAddedStretch(masterIdx){
+  const state = loadState();
+  const routineKey = state.routine || "rest";
+  if(!state.customRoutines || !state.customRoutines[routineKey]) return;
+  state.customRoutines[routineKey].add = (state.customRoutines[routineKey].add || []).filter(i => i !== masterIdx);
+  saveState(state);
+  renderHome();
 }
 
 function renderHome(){
@@ -1045,27 +1194,34 @@ function renderHome(){
     `<button class="r-chip${r.key===routineKey?' active':''}" onclick="setRoutine('${r.key}')">${r.name}</button>`
   ).join("");
 
-  // Routine section subtitle (sits in the "Routine" section-head)
-  const durSec = routine.indices.length * holdSec;
+  // Effective indices (defaults + user adds)
+  const eff = effectiveIndices(state, routine);
+  const totalCount = eff.all.length;
+  const durSec = totalCount * holdSec;
+
   document.getElementById("routine-tag-sub").textContent = routine.name + " · " + fmtMMSS(durSec);
 
-  // BEGIN subtitle
   document.getElementById("begin-sub").innerHTML =
-    `${routine.indices.length} STRETCHES <span class="dot">·</span> ${fmtMMSS(durSec)}` +
+    `${totalCount} STRETCHES <span class="dot">·</span> ${fmtMMSS(durSec)}` +
     (holdSec !== HOLD_SECONDS ? ` <span class="dot">·</span> ${holdSec}S HOLDS` : ` <span class="dot">·</span> NO EXCUSES`);
 
-  // Routine list
+  // Routine list — defaults render as normal; user-added stretches get a remove (×) button.
   const $list = document.getElementById("routine-list");
-  $list.innerHTML = routine.indices.map((idx, i) => {
+  $list.innerHTML = eff.all.map((idx, i) => {
     const s = STRETCHES[idx];
     const sideTag = s.side ? ` <span style="color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em">${s.side[0]}</span>` : "";
-    return `<div class="routine-item">
+    const isAdded = eff.adds.has(idx);
+    const removeBtn = isAdded ? `<button class="rm-btn" onclick="removeAddedStretch(${idx})" aria-label="Remove">×</button>` : "";
+    return `<div class="routine-item${isAdded ? ' added' : ''}">
       <span class="n">${String(i+1).padStart(2,"0")}</span>
-      <span class="nm">${s.name}${sideTag}</span>
+      <span class="nm">${s.name}${sideTag}${isAdded ? ' <span class="added-tag">+</span>' : ''}</span>
+      ${removeBtn}
       <button class="info-btn" onclick="openInfo(${idx})" aria-label="How to do ${s.name}">i</button>
       <span class="t">${holdSec}s</span>
     </div>`;
   }).join("");
+  // "+ Add stretch" button at end of list.
+  $list.innerHTML += `<button class="add-stretch" onclick="openStretchPicker()">+ ADD STRETCH</button>`;
 
   // Stats strip — TODAY / WEEK / STREAK
   const todayMin = todayRawMinutes(state);
@@ -1076,8 +1232,8 @@ function renderHome(){
     <div class="stat"><div class="l">Streak</div><div class="v ${streak>0?'orange':''}">${streak}<span class="u">day</span></div></div>
   `;
 
-  // Volume bars — filtered to muscles in the SELECTED routine only.
-  const muscles = routineMuscleSet(routine);
+  // Volume bars — filtered to muscles in the SELECTED routine only (incl. user adds).
+  const muscles = routineMuscleSet(routine, eff);
   document.getElementById("vol-section-sub").textContent =
     `For ${routine.name.toLowerCase()} (${muscles.length} muscles)`;
   const weekly = weeklyMuscleMinutes(state);
@@ -1152,9 +1308,10 @@ function startRoutine(){
   const state = loadState();
   const routine = getRoutine(state.routine || "rest");
   const holdSec = routineHoldSec(routine);
+  const eff = effectiveIndices(state, routine);
   // R.list = the stretches to run for THIS session (each with its master STRETCHES index baked in).
   // Completion records use masterIdx so volume tracking always credits the same global muscle map.
-  const list = routine.indices.map(masterIdx => ({...STRETCHES[masterIdx], masterIdx}));
+  const list = eff.all.map(masterIdx => ({...STRETCHES[masterIdx], masterIdx}));
   R = { i:0, secLeft:holdSec, paused:false, ticker:null, wakeLock:null,
         completed:[], list, routineKey:routine.key, holdSec };
   document.getElementById("home").style.display = "none";
