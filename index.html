@@ -139,33 +139,34 @@ button{cursor:pointer;font-family:inherit}
 .done-back{margin:24px 0 8px;width:100%;background:#000;color:#FFF;border:none;padding:20px 0;font-family:'Inter',sans-serif;font-size:16px;font-weight:900;letter-spacing:-.01em;cursor:pointer}
 .done-back:active{background:var(--orange)}
 
-/* BOTTOM NAV */
-.nav{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:rgba(255,255,255,.98);border-top:1px solid #000;display:flex;justify-content:space-around;padding:10px 10px calc(14px + env(safe-area-inset-bottom));z-index:40}
-.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.28em;color:#000;text-transform:uppercase;font-weight:700;cursor:pointer;padding:6px 4px;background:none;border:none}
-.nav-item.active{color:var(--orange)}
-.nav-item.active svg{stroke:var(--orange)}
-.nav-item svg{width:22px;height:22px;stroke-width:1.8;stroke:#000;fill:none;stroke-linecap:square}
-.app{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+/* LIFT-APP BANNER (only renders if dumbass_state present) */
+.lift-banner{background:#000;color:#FFF;padding:12px 14px;margin:18px 0 6px;display:flex;align-items:center;gap:12px;font-family:'Inter',sans-serif}
+.lift-banner .icon{flex-shrink:0;width:28px;height:28px;background:var(--orange);display:flex;align-items:center;justify-content:center}
+.lift-banner .icon svg{width:18px;height:18px;stroke:#FFF;stroke-width:2.5;fill:none}
+.lift-banner .meta{flex:1;min-width:0}
+.lift-banner .l{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:3px}
+.lift-banner .n{font-family:'Inter',sans-serif;font-weight:900;font-size:14px;letter-spacing:-.01em;line-height:1.2;color:#FFF}
+.lift-banner .n b{color:var(--orange)}
+.lift-banner .pick{flex-shrink:0;background:var(--orange);border:none;color:#FFF;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:8px 12px;cursor:pointer}
+.lift-banner .pick:active{background:var(--orange-deep)}
+.lift-banner.matched{background:var(--steel);color:#000}
+.lift-banner.matched .n{color:#000}
+.lift-banner.matched .l{color:var(--text-mid)}
+.lift-banner.matched .pick{display:none}
 
-/* VOLUME VIEW */
-.vol-head-block{padding:18px 0 12px;border-bottom:1px solid var(--border);margin-bottom:18px}
-.vol-title{font-family:'Inter',sans-serif;font-weight:900;font-size:48px;letter-spacing:-.04em;line-height:.95;margin-bottom:6px}
-.vol-title .accent{color:var(--orange)}
-.vol-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.14em;line-height:1.6}
-.vol-window{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.32em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:18px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.vol-window .total{font-family:'JetBrains Mono',monospace;font-size:13px;color:#000;letter-spacing:.06em}
-.vol-window .total b{font-family:'Inter',sans-serif;font-weight:900;color:var(--orange);font-size:18px;letter-spacing:-.02em}
+/* STATS STRIP — TODAY / WEEK / STREAK */
+.stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:24px;margin-bottom:6px}
+.stats-strip .stat{background:#FFF;border:1px solid #000;padding:12px 8px;text-align:center}
+.stats-strip .stat .l{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.24em;color:var(--text-mid);text-transform:uppercase;font-weight:700;margin-bottom:6px;line-height:1.2}
+.stats-strip .stat .v{font-family:'Inter',sans-serif;font-weight:900;font-size:26px;letter-spacing:-.04em;line-height:1;color:#000}
+.stats-strip .stat .v.orange{color:var(--orange)}
+.stats-strip .stat .u{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-faint);letter-spacing:.18em;margin-left:3px;font-weight:700}
 
-.vol-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:24px}
-.vol-stat{background:#FFF;border:1px solid #000;padding:14px 8px;text-align:center;cursor:pointer}
-.vol-stat .l{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;color:var(--text-mid);text-transform:uppercase;font-weight:700;margin-bottom:6px;line-height:1.2}
-.vol-stat .v{font-family:'Inter',sans-serif;font-weight:900;font-size:32px;letter-spacing:-.04em;line-height:1;color:#000}
-.vol-stat.active{background:#000;color:#FFF}
-.vol-stat.active .l,.vol-stat.active .v{color:#FFF}
-.vol-stat.under .v{color:var(--text-faint)}
-.vol-stat.ideal .v{color:var(--orange)}
-.vol-stat.over .v{color:var(--red)}
-.vol-stat.active.under .v,.vol-stat.active.ideal .v,.vol-stat.active.over .v{color:#FFF}
+/* INTEGRATED VOLUME BARS */
+.vol-section{margin-top:28px;border-top:1px solid var(--border);padding-top:18px}
+.vol-section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:8px}
+.vol-section-head .t{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.32em;color:#000;text-transform:uppercase;font-weight:700}
+.vol-section-head .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.08em}
 
 .vol-card{background:#FFF;border:1px solid #000;padding:14px;margin-bottom:8px}
 .vol-card .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
@@ -213,7 +214,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.1</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.0</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -222,53 +223,35 @@ button{cursor:pointer;font-family:inherit}
   </div>
 
   <div class="hero">
-    <div class="eyebrow">Five minutes. Every day.</div>
     <div class="title">UN<span class="accent">FUCK</span> YOUR BODY.</div>
-    <p class="lede">Thirty-second holds. Pick a routine. <b>That's it.</b> Tap. Breathe. Done.</p>
+    <p class="lede">Static holds, daily. Pair to your lift split. <b>Tap. Breathe. Done.</b></p>
+
+    <!-- Lift-day banner — shows what's recommended (if lift app data found) -->
+    <div class="lift-banner" id="lift-banner" style="display:none"></div>
 
     <div class="r-chips" id="r-chips"></div>
-    <div class="routine-tag"><span id="routine-tag-name">Today's routine</span><span class="sub" id="routine-tag-sub">5:00</span></div>
+    <div class="routine-tag"><span id="routine-tag-name">Routine</span><span class="sub" id="routine-tag-sub">5:00</span></div>
     <div class="routine-list" id="routine-list"></div>
 
     <button class="begin" onclick="startRoutine()">BEGIN<span class="arrow">→</span></button>
     <div class="begin-sub" id="begin-sub">10 STRETCHES <span class="dot">·</span> 5 MINUTES <span class="dot">·</span> NO EXCUSES</div>
 
+    <!-- Stats strip — TODAY / WEEK / STREAK -->
+    <div class="stats-strip" id="stats-strip"></div>
+
+    <!-- Volume bars — filtered to the muscles in the SELECTED routine -->
+    <div class="vol-section" id="vol-section">
+      <div class="vol-section-head">
+        <span class="t">WEEKLY VOLUME</span>
+        <span class="c" id="vol-section-sub">For this routine</span>
+      </div>
+      <div id="vol-list"></div>
+      <div class="vol-legend">
+        <p><b>MEV</b> Below this = no ROM gains. <b>MAV</b> Productive band. <b>MRV</b> Past this = irritation, not gains.</p>
+      </div>
+    </div>
+
     <div class="last-done" id="last-done"></div>
-  </div>
-</div>
-
-<!-- VOLUME -->
-<div class="app" id="volume" style="display:none">
-  <div class="header">
-    <div class="logo">
-      <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v3.1</span>
-    </div>
-    <div class="streak-chip" id="streak-chip-2">
-      <span class="num" id="streak-num-2">0</span>
-      <span>DAY STREAK</span>
-    </div>
-  </div>
-
-  <div class="vol-head-block">
-    <div class="vol-title">WEEKLY <span class="accent">VOLUME</span></div>
-    <div class="vol-sub">Minutes in a stretched muscle, last 7 days.</div>
-  </div>
-
-  <div class="vol-window">
-    <span>Rolling 7-day total</span>
-    <span class="total"><b id="vol-total">0</b> min</span>
-  </div>
-
-  <div class="vol-summary" id="vol-summary"></div>
-  <div id="vol-list"></div>
-
-  <div class="vol-legend">
-    <div class="h">How to read it</div>
-    <p><b>MEV</b> Minimum effective volume. Below this you don't gain ROM.</p>
-    <p><b>MAV</b> Maximum adaptive volume — the productive band. Live here.</p>
-    <p><b>MRV</b> Maximum recoverable volume. Past this is irritation, not gains.</p>
-    <p class="note">Primary muscle = 1× hold time. Secondary = 0.5× (synergist convention).</p>
   </div>
 </div>
 
@@ -328,18 +311,6 @@ button{cursor:pointer;font-family:inherit}
   <button class="done-back" onclick="backHome()">BACK HOME</button>
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="nav" id="nav">
-  <button class="nav-item active" data-view="home" onclick="showView('home')">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 L12 4 L21 11 V20 H14 V14 H10 V20 H3 Z"/></svg>
-    <span>Today</span>
-  </button>
-  <button class="nav-item" data-view="volume" onclick="showView('volume')">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 V10 M10 20 V4 M16 20 V14 M22 20 H2"/></svg>
-    <span>Volume</span>
-  </button>
-</nav>
-
 <script>
 // ============================================================
 // DUMBASS STRETCH — daily 5-minute mobility routine
@@ -347,37 +318,56 @@ button{cursor:pointer;font-family:inherit}
 
 // primary = full credit (1.0× hold). secondary = half credit (0.5× hold).
 // Same convention as DUMBASS LIFT — RP/Israetel synergist accounting.
+// Leg-heavy library: 14 of 21 stretches target lower body — to mirror the
+// volume share of leg work in a serious hypertrophy split.
 const STRETCHES = [
-  { name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hang heavy. Let the head drop.",                                    area:"Hamstrings · Low back",     side:null,  primary:"hamstrings",   secondary:["lower-back"] },
-  { name:"World's Greatest Stretch",cue:"Lunge, hand inside the front foot. Reach the other arm to the ceiling. Open the chest.",        area:"Hips · Thoracic spine",     side:"LEFT", primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
-  { name:"World's Greatest Stretch",cue:"Switch sides. Reach tall. Push the back hip forward.",                                          area:"Hips · Thoracic spine",     side:"RIGHT",primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
-  { name:"Couch Stretch",           cue:"Back foot up against a wall or couch. Squeeze the glute. Stand the torso up.",                  area:"Hip flexor · Quad",         side:"LEFT", primary:"hip-flexors",  secondary:["quads"] },
-  { name:"Couch Stretch",           cue:"Switch. Posterior tilt the pelvis — don't arch the lower back.",                                area:"Hip flexor · Quad",         side:"RIGHT",primary:"hip-flexors",  secondary:["quads"] },
-  { name:"90 / 90 Hip Switch",      cue:"Sit with both knees at 90°. Slowly switch sides. Press the back knee down.",                    area:"Hip rotators",              side:null,  primary:"hip-rotators", secondary:["glutes"] },
-  { name:"Doorway Pec Stretch",     cue:"Forearms on the doorframe. Step through. Keep ribs down. Hold.",                                area:"Chest · Front delt",        side:null,  primary:"chest",        secondary:["shoulders"] },
-  { name:"Thread the Needle",       cue:"On all fours. Thread the arm under the body, shoulder to the floor. Reach.",                    area:"T-spine · Rear delt",       side:"LEFT", primary:"t-spine",      secondary:["shoulders"] },
-  { name:"Thread the Needle",       cue:"Switch sides. Exhale to sink deeper.",                                                          area:"T-spine · Rear delt",       side:"RIGHT",primary:"t-spine",      secondary:["shoulders"] },
-  { name:"Child's Pose with Reach", cue:"Knees wide. Hips back to heels. Arms long, walk the fingertips away.",                          area:"Lats · Low back",           side:null,  primary:"lats",         secondary:["lower-back"] },
-  // Extended library — used by Lower / Upper / Desk-reset routines.
-  { name:"Pigeon Pose",             cue:"Front shin across, back leg long. Press the front hip down. Fold forward only as far as feels good.", area:"Glutes · Hip rotators",  side:"LEFT", primary:"glutes",       secondary:["hip-rotators"] },
-  { name:"Pigeon Pose",             cue:"Switch sides. Square the hips first, then sink.",                                                      area:"Glutes · Hip rotators",  side:"RIGHT",primary:"glutes",       secondary:["hip-rotators"] },
-  { name:"Lying Spinal Twist",      cue:"On your back. Drop the bent knee across the body. Opposite shoulder stays on the floor.",              area:"T-spine · Glutes",       side:"LEFT", primary:"t-spine",      secondary:["glutes"] },
-  { name:"Lying Spinal Twist",      cue:"Switch. Look toward the open hand. Exhale to deepen.",                                                 area:"T-spine · Glutes",       side:"RIGHT",primary:"t-spine",      secondary:["glutes"] },
+  // ---- LOWER BODY (0–4, 10–11, 14–20) ----
+  /* 0 */ { name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hinge. Let the head fall heavy. Long, slow exhales.",            area:"Hamstrings · Low back",     side:null,  primary:"hamstrings",   secondary:["lower-back","calves"] },
+  /* 1 */ { name:"World's Greatest Stretch",cue:"Deep lunge. Same-side hand inside the front foot. Open the chest to the ceiling.",            area:"Hip flexors · T-spine",     side:"LEFT", primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
+  /* 2 */ { name:"World's Greatest Stretch",cue:"Switch. Tall reach. Drive the back hip forward, ribs stacked.",                               area:"Hip flexors · T-spine",     side:"RIGHT",primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
+  /* 3 */ { name:"Couch Stretch",           cue:"Back foot up against a wall. Squeeze that glute hard. Stand the torso tall.",                 area:"Hip flexor · Quad",         side:"LEFT", primary:"hip-flexors",  secondary:["quads"] },
+  /* 4 */ { name:"Couch Stretch",           cue:"Switch. Tuck the tailbone — never arch the low back to fake range.",                          area:"Hip flexor · Quad",         side:"RIGHT",primary:"hip-flexors",  secondary:["quads"] },
+  /* 5 */ { name:"90 / 90 Hip Switch",      cue:"Both knees bent 90°. Press the back knee toward the floor. Switch slowly.",                   area:"Hip rotators",              side:null,  primary:"hip-rotators", secondary:["glutes"] },
+  /* 6 */ { name:"Doorway Pec Stretch",     cue:"Forearms on the frame, elbows shoulder height. Step through. Ribs DOWN.",                     area:"Chest · Front delt",        side:null,  primary:"chest",        secondary:["shoulders"] },
+  /* 7 */ { name:"Thread the Needle",       cue:"Hands and knees. Thread the arm under the body — shoulder and ear toward the floor.",         area:"T-spine · Rear delt",       side:"LEFT", primary:"t-spine",      secondary:["shoulders"] },
+  /* 8 */ { name:"Thread the Needle",       cue:"Switch sides. Exhale long to sink deeper into the rotation.",                                 area:"T-spine · Rear delt",       side:"RIGHT",primary:"t-spine",      secondary:["shoulders"] },
+  /* 9 */ { name:"Child's Pose with Reach", cue:"Knees wide, hips back to heels. Arms long, fingertips walk forward.",                         area:"Lats · Low back",           side:null,  primary:"lats",         secondary:["lower-back"] },
+  /* 10 */ { name:"Pigeon Pose",            cue:"Front shin across the body. Back leg long. Square the hips, then sink.",                       area:"Glutes · Hip rotators",     side:"LEFT", primary:"glutes",       secondary:["hip-rotators"] },
+  /* 11 */ { name:"Pigeon Pose",            cue:"Switch. Press the front hip down. Fold over the shin only if it stays strong.",                area:"Glutes · Hip rotators",     side:"RIGHT",primary:"glutes",       secondary:["hip-rotators"] },
+  /* 12 */ { name:"Lying Spinal Twist",     cue:"On your back. Drop the bent knee across. Opposite shoulder stays glued to the floor.",         area:"T-spine · Glutes",          side:"LEFT", primary:"t-spine",      secondary:["glutes"] },
+  /* 13 */ { name:"Lying Spinal Twist",     cue:"Switch. Look toward the open hand. Exhale to deepen the twist.",                               area:"T-spine · Glutes",          side:"RIGHT",primary:"t-spine",      secondary:["glutes"] },
+  /* 14 */ { name:"Frog Pose",              cue:"On all fours, knees wide as it allows. Sit hips back toward the heels. Slow.",                 area:"Adductors · Groin",         side:null,  primary:"adductors",    secondary:["hip-rotators","glutes"] },
+  /* 15 */ { name:"Wall Calf Stretch",      cue:"Toes on the wall, heel on the floor. Drive hips forward to load the calf.",                    area:"Calves · Achilles",         side:"LEFT", primary:"calves",       secondary:["hamstrings"] },
+  /* 16 */ { name:"Wall Calf Stretch",      cue:"Switch. Long, steady pressure — calves love time under tension.",                              area:"Calves · Achilles",         side:"RIGHT",primary:"calves",       secondary:["hamstrings"] },
+  /* 17 */ { name:"Half Split",             cue:"Front leg long, back knee down. Hinge the hips back over the heel. Spine long.",                area:"Hamstrings (deep)",         side:"LEFT", primary:"hamstrings",   secondary:["calves"] },
+  /* 18 */ { name:"Half Split",             cue:"Switch. Keep the front foot flexed — toes pulled up to the shin.",                              area:"Hamstrings (deep)",         side:"RIGHT",primary:"hamstrings",   secondary:["calves"] },
+  /* 19 */ { name:"Standing Quad Pull",     cue:"Stand tall. Grab one ankle. Knees together. Squeeze the glute. Tall posture.",                  area:"Quads · Hip flexor",        side:"LEFT", primary:"quads",        secondary:["hip-flexors"] },
+  /* 20 */ { name:"Standing Quad Pull",     cue:"Switch. Don't lean back to fake it — drive the hip forward with the glute.",                    area:"Quads · Hip flexor",        side:"RIGHT",primary:"quads",        secondary:["hip-flexors"] },
 ];
 const HOLD_SECONDS = 30;
 
-// Routine = a named subset of STRETCHES. The same daily app, four target moods.
-// Each entry's `indices` points into STRETCHES; the routine engine reads in order.
-// `mmss` is precomputed for the chip label so we don't recompute on every render.
+// Routine = a named subset of STRETCHES, ordered. Map directly to a DUMBASS LIFT day so the
+// recommend-on-open flow has a 1:1 match. holdSeconds override = "deep mobility" gets 60s for ROM gains.
 const ROUTINES = [
-  { key:"full",  name:"Full body",  sub:"All 10 · 5:00",        indices:[0,1,2,3,4,5,6,7,8,9] },
-  { key:"lower", name:"Lower",      sub:"8 stretches · 4:00",   indices:[0,1,2,3,4,5,10,11] },
-  { key:"upper", name:"Upper",      sub:"6 stretches · 3:00",   indices:[6,7,8,12,13,9] },
-  { key:"desk",  name:"Desk reset", sub:"5 stretches · 2:30",   indices:[6,1,2,7,8] },
+  { key:"leg",  name:"Leg day",        muscles:"Hams · Hip flex · Quads · Glutes · Calves · Adductors",
+    indices:[0,3,4,10,11,15,16,14,17,18] },
+  { key:"push", name:"Push day",       muscles:"Chest · T-spine · Shoulders",
+    indices:[6,7,8,12,13,9] },
+  { key:"pull", name:"Pull day",       muscles:"Lats · T-spine · Chest",
+    indices:[9,6,7,8,12,13] },
+  { key:"abs",  name:"Abs / core day", muscles:"Hip flexors · Lower back · Obliques",
+    indices:[3,4,9,12,13,5] },
+  { key:"rest", name:"Rest day · full body", muscles:"Everything, lightly",
+    indices:[0,1,2,3,4,5,6,7,8,9] },
+  { key:"desk", name:"Desk reset",     muscles:"Chest · T-spine · Hips",
+    indices:[6,1,2,7,8] },
+  { key:"deep", name:"Deep mobility",  muscles:"Long 60s holds · ROM gains",
+    indices:[0,3,4,10,11,17,18,14], holdSeconds:60 },
 ];
 function getRoutine(key){
-  return ROUTINES.find(r => r.key === key) || ROUTINES[0];
+  return ROUTINES.find(r => r.key === key) || ROUTINES[4]; // default rest/full body
 }
+function routineHoldSec(routine){ return routine.holdSeconds || HOLD_SECONDS; }
 
 // Display names for each muscle group key.
 const MUSCLE_NAMES = {
@@ -386,6 +376,8 @@ const MUSCLE_NAMES = {
   "quads":"Quads",
   "glutes":"Glutes",
   "hip-rotators":"Hip rotators",
+  "adductors":"Adductors",
+  "calves":"Calves",
   "t-spine":"Thoracic spine",
   "chest":"Chest",
   "shoulders":"Shoulders",
@@ -393,11 +385,9 @@ const MUSCLE_NAMES = {
   "lower-back":"Lower back",
 };
 
-// Weekly minutes-in-stretched-position landmarks.
-// Same idea as RP/Israetel volume landmarks for hypertrophy, but applied to mobility.
-// mev = floor for any ROM gain · mav = productive band · mrv = past it = diminishing returns + irritation.
-// House numbers — there is no peer-reviewed table for stretching the way there is for sets.
-// Calibrated so the default 5-minute daily routine, done 7 days, lands every targeted muscle in MAV.
+// Weekly minutes-in-stretched-position landmarks. RP/Israetel idea applied to mobility.
+// mev = floor for ROM gain · mav = productive band · mrv = past it = irritation, not gains.
+// Numbers are house defaults — calibrated so a daily routine that includes a muscle lands MAV.
 const MUSCLE_LANDMARKS = {
   "hip-flexors":  {mev:5, mav:[8,16], mrv:25},
   "t-spine":      {mev:5, mav:[8,16], mrv:25},
@@ -405,132 +395,242 @@ const MUSCLE_LANDMARKS = {
   "quads":        {mev:2, mav:[4,10], mrv:18},
   "chest":        {mev:3, mav:[5,12], mrv:20},
   "hip-rotators": {mev:3, mav:[5,12], mrv:20},
+  "glutes":       {mev:2, mav:[4,10], mrv:18},
+  "adductors":    {mev:2, mav:[4,8],  mrv:14},
+  "calves":       {mev:2, mav:[4,10], mrv:18},
   "lats":         {mev:2, mav:[4,10], mrv:18},
   "shoulders":    {mev:2, mav:[4,10], mrv:18},
-  "glutes":       {mev:2, mav:[4,10], mrv:18},
   "lower-back":   {mev:1, mav:[3,7],  mrv:12},
 };
-// Priority order — muscles most likely to get short from a desk life, listed first.
-const MUSCLE_ORDER = ["hip-flexors","t-spine","hamstrings","chest","hip-rotators","quads","shoulders","lats","glutes","lower-back"];
+// Priority order — desk-shortened first, then leg-day muscles, then upper.
+const MUSCLE_ORDER = ["hip-flexors","t-spine","hamstrings","quads","glutes","hip-rotators","calves","adductors","chest","shoulders","lats","lower-back"];
+
+// Map a DUMBASS LIFT day name → recommended stretch routine.
+// state.today.name comes verbatim from the lift app's schedule ("LEGS A", "PUSH B", etc.)
+function recommendRoutineFromLiftDay(dayName){
+  if(!dayName) return null;
+  const n = String(dayName).toUpperCase();
+  if(n.includes("REST")) return "rest";
+  if(n.includes("LEG") || n.includes("LOWER") || n.includes("QUAD") || n.includes("HAM")) return "leg";
+  if(n.includes("ABS") || n.includes("CORE")) return "abs";
+  if(n.includes("PULL") || n.includes("BACK") || n.includes("LAT")) return "pull";
+  if(n.includes("PUSH") || n.includes("CHEST") || n.includes("SHOULDER")) return "push";
+  if(n.includes("UPPER") || n.includes("ARM") || n.includes("BICEP") || n.includes("TRICEP")) return "push";
+  return null;
+}
+// Read the DUMBASS LIFT app's state out of shared localStorage (same github.io origin).
+function getLiftDay(){
+  try {
+    const raw = localStorage.getItem("dumbass_state");
+    if(!raw) return null;
+    const lift = JSON.parse(raw);
+    if(lift && lift.today && lift.today.name) return {
+      name: lift.today.name,
+      muscles: lift.today.muscles || "",
+      type: lift.today.type || "train",
+    };
+    return null;
+  } catch(e){ return null; }
+}
 
 // Per-stretch detail: pose illustration + plain-English explanation.
 // Keyed by stretch name (sides share the same info).
+// SVG style: viewBox 240×180, floor at y=170, orange = stretched part, head = circle r=11.
 const STRETCH_INFO = {
   "Standing Forward Fold": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="118" y1="146" x2="118" y2="76" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="118" y1="76" x2="150" y2="92" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="156" cy="104" r="10" fill="#0a0a0a"/>
-      <line x1="148" y1="94" x2="138" y2="132" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="100" y1="170" x2="100" y2="78" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
+      <line x1="140" y1="170" x2="140" y2="78" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
+      <line x1="95" y1="78" x2="145" y2="78" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="120" y1="82" x2="120" y2="130" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="108" y1="130" x2="132" y2="130" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="120" cy="148" r="11" fill="#0a0a0a"/>
+      <line x1="108" y1="132" x2="100" y2="158" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <line x1="132" y1="132" x2="140" y2="158" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
     </svg>`,
-    what:"Lengthens the <b>hamstrings</b> and lets the spine decompress. The classic antidote to a day in a chair.",
-    how:"Stand with your feet hip-width apart. Soft bend in the knees — they don't need to lock. Hinge from the hips and let your upper body hang heavy. Let the head drop. Don't force the hands to the floor — gravity does the work."
+    what:"Lengthens the <b>hamstrings</b> and decompresses the spine. The classic antidote to a day in a chair.",
+    how:"Stand feet hip-width. Soft bend in the knees — never lock them. Hinge from the hips, let the upper body hang heavy. Head drops fully. Don't force the hands to the floor — gravity does the work. For <b>extra ROM</b>, bend the knees more on the way down, then slowly try to straighten them while staying folded."
   },
   "World's Greatest Stretch": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="60" y1="146" x2="115" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="150" y1="146" x2="150" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="115" y1="108" x2="150" y2="108" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="132" y1="108" x2="132" y2="60" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="132" cy="50" r="10" fill="#0a0a0a"/>
-      <line x1="132" y1="60" x2="132" y2="20" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
-      <line x1="132" y1="60" x2="148" y2="120" stroke="#0a0a0a" stroke-width="5" stroke-linecap="round"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="55" y1="170" x2="135" y2="110" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="170" y1="170" x2="170" y2="135" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="170" y1="135" x2="138" y2="108" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="138" y1="108" x2="155" y2="55" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="158" cy="45" r="11" fill="#0a0a0a"/>
+      <line x1="150" y1="80" x2="155" y2="130" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <line x1="160" y1="60" x2="205" y2="22" stroke="#FF6B00" stroke-width="9" stroke-linecap="round"/>
     </svg>`,
-    what:"Opens the <b>hips</b> and rotates the <b>upper back</b> — one move, two big wins. Best bang for your 30 seconds.",
-    how:"Step into a deep lunge. Plant the same-side hand on the floor inside the front foot. Rotate and reach the other arm to the ceiling — chest open, eyes follow the hand. Keep the back leg long and the back hip pushing forward."
+    what:"Opens the <b>hip flexors</b> and rotates the <b>upper back</b> — one move, two huge wins. The all-time best bang for your 30 seconds.",
+    how:"Step into a deep lunge. Plant the same-side hand on the floor inside the front foot. Rotate and reach the other arm to the ceiling — chest open, eyes follow the hand. Keep the back leg long and the back hip driving forward. For <b>extra hip flexor</b>, drop the back knee and posterior-tilt the pelvis."
   },
   "Couch Stretch": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="60" y1="20" x2="60" y2="146" stroke="#D8D8D8" stroke-width="2"/>
-      <line x1="155" y1="146" x2="155" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="155" y1="108" x2="115" y2="100" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="115" y1="100" x2="92" y2="138" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="92" y1="138" x2="65" y2="108" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="115" y1="100" x2="118" y2="56" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="120" cy="46" r="10" fill="#0a0a0a"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="40" y1="20" x2="40" y2="170" stroke="#D8D8D8" stroke-width="4"/>
+      <line x1="50" y1="120" x2="50" y2="170" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="50" y1="120" x2="115" y2="108" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="115" y1="108" x2="155" y2="160" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="155" y1="160" x2="190" y2="170" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="115" y1="108" x2="125" y2="50" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="115" y1="50" x2="140" y2="50" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+      <circle cx="128" cy="32" r="11" fill="#0a0a0a"/>
     </svg>`,
-    what:"Hits the <b>hip flexor</b> and <b>quad</b> on the back leg — the muscles that get short from sitting all day.",
-    how:"Half-kneel with your back foot up against a wall or couch (toes pointing up, shin against the wall). Front foot planted firmly. Squeeze the glute of the back leg and stand the torso tall. Tilt the pelvis under — don't arch the lower back to fake it."
+    what:"Loaded stretch for the <b>hip flexors</b> and <b>quad</b> on the back leg — the muscles that get short from sitting all day. The single highest-leverage move for desk life.",
+    how:"Half-kneel with the back foot up against a wall (toes pointing up, shin against the wall). Front foot planted firmly. <b>Squeeze the back-leg glute hard</b> — that's what makes it work. Tuck the tailbone under and stand the torso tall. Never arch the lower back to fake range."
   },
   "90 / 90 Hip Switch": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="120" y1="140" x2="60" y2="140" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="60" y1="140" x2="60" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="120" y1="140" x2="180" y2="140" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="180" y1="140" x2="180" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="120" y1="140" x2="120" y2="70" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="120" cy="60" r="10" fill="#0a0a0a"/>
-      <line x1="120" y1="80" x2="98" y2="115" stroke="#0a0a0a" stroke-width="5" stroke-linecap="round"/>
-      <line x1="120" y1="80" x2="142" y2="115" stroke="#0a0a0a" stroke-width="5" stroke-linecap="round"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="65" y1="155" x2="120" y2="155" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="65" y1="155" x2="50" y2="125" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="120" y1="155" x2="175" y2="155" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="175" y1="155" x2="190" y2="125" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="120" y1="155" x2="120" y2="80" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="108" y1="80" x2="132" y2="80" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="120" cy="62" r="11" fill="#0a0a0a"/>
+      <line x1="108" y1="82" x2="92" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <line x1="132" y1="82" x2="148" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
     </svg>`,
-    what:"Unlocks the <b>hip rotators</b> — internal rotation on one side, external on the other. Fixes hips that feel \"stuck.\"",
-    how:"Sit on the floor with one leg in front of you bent at 90° (shin parallel to your torso), and the other leg out to the side also bent at 90°. Sit tall. Slowly switch which leg is in front. Try to press the back knee gently toward the floor."
+    what:"Unlocks the <b>hip rotators</b> — internal on one side, external on the other. Fixes hips that feel \"stuck\" and improves squat depth.",
+    how:"Sit on the floor with one leg in front bent at 90° (shin parallel to your torso) and the other leg out to the side also bent at 90°. Sit tall — don't slouch. Slowly switch which leg is in front. Press the back knee gently toward the floor. For <b>extra ROM</b>, fold forward over the front shin."
   },
   "Doorway Pec Stretch": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="80" y1="20" x2="80" y2="148" stroke="#D8D8D8" stroke-width="3"/>
-      <line x1="140" y1="146" x2="140" y2="76" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="140" y1="76" x2="140" y2="46" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="140" cy="36" r="10" fill="#0a0a0a"/>
-      <line x1="140" y1="76" x2="85" y2="62" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
-      <line x1="85" y1="62" x2="80" y2="36" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="65" y1="15" x2="65" y2="170" stroke="#D8D8D8" stroke-width="4"/>
+      <line x1="115" y1="170" x2="115" y2="125" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="140" y1="170" x2="135" y2="125" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="113" y1="125" x2="140" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="125" y1="125" x2="125" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="110" y1="78" x2="142" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="125" cy="58" r="11" fill="#0a0a0a"/>
+      <line x1="110" y1="78" x2="73" y2="55" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
+      <line x1="73" y1="55" x2="66" y2="22" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
+      <line x1="142" y1="80" x2="160" y2="105" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
     </svg>`,
-    what:"Opens the <b>chest</b> and <b>front of the shoulder</b>. Counteracts the rounded-forward posture from phones and keyboards.",
-    how:"Stand in a doorway. Place your forearms on the frame at about shoulder height (or higher for upper chest). Step one foot through the doorway and lean your chest forward. Ribs down — don't flare them. You should feel a stretch across the chest, not in the shoulder joint."
+    what:"Opens the <b>chest</b> and the <b>front of the shoulder</b>. The direct counter to the rounded posture from phones, keyboards, and bench pressing.",
+    how:"Stand in a doorway. Forearm on the frame, elbow at shoulder height (or higher for upper chest). Step one foot through the doorway and lean your chest forward. <b>Ribs DOWN</b> — never let them flare. Stretch is across the chest, not in the shoulder joint."
   },
   "Thread the Needle": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="60" y1="146" x2="60" y2="108" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="60" y1="108" x2="150" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="150" y1="100" x2="150" y2="138" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="150" y1="100" x2="195" y2="140" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
-      <circle cx="170" cy="138" r="9" fill="#0a0a0a"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="175" y1="170" x2="180" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="210" y1="170" x2="205" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="180" y1="125" x2="205" y2="125" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="190" y1="128" x2="115" y2="155" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="115" y1="155" x2="138" y2="170" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+      <line x1="115" y1="155" x2="55" y2="165" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="103" cy="158" r="11" fill="#0a0a0a"/>
     </svg>`,
-    what:"Rotates the <b>upper back</b> (thoracic spine) and stretches the <b>rear shoulder</b>. Huge for anyone who lifts or sits.",
-    how:"Start on all fours. Take one arm and thread it under your body, palm up, reaching as far as you can to the opposite side. Let that same-side shoulder and ear lower toward the floor. Keep the other hand pressing into the ground. Exhale to sink deeper."
+    what:"Rotates the <b>thoracic spine</b> and stretches the <b>rear shoulder</b>. Huge for anyone who lifts heavy or sits a lot.",
+    how:"Start on all fours. Take one arm and thread it under the body, palm up, reaching as far as you can to the opposite side. Let that same-side shoulder and ear sink toward the floor. Keep the other hand pressing into the ground. Exhale long to sink deeper."
   },
   "Pigeon Pose": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="40" y1="138" x2="180" y2="138" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="180" y1="138" x2="200" y2="148" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="120" y1="138" x2="120" y2="92" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="120" y1="92" x2="150" y2="78" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="158" cy="76" r="10" fill="#0a0a0a"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="220" y1="155" x2="125" y2="138" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="40" y1="150" x2="120" y2="138" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="125" cy="130" r="15" fill="#0a0a0a"/>
+      <line x1="125" y1="120" x2="138" y2="62" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="122" y1="62" x2="152" y2="62" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="138" cy="44" r="11" fill="#0a0a0a"/>
+      <line x1="122" y1="63" x2="105" y2="105" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <line x1="152" y1="63" x2="165" y2="105" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
     </svg>`,
-    what:"Opens the <b>glutes</b> and <b>external hip rotators</b>. The single best counter for a tight, locked-up backside.",
-    how:"Bring one shin across in front of you (front knee bent ~90°, the more parallel-to-front the deeper the stretch). Stretch the other leg straight back behind you. Square the hips toward the floor. Stay upright or fold forward over the front leg — go only as far as feels strong, not painful."
+    what:"Targets the <b>glutes</b> and <b>external hip rotators</b>. The single best counter for a tight, locked-up backside — and the most-needed post-squat stretch.",
+    how:"Bring one shin across in front (front knee bent — the more parallel-to-front the deeper the stretch). Stretch the other leg straight back. <b>Square the hips</b> toward the floor first, then sink. Stay upright or fold over the front shin — only as far as feels strong, never painful."
   },
   "Lying Spinal Twist": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="60" y1="140" x2="60" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="60" y1="100" x2="170" y2="100" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <line x1="170" y1="100" x2="200" y2="92" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="210" cy="90" r="10" fill="#0a0a0a"/>
-      <line x1="60" y1="100" x2="105" y2="138" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="60" y1="100" x2="20" y2="86" stroke="#0a0a0a" stroke-width="6" stroke-linecap="round"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <rect x="105" y="48" width="32" height="65" fill="#FF6B00" rx="9"/>
+      <circle cx="98" cy="38" r="12" fill="#0a0a0a"/>
+      <line x1="105" y1="68" x2="48" y2="68" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
+      <line x1="137" y1="68" x2="195" y2="68" stroke="#FF6B00" stroke-width="10" stroke-linecap="round"/>
+      <line x1="103" y1="118" x2="137" y2="118" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="132" y1="118" x2="195" y2="135" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="195" y1="135" x2="200" y2="160" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
     </svg>`,
-    what:"Rotates the <b>thoracic spine</b> while gently stretching the <b>glutes</b>. Resets a stiff back without loading it.",
-    how:"Lie on your back. Bend one knee and let it drop across the body toward the floor on the other side. Reach the same-side arm out wide, palm up. Look toward the outstretched hand. Keep both shoulders pressing down — don't let the opposite shoulder lift."
+    what:"Rotates the <b>thoracic spine</b> while gently stretching the <b>glutes</b> and obliques. Resets a stiff back without loading it.",
+    how:"Lie on your back. Bend both knees, then let them drop together to one side toward the floor. Reach the opposite arm wide, palm up. Look toward the outstretched hand. <b>Keep both shoulder blades on the floor</b> — don't let the opposite shoulder lift to chase range."
   },
   "Child's Pose with Reach": {
-    svg:`<svg viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
-      <line x1="20" y1="148" x2="220" y2="148" stroke="#D8D8D8" stroke-width="1.5"/>
-      <line x1="50" y1="146" x2="80" y2="125" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="80" y1="125" x2="60" y2="138" stroke="#0a0a0a" stroke-width="7" stroke-linecap="round"/>
-      <line x1="80" y1="125" x2="170" y2="142" stroke="#FF6B00" stroke-width="7" stroke-linecap="round"/>
-      <circle cx="180" cy="143" r="9" fill="#0a0a0a"/>
-      <line x1="170" y1="142" x2="215" y2="146" stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="195" y1="160" x2="160" y2="170" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="200" cy="150" r="16" fill="#0a0a0a"/>
+      <line x1="190" y1="150" x2="100" y2="158" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <circle cx="92" cy="160" r="11" fill="#0a0a0a"/>
+      <line x1="105" y1="158" x2="40" y2="162" stroke="#FF6B00" stroke-width="10" stroke-linecap="round"/>
     </svg>`,
-    what:"Stretches the <b>lats</b> and the <b>lower back</b>. A rest position that's still doing work — the perfect cooldown.",
-    how:"Kneel down, knees wide, big toes touching. Sit your hips back onto your heels and walk your hands forward along the floor. Let your forehead rest down. Reach the fingertips as far away as you can, opening the armpits."
+    what:"Stretches the <b>lats</b> and the <b>lower back</b>. A rest position that's still working — the perfect cooldown after pulls or heavy ab work.",
+    how:"Kneel down, knees wide, big toes touching. Sit the hips back onto the heels and walk your hands as far forward along the floor as they'll go. Forehead rests down. Reach the fingertips away from the hips — open the armpits."
+  },
+  "Frog Pose": {
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="50" y1="170" x2="100" y2="142" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="100" y1="142" x2="118" y2="110" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="190" y1="170" x2="140" y2="142" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="140" y1="142" x2="122" y2="110" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="105" y1="110" x2="135" y2="110" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="120" y1="115" x2="120" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="105" y1="78" x2="135" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="105" y1="80" x2="78" y2="130" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <line x1="135" y1="80" x2="162" y2="130" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="120" cy="58" r="11" fill="#0a0a0a"/>
+    </svg>`,
+    what:"Opens the <b>adductors</b> (inner thighs) and the <b>hip rotators</b>. The unlock move for deep squats and ATG mobility.",
+    how:"Hands and knees. Walk the knees out as wide as they'll go comfortably — toes pointed out, shins parallel to each other. Forearms drop to the floor. Slowly sit the hips back toward the heels. Stay there. <b>Move only a millimeter at a time</b> — adductors don't like fast loading."
+  },
+  "Wall Calf Stretch": {
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="40" y1="15" x2="40" y2="170" stroke="#D8D8D8" stroke-width="4"/>
+      <line x1="40" y1="148" x2="62" y2="170" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
+      <line x1="55" y1="170" x2="120" y2="98" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="190" y1="170" x2="130" y2="98" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="125" y1="98" x2="98" y2="50" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="95" cy="40" r="11" fill="#0a0a0a"/>
+      <line x1="100" y1="58" x2="50" y2="68" stroke="#0a0a0a" stroke-width="9" stroke-linecap="round"/>
+    </svg>`,
+    what:"Loads the <b>calf</b> (gastrocnemius) and the Achilles. Tight calves shorten your squat depth and shift load to the lower back — fix them.",
+    how:"Stand facing a wall. Place the ball of one foot on the wall, heel on the floor. Drive your hips forward toward the wall — keep the back leg straight. Hands support on the wall. For the deeper soleus, bend the front knee slightly while keeping the heel down."
+  },
+  "Half Split": {
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="38" y1="158" x2="120" y2="138" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="38" y1="158" x2="42" y2="138" stroke="#FF6B00" stroke-width="11" stroke-linecap="round"/>
+      <line x1="120" y1="138" x2="170" y2="170" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="170" y1="170" x2="210" y2="165" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="120" y1="138" x2="138" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="120" y1="78" x2="150" y2="78" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="142" cy="58" r="11" fill="#0a0a0a"/>
+      <line x1="122" y1="80" x2="90" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <line x1="150" y1="80" x2="118" y2="125" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+    </svg>`,
+    what:"The deepest <b>hamstring</b> stretch in the library — way past what Forward Fold can reach. Best stretch you can do post-deadlift or post-leg day.",
+    how:"From a kneeling lunge, slide the front foot forward so the front leg is straight. Back knee stays on the floor (cushion it if needed). Pull the front foot's toes up. Hinge the hips back over the back heel — keep the spine long, don't round to chase your toes."
+  },
+  "Standing Quad Pull": {
+    svg:`<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="170" x2="230" y2="170" stroke="#D8D8D8" stroke-width="2"/>
+      <line x1="115" y1="170" x2="118" y2="92" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="118" y1="92" x2="155" y2="135" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="155" y1="135" x2="132" y2="108" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>
+      <line x1="105" y1="92" x2="135" y2="92" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
+      <line x1="120" y1="95" x2="120" y2="42" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <line x1="105" y1="42" x2="135" y2="42" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+      <circle cx="120" cy="22" r="11" fill="#0a0a0a"/>
+      <line x1="134" y1="44" x2="148" y2="115" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+      <line x1="106" y1="44" x2="78" y2="62" stroke="#0a0a0a" stroke-width="8" stroke-linecap="round"/>
+    </svg>`,
+    what:"Isolates the <b>quad</b> (and a little hip flexor). The simplest, most accessible quad stretch you can do anywhere.",
+    how:"Stand tall. Grab one ankle and pull the heel toward the butt. <b>Knees stay touching</b> — don't let the lifted knee drift out. Squeeze the glute of the lifted leg and drive the hip forward. Don't lean back to fake more range. Hold the wall lightly for balance if you need."
   },
 };
 
@@ -636,91 +736,176 @@ function classifyVolume(minutes, lm){
 const VOLUME_STATUS_LABEL = {"under":"Below MEV","mev":"At MEV","mav":"In MAV","over-mav":"Above MAV","over":"Past MRV"};
 
 // ============================================================
-// VIEW ROUTING
+// HOME (single-screen, no view routing)
 // ============================================================
-let currentView = "home";
-function showView(name){
-  currentView = name;
-  document.getElementById("home").style.display   = name === "home"   ? "" : "none";
-  document.getElementById("volume").style.display = name === "volume" ? "" : "none";
-  document.querySelectorAll(".nav-item").forEach(b => {
-    b.classList.toggle("active", b.dataset.view === name);
-  });
-  if(name === "home") renderHome();
-  if(name === "volume") renderVolume();
-  window.scrollTo(0,0);
+function setRoutine(key){
+  const state = loadState();
+  state.routine = key;
+  saveState(state);
+  renderHome();
 }
-
-// ============================================================
-// VOLUME
-// ============================================================
-let volumeStatusFilter = "all"; // 'all' | 'under' | 'ideal' | 'over'
-function statusBucket(cls){
-  if(cls === "under" || cls === "mev") return "under";
-  if(cls === "mav") return "ideal";
-  return "over";
-}
-function setVolumeStatusFilter(s){
-  volumeStatusFilter = (volumeStatusFilter === s ? "all" : s);
-  renderVolume();
+function fmtMMSS(totalSec){
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec % 60;
+  return m + ":" + String(s).padStart(2, "0");
 }
 function fmtMin(m){
   if(m >= 10) return Math.round(m).toString();
   return (Math.round(m*10)/10).toFixed(1);
 }
-function renderVolume(){
-  const state = loadState();
+// Minutes done today (single-day, not weekly). Same crediting rule as weekly: primary 1.0, secondary 0.5.
+function todayMuscleMinutes(state){
+  const totals = {};
+  for(const m of MUSCLE_ORDER) totals[m] = 0;
+  let total = 0;
+  const today = todayStr();
+  for(const session of getSessions(state)){
+    if(session.date !== today) continue;
+    for(const c of (session.completed||[])){
+      const s = STRETCHES[c.i];
+      if(!s) continue;
+      const min = (c.sec||0) / 60;
+      total += min;
+      if(s.primary && totals.hasOwnProperty(s.primary)) totals[s.primary] += min;
+      for(const sec of (s.secondary||[])){
+        if(totals.hasOwnProperty(sec)) totals[sec] += min * 0.5;
+      }
+    }
+  }
+  return {totals, total};
+}
+// Total weekly minutes (sum across all muscles — already includes 0.5x for secondaries).
+function weeklyTotalMinutes(state){
   const totals = weeklyMuscleMinutes(state);
+  let sum = 0;
+  for(const k in totals) sum += totals[k];
+  // Subtract double-counting: actually the per-stretch minutes go into 1 primary + N×0.5 secondaries,
+  // so summing across muscles overcounts. For the headline "stretching minutes" stat we want raw time.
+  // Recompute simply: sum sec across all sessions in last 7 days.
+  let rawSec = 0;
+  const today = todayStr();
+  for(const session of getSessions(state)){
+    const gap = daysBetween(session.date, today);
+    if(gap < 0 || gap > 6) continue;
+    for(const c of (session.completed||[])) rawSec += (c.sec || 0);
+  }
+  return rawSec / 60;
+}
+// Raw minutes done today (sum of held seconds, ignoring muscle crediting).
+function todayRawMinutes(state){
+  const today = todayStr();
+  let sec = 0;
+  for(const session of getSessions(state)){
+    if(session.date !== today) continue;
+    for(const c of (session.completed||[])) sec += (c.sec || 0);
+  }
+  return sec / 60;
+}
+
+// Build the routine's relevant muscle list — primary + secondary unions, kept in priority order.
+function routineMuscleSet(routine){
+  const set = new Set();
+  for(const idx of routine.indices){
+    const s = STRETCHES[idx];
+    if(!s) continue;
+    if(s.primary) set.add(s.primary);
+    for(const sec of (s.secondary||[])) set.add(sec);
+  }
+  return MUSCLE_ORDER.filter(m => set.has(m));
+}
+
+function renderHome(){
+  const state = loadState();
   const streak = computeStreak(state);
-  document.getElementById("streak-num-2").textContent = streak;
-  document.getElementById("streak-chip-2").classList.toggle("zero", streak === 0);
+  const $num = document.getElementById("streak-num");
+  const $chip = document.getElementById("streak-chip");
+  $num.textContent = streak;
+  $chip.classList.toggle("zero", streak === 0);
 
-  // Classify all muscles first so we can summarize regardless of filter.
-  const status = {};
-  let under = 0, ideal = 0, over = 0, grandTotal = 0;
-  for(const m of MUSCLE_ORDER){
+  // Resolve lift-app day → recommendation. Auto-pick on first visit; respect explicit later choices.
+  const lift = getLiftDay();
+  const recommendedKey = lift ? recommendRoutineFromLiftDay(lift.name) : null;
+  let routineKey = state.routine;
+  if(!routineKey){
+    routineKey = recommendedKey || "rest";
+    state.routine = routineKey;
+    saveState(state);
+  }
+  const routine = getRoutine(routineKey);
+  const holdSec = routineHoldSec(routine);
+
+  // Lift banner — only render if lift state was found.
+  const $banner = document.getElementById("lift-banner");
+  if(lift){
+    const matched = recommendedKey && recommendedKey === routineKey;
+    const recRoutine = recommendedKey ? getRoutine(recommendedKey) : null;
+    $banner.className = "lift-banner" + (matched ? " matched" : "");
+    $banner.style.display = "flex";
+    $banner.innerHTML = `
+      <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9 H21 M5 5 V19 M19 5 V19 M3 15 H21"/></svg></div>
+      <div class="meta">
+        <div class="l">From DUMBASS LIFT</div>
+        <div class="n">Today: <b>${lift.name}</b>${recRoutine && !matched ? ` · pair with ${recRoutine.name}` : matched ? ` · paired ✓` : ""}</div>
+      </div>
+      ${recRoutine && !matched ? `<button class="pick" onclick="setRoutine('${recommendedKey}')">PAIR</button>` : ""}
+    `;
+  } else {
+    $banner.style.display = "none";
+  }
+
+  // Chip row
+  document.getElementById("r-chips").innerHTML = ROUTINES.map(r =>
+    `<button class="r-chip${r.key===routineKey?' active':''}" onclick="setRoutine('${r.key}')">${r.name}</button>`
+  ).join("");
+
+  // Tag header (name + duration + muscle subtitle)
+  const durSec = routine.indices.length * holdSec;
+  document.getElementById("routine-tag-name").textContent = routine.name;
+  document.getElementById("routine-tag-sub").textContent = fmtMMSS(durSec) + " · " + routine.muscles;
+
+  // BEGIN subtitle
+  document.getElementById("begin-sub").innerHTML =
+    `${routine.indices.length} STRETCHES <span class="dot">·</span> ${fmtMMSS(durSec)}` +
+    (holdSec !== HOLD_SECONDS ? ` <span class="dot">·</span> ${holdSec}S HOLDS` : ` <span class="dot">·</span> NO EXCUSES`);
+
+  // Routine list
+  const $list = document.getElementById("routine-list");
+  $list.innerHTML = routine.indices.map((idx, i) => {
+    const s = STRETCHES[idx];
+    const sideTag = s.side ? ` <span style="color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em">${s.side[0]}</span>` : "";
+    return `<div class="routine-item">
+      <span class="n">${String(i+1).padStart(2,"0")}</span>
+      <span class="nm">${s.name}${sideTag}</span>
+      <button class="info-btn" onclick="openInfo(${idx})" aria-label="How to do ${s.name}">i</button>
+      <span class="t">${holdSec}s</span>
+    </div>`;
+  }).join("");
+
+  // Stats strip — TODAY / WEEK / STREAK
+  const todayMin = todayRawMinutes(state);
+  const weekMin = weeklyTotalMinutes(state);
+  document.getElementById("stats-strip").innerHTML = `
+    <div class="stat"><div class="l">Today</div><div class="v ${todayMin>0?'orange':''}">${fmtMin(todayMin)}<span class="u">min</span></div></div>
+    <div class="stat"><div class="l">This week</div><div class="v ${weekMin>0?'orange':''}">${fmtMin(weekMin)}<span class="u">min</span></div></div>
+    <div class="stat"><div class="l">Streak</div><div class="v ${streak>0?'orange':''}">${streak}<span class="u">day</span></div></div>
+  `;
+
+  // Volume bars — filtered to muscles in the SELECTED routine only.
+  const muscles = routineMuscleSet(routine);
+  document.getElementById("vol-section-sub").textContent =
+    `For ${routine.name.toLowerCase()} (${muscles.length} muscles)`;
+  const weekly = weeklyMuscleMinutes(state);
+  document.getElementById("vol-list").innerHTML = muscles.map(m => {
     const lm = MUSCLE_LANDMARKS[m];
-    const mins = totals[m] || 0;
-    grandTotal += mins;
+    const mins = weekly[m] || 0;
     const cls = classifyVolume(mins, lm);
-    const bucket = statusBucket(cls);
-    status[m] = {cls, bucket, mins};
-    if(bucket === "under") under++;
-    else if(bucket === "ideal") ideal++;
-    else over++;
-  }
-  document.getElementById("vol-total").textContent = fmtMin(grandTotal);
-
-  document.getElementById("vol-summary").innerHTML = `
-    <button class="vol-stat under${volumeStatusFilter==='under'?' active':''}" onclick="setVolumeStatusFilter('under')">
-      <div class="l">Below MEV</div><div class="v">${under}</div>
-    </button>
-    <button class="vol-stat ideal${volumeStatusFilter==='ideal'?' active':''}" onclick="setVolumeStatusFilter('ideal')">
-      <div class="l">In MAV</div><div class="v">${ideal}</div>
-    </button>
-    <button class="vol-stat over${volumeStatusFilter==='over'?' active':''}" onclick="setVolumeStatusFilter('over')">
-      <div class="l">Past MRV</div><div class="v">${over}</div>
-    </button>`;
-
-  const filtered = MUSCLE_ORDER.filter(m => {
-    return volumeStatusFilter === "all" || status[m].bucket === volumeStatusFilter;
-  });
-
-  if(!filtered.length){
-    document.getElementById("vol-list").innerHTML = `<div class="vol-empty">Nothing in this band.</div>`;
-    return;
-  }
-
-  document.getElementById("vol-list").innerHTML = filtered.map(m => {
-    const lm = MUSCLE_LANDMARKS[m];
-    const {cls, mins} = status[m];
     const scaleMax = Math.max(lm.mrv + 4, mins + 2);
     const fillPct = Math.min(100, (mins / scaleMax) * 100);
     const mevPct = (lm.mev / scaleMax) * 100;
     const mav0Pct = (lm.mav[0] / scaleMax) * 100;
     const mav1Pct = (lm.mav[1] / scaleMax) * 100;
     const mrvPct = (lm.mrv / scaleMax) * 100;
-    const range = `MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv} min/wk`;
+    const range = `MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv}`;
     return `<div class="vol-card ${cls}">
       <div class="head">
         <span class="nm">${MUSCLE_NAMES[m]}</span>
@@ -737,59 +922,6 @@ function renderVolume(){
         <span class="range">${range}</span>
         <span class="status ${cls}">${VOLUME_STATUS_LABEL[cls]}</span>
       </div>
-    </div>`;
-  }).join("");
-}
-
-// ============================================================
-// HOME
-// ============================================================
-function setRoutine(key){
-  const state = loadState();
-  state.routine = key;
-  saveState(state);
-  renderHome();
-}
-function fmtMMSS(totalSec){
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return m + ":" + String(s).padStart(2, "0");
-}
-function renderHome(){
-  const state = loadState();
-  const streak = computeStreak(state);
-  const $num = document.getElementById("streak-num");
-  const $chip = document.getElementById("streak-chip");
-  $num.textContent = streak;
-  $chip.classList.toggle("zero", streak === 0);
-
-  const routineKey = state.routine || "full";
-  const routine = getRoutine(routineKey);
-
-  // Chip row
-  document.getElementById("r-chips").innerHTML = ROUTINES.map(r =>
-    `<button class="r-chip${r.key===routineKey?' active':''}" onclick="setRoutine('${r.key}')">${r.name}</button>`
-  ).join("");
-
-  // Tag header
-  document.getElementById("routine-tag-name").textContent = routine.name;
-  document.getElementById("routine-tag-sub").textContent = fmtMMSS(routine.indices.length * HOLD_SECONDS);
-
-  // BEGIN subtitle
-  const totalMin = Math.round(routine.indices.length * HOLD_SECONDS / 60 * 10) / 10;
-  document.getElementById("begin-sub").innerHTML =
-    `${routine.indices.length} STRETCHES <span class="dot">·</span> ${fmtMMSS(routine.indices.length * HOLD_SECONDS)} <span class="dot">·</span> NO EXCUSES`;
-
-  // Routine list
-  const $list = document.getElementById("routine-list");
-  $list.innerHTML = routine.indices.map((idx, i) => {
-    const s = STRETCHES[idx];
-    const sideTag = s.side ? ` <span style="color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em">${s.side[0]}</span>` : "";
-    return `<div class="routine-item">
-      <span class="n">${String(i+1).padStart(2,"0")}</span>
-      <span class="nm">${s.name}${sideTag}</span>
-      <button class="info-btn" onclick="openInfo(${idx})" aria-label="How to do ${s.name}">i</button>
-      <span class="t">${HOLD_SECONDS}s</span>
     </div>`;
   }).join("");
 
@@ -817,7 +949,7 @@ function openInfo(i){
   document.getElementById("info-area").textContent = s.area;
   document.getElementById("info-figure").innerHTML = info.svg;
   document.getElementById("info-what").innerHTML = info.what;
-  document.getElementById("info-how").textContent = info.how;
+  document.getElementById("info-how").innerHTML = info.how;
   document.getElementById("info").classList.add("active");
   document.getElementById("info").scrollTop = 0;
 }
@@ -832,16 +964,14 @@ let R = null;
 
 function startRoutine(){
   const state = loadState();
-  const routine = getRoutine(state.routine || "full");
+  const routine = getRoutine(state.routine || "rest");
+  const holdSec = routineHoldSec(routine);
   // R.list = the stretches to run for THIS session (each with its master STRETCHES index baked in).
   // Completion records use masterIdx so volume tracking always credits the same global muscle map.
   const list = routine.indices.map(masterIdx => ({...STRETCHES[masterIdx], masterIdx}));
-  R = { i:0, secLeft:HOLD_SECONDS, paused:false, ticker:null, wakeLock:null,
-        completed:[], list, routineKey:routine.key };
-  // The routine overlay covers everything via z-index, but make sure no
-  // background view is showing in case of paint glitches on slow devices.
+  R = { i:0, secLeft:holdSec, paused:false, ticker:null, wakeLock:null,
+        completed:[], list, routineKey:routine.key, holdSec };
   document.getElementById("home").style.display = "none";
-  document.getElementById("volume").style.display = "none";
   document.getElementById("routine").classList.add("active");
 
   // Build segment bar
@@ -869,7 +999,7 @@ function showStretch(i){
     if(idx < i){ seg.classList.add("done"); fill.style.width = "0%"; }
     else { seg.classList.remove("done"); fill.style.width = "0%"; }
   });
-  R.secLeft = HOLD_SECONDS;
+  R.secLeft = R.holdSec;
   updateTimerDisplay();
 }
 
@@ -882,7 +1012,7 @@ function updateTimerDisplay(){
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){
     const fill = seg.querySelector(".fill");
-    const pct = ((HOLD_SECONDS - R.secLeft) / HOLD_SECONDS) * 100;
+    const pct = ((R.holdSec - R.secLeft) / R.holdSec) * 100;
     fill.style.width = pct + "%";
   }
 }
@@ -895,7 +1025,7 @@ function startTicker(){
     if(R.secLeft <= 0){
       // Mark done, move on. Credit goes to the MASTER stretch index so volume
       // tracking treats this stretch the same regardless of which routine ran.
-      R.completed.push({i:R.list[R.i].masterIdx, sec:HOLD_SECONDS});
+      R.completed.push({i:R.list[R.i].masterIdx, sec:R.holdSec});
       const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
       if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
       if(R.i + 1 >= R.list.length){
@@ -924,7 +1054,7 @@ function togglePause(){
 function skipStretch(){
   if(!R) return;
   // Credit the time actually held — skip mid-hold = partial credit.
-  const heldSec = Math.max(0, HOLD_SECONDS - R.secLeft);
+  const heldSec = Math.max(0, R.holdSec - R.secLeft);
   R.completed.push({i:R.list[R.i].masterIdx, sec:heldSec});
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
@@ -940,7 +1070,9 @@ function quitRoutine(){
   if(!confirm("Quit this session? Today won't count.")) return;
   cleanupRoutine();
   document.getElementById("routine").classList.remove("active");
-  showView("home");
+  document.getElementById("home").style.display = "";
+  renderHome();
+  window.scrollTo(0,0);
 }
 
 function cleanupRoutine(){
@@ -981,7 +1113,9 @@ function finishRoutine(){
 
 function backHome(){
   document.getElementById("done").classList.remove("active");
-  showView("home");
+  document.getElementById("home").style.display = "";
+  renderHome();
+  window.scrollTo(0,0);
 }
 
 // Pause when the tab goes hidden so the timer doesn't run "in your pocket"
