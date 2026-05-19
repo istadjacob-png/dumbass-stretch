@@ -169,6 +169,20 @@ button{cursor:pointer;font-family:inherit}
 .week-cell.today.done .bar{background:var(--orange)}
 .week-cell.today.done .m{color:var(--orange)}
 
+/* WEEKLY PROGRESS VERDICT — "will I gain ROM this week?" */
+.week-verdict{margin-top:10px;padding:14px;background:#FFF;border:1px solid #000;display:flex;align-items:center;gap:14px}
+.week-verdict .big{font-family:'Inter',sans-serif;font-weight:900;font-size:30px;letter-spacing:-.03em;line-height:1;color:#000;white-space:nowrap}
+.week-verdict .big .accent{color:var(--orange)}
+.week-verdict .body{flex:1;min-width:0;border-left:1px solid var(--border);padding-left:14px}
+.week-verdict .status{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;margin-bottom:3px}
+.week-verdict.progressing .status{color:var(--orange)}
+.week-verdict.maintaining .status{color:var(--text-mid)}
+.week-verdict.under .status{color:var(--text-faint)}
+.week-verdict.over .status{color:var(--red)}
+.week-verdict .detail{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.04em;line-height:1.45}
+.week-verdict .detail b{color:#000;font-family:'Inter',sans-serif;font-weight:900;font-size:13px}
+.week-verdict .detail b.orange{color:var(--orange)}
+
 /* LIFT-APP BANNER (only renders if dumbass_state present) */
 .lift-banner{background:#000;color:#FFF;padding:12px 14px;margin:18px 0 6px;display:flex;align-items:center;gap:12px;font-family:'Inter',sans-serif}
 .lift-banner .icon{flex-shrink:0;width:28px;height:28px;background:var(--orange);display:flex;align-items:center;justify-content:center}
@@ -246,7 +260,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.1</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.2</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -269,9 +283,10 @@ button{cursor:pointer;font-family:inherit}
     <!-- WEEKLY 7-DAY STRIP — minutes per day -->
     <div class="section-head">
       <span class="t">This week</span>
-      <span class="c" id="week-total-c">0 min</span>
+      <span class="c" id="week-total-c">Will I progress?</span>
     </div>
     <div class="week-strip" id="week-strip"></div>
+    <div class="week-verdict" id="week-verdict"></div>
 
     <!-- ROUTINE PICKER -->
     <div class="section-head">
@@ -959,7 +974,9 @@ function renderHome(){
   // Week strip — 7 cells, oldest → today.
   const week = lastSevenDays(state);
   const maxMin = Math.max(5, ...week.map(d => d.minutes));
-  document.getElementById("week-total-c").textContent = fmtMin(week.reduce((a,b)=>a+b.minutes,0)) + " min";
+  const weekTotal = week.reduce((a,b)=>a+b.minutes,0);
+  // Section-head right-side text — keep it as a question, the big number is in the verdict card.
+  document.getElementById("week-total-c").textContent = "Will I progress?";
   document.getElementById("week-strip").innerHTML = week.map(d => {
     const pct = Math.round((d.minutes / maxMin) * 100);
     const cls = "week-cell" + (d.minutes > 0 ? " done" : "") + (d.isToday ? " today" : "");
@@ -969,6 +986,57 @@ function renderHome(){
       <div class="m">${d.minutes > 0 ? fmtMin(d.minutes) : "·"}</div>
     </div>`;
   }).join("");
+
+  // Weekly verdict — "will I gain ROM this week?" against the selected routine's muscles.
+  const weeklyForVerdict = weeklyMuscleMinutes(state);
+  const verdictMuscles = routineMuscleSet(routine);
+  let progressing = 0, maintaining = 0, under = 0, overMRV = 0;
+  for(const m of verdictMuscles){
+    const lm = MUSCLE_LANDMARKS[m];
+    const mins = weeklyForVerdict[m] || 0;
+    const cls = classifyVolume(mins, lm);
+    if(cls === "mav") progressing++;
+    else if(cls === "over-mav") progressing++;
+    else if(cls === "mev") maintaining++;
+    else if(cls === "over") overMRV++;
+    else under++;
+  }
+  const N = verdictMuscles.length;
+  let statusKey, statusLabel, detail;
+  if(overMRV > 0){
+    statusKey = "over";
+    statusLabel = "Past MRV";
+    detail = `<b class="orange">${overMRV}</b> over the ceiling · back off ${overMRV>1?"these muscles":"this muscle"}`;
+  } else if(progressing >= Math.max(1, Math.ceil(N/2))){
+    statusKey = "progressing";
+    statusLabel = "Progressing";
+    detail = `<b class="orange">${progressing}</b> of ${N} in MAV · gaining ROM`;
+  } else if(progressing > 0){
+    statusKey = "progressing";
+    statusLabel = "Partial progress";
+    detail = `<b class="orange">${progressing}</b> gaining · ${maintaining} maintaining · ${under} under`;
+  } else if(progressing + maintaining >= N){
+    statusKey = "maintaining";
+    statusLabel = "Maintaining";
+    detail = `<b>${progressing + maintaining}</b> of ${N} past MEV · holding range`;
+  } else if(maintaining > 0){
+    statusKey = "maintaining";
+    statusLabel = "Building";
+    detail = `<b>${maintaining}</b> of ${N} at MEV · ${under} still below`;
+  } else {
+    statusKey = "under";
+    statusLabel = "Below threshold";
+    detail = `<b>${under}</b> of ${N} below MEV · won't gain yet`;
+  }
+  const $v = document.getElementById("week-verdict");
+  $v.className = "week-verdict " + statusKey;
+  $v.innerHTML = `
+    <div class="big">${fmtMin(weekTotal)}<span class="accent"> min</span></div>
+    <div class="body">
+      <div class="status">${statusLabel}</div>
+      <div class="detail">${detail}</div>
+    </div>
+  `;
 
   // Chip row
   document.getElementById("r-chips").innerHTML = ROUTINES.map(r =>
