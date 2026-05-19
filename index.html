@@ -123,8 +123,15 @@ button{cursor:pointer;font-family:inherit}
 .info-close{background:none;border:none;color:var(--text);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:8px 0}
 .info-name{font-family:'Inter',sans-serif;font-weight:900;font-size:38px;letter-spacing:-.035em;line-height:.95;color:#000;text-wrap:balance;margin:8px 0 4px}
 .info-area{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:18px}
-.info-figure{width:100%;background:var(--steel);border:1px solid var(--border);padding:24px;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
-.info-figure svg{width:100%;max-width:280px;height:auto}
+.info-figure{display:none}
+.info-watch{display:flex;align-items:center;gap:14px;width:100%;background:#000;color:#FFF;border:none;padding:18px 20px;cursor:pointer;text-decoration:none;margin-bottom:24px;transition:background .12s}
+.info-watch:active{background:var(--orange)}
+.info-watch .play{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center}
+.info-watch .play svg{width:18px;height:18px;fill:#FFF}
+.info-watch .copy{flex:1;text-align:left;min-width:0}
+.info-watch .copy .l1{font-family:'Inter',sans-serif;font-weight:900;font-size:17px;letter-spacing:-.02em;line-height:1.1;color:#FFF}
+.info-watch .copy .l2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-top:3px}
+.info-watch .arr{flex-shrink:0;font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--orange);line-height:1}
 .info-section{margin-bottom:20px}
 .info-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.32em;color:var(--text-faint);font-weight:700;text-transform:uppercase;margin-bottom:6px}
 .info-text{font-family:'Inter',sans-serif;font-size:15px;line-height:1.55;color:var(--text);text-wrap:balance}
@@ -435,7 +442,14 @@ button{cursor:pointer;font-family:inherit}
   </div>
   <div class="info-name" id="info-name">—</div>
   <div class="info-area" id="info-area">—</div>
-  <div class="info-figure" id="info-figure"></div>
+  <a class="info-watch" id="info-watch" href="#" target="_blank" rel="noopener">
+    <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
+    <span class="copy">
+      <span class="l1">Watch a demo</span>
+      <span class="l2">Real person on YouTube</span>
+    </span>
+    <span class="arr">→</span>
+  </a>
   <div class="info-section">
     <div class="info-label">What it does</div>
     <p class="info-text" id="info-what">—</p>
@@ -1399,7 +1413,10 @@ function openInfo(i){
   if(!info) return;
   document.getElementById("info-name").textContent = s.name + (s.side ? " — " + s.side : "");
   document.getElementById("info-area").textContent = s.area;
-  document.getElementById("info-figure").innerHTML = info.svg;
+  // Real demo: open a YouTube search for this exact stretch in a new tab.
+  // Search-URLs are deterministic and never rot — no hardcoded video IDs to break.
+  const q = encodeURIComponent(s.name + " stretch how to");
+  document.getElementById("info-watch").href = "https://www.youtube.com/results?search_query=" + q;
   document.getElementById("info-what").innerHTML = info.what;
   document.getElementById("info-how").innerHTML = info.how;
   document.getElementById("info").classList.add("active");
