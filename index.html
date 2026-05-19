@@ -272,7 +272,8 @@ button{cursor:pointer;font-family:inherit}
 .vol-card .min{font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.03em;line-height:1;color:var(--orange);white-space:nowrap}
 .vol-card .min .unit{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint);letter-spacing:.18em;margin-left:4px;font-weight:700}
 .vol-bar{position:relative;height:14px;background:var(--steel);border:1px solid var(--border);overflow:visible}
-.vol-bar .fill{height:100%;background:var(--orange);transition:width .3s}
+.vol-bar .fill{position:absolute;left:0;top:0;height:100%;background:var(--orange);transition:width .3s;z-index:2}
+.vol-bar .fill.projected{background:rgba(255,107,0,.35);z-index:1}
 .vol-card.under .fill{background:#9AA0A6}
 .vol-card.mev .fill{background:var(--orange-bright)}
 .vol-card.mav .fill{background:var(--orange)}
@@ -312,7 +313,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.6</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.7</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -946,6 +947,36 @@ function weeklyMuscleMinutes(state){
   return totals;
 }
 
+// Per-muscle minutes ONE pass of the given routine would contribute.
+// primary = full credit · secondary = half credit. Uses effective indices (incl. user adds).
+function routineContribution(state, routine){
+  const holdMin = routineHoldSec(routine) / 60;
+  const eff = effectiveIndices(state, routine);
+  const out = {};
+  for(const m of MUSCLE_ORDER) out[m] = 0;
+  for(const idx of eff.all){
+    const s = STRETCHES[idx];
+    if(!s) continue;
+    if(s.primary && out.hasOwnProperty(s.primary)) out[s.primary] += holdMin;
+    for(const sec of (s.secondary||[])){
+      if(out.hasOwnProperty(sec)) out[sec] += holdMin * 0.5;
+    }
+  }
+  return out;
+}
+// "If you finish today's stretch, here's what the week will land on."
+// If today is already logged, projection == actual (no double-counting).
+function projectedMuscleMinutes(state, routine){
+  const actual = weeklyMuscleMinutes(state);
+  const today = todayStr();
+  const doneToday = getSessions(state).some(s => s.date === today);
+  if(doneToday) return {projected: actual, todaysContribution: null};
+  const contrib = routineContribution(state, routine);
+  const proj = {};
+  for(const m of MUSCLE_ORDER) proj[m] = (actual[m] || 0) + (contrib[m] || 0);
+  return {projected: proj, todaysContribution: contrib};
+}
+
 function classifyVolume(minutes, lm){
   if(minutes < lm.mev) return "under";
   if(minutes < lm.mav[0]) return "mev";
@@ -1282,17 +1313,23 @@ function renderHome(){
   const $vb = document.querySelector(".weekly-btn .vol-big");
   if($vb) $vb.textContent = fmtMin(weekMin);
 
-  // Volume bars — filtered to muscles in the SELECTED routine only (incl. user adds).
+  // Volume bars — show PROJECTED weekly state (actual completed + today's routine if not yet done).
+  // Filtered to muscles in the SELECTED routine only (incl. user adds).
   const muscles = routineMuscleSet(routine, eff);
-  document.getElementById("vol-section-sub").textContent =
-    `For ${routine.name.toLowerCase()} (${muscles.length} muscles)`;
-  const weekly = weeklyMuscleMinutes(state);
+  const {projected, todaysContribution} = projectedMuscleMinutes(state, routine);
+  const actual = weeklyMuscleMinutes(state);
+  document.getElementById("vol-section-sub").textContent = todaysContribution
+    ? `After today's ${routine.name.toLowerCase()}`
+    : `Done today · ${muscles.length} muscles`;
   document.getElementById("vol-list").innerHTML = muscles.map(m => {
     const lm = MUSCLE_LANDMARKS[m];
-    const mins = weekly[m] || 0;
-    const cls = classifyVolume(mins, lm);
-    const scaleMax = Math.max(lm.mrv + 4, mins + 2);
-    const fillPct = Math.min(100, (mins / scaleMax) * 100);
+    const projMins = projected[m] || 0;
+    const actMins = actual[m] || 0;
+    const cls = classifyVolume(projMins, lm);
+    const scaleMax = Math.max(lm.mrv + 4, projMins + 2);
+    // Two overlaid fills: actual (solid orange) and projected addition (lighter overlay).
+    const actualPct = Math.min(100, (actMins / scaleMax) * 100);
+    const projPct = Math.min(100, (projMins / scaleMax) * 100);
     const mevPct = (lm.mev / scaleMax) * 100;
     const mav0Pct = (lm.mav[0] / scaleMax) * 100;
     const mav1Pct = (lm.mav[1] / scaleMax) * 100;
@@ -1301,17 +1338,18 @@ function renderHome(){
     return `<div class="vol-card ${cls}">
       <div class="head">
         <span class="nm">${MUSCLE_NAMES[m]}</span>
-        <span class="min">${fmtMin(mins)}<span class="unit">min</span></span>
+        <span class="min">${fmtMin(projMins)}<span class="unit">min</span></span>
       </div>
       <div class="vol-bar">
-        <div class="fill" style="width:${fillPct}%"></div>
+        <div class="fill projected" style="width:${projPct}%"></div>
+        <div class="fill" style="width:${actualPct}%"></div>
         ${lm.mev>0?`<div class="tick" style="left:${mevPct}%"></div>`:''}
         <div class="tick" style="left:${mav0Pct}%"></div>
         <div class="tick" style="left:${mav1Pct}%"></div>
         <div class="tick mrv" style="left:${mrvPct}%"></div>
       </div>
       <div class="vol-foot">
-        <span class="range">${range}</span>
+        <span class="range">${range}${actMins>0?` · now <b>${fmtMin(actMins)}</b>`:''}</span>
         <span class="status ${cls}">${VOLUME_STATUS_LABEL[cls]}</span>
       </div>
     </div>`;
