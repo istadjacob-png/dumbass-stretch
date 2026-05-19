@@ -315,7 +315,7 @@ button{cursor:pointer;font-family:inherit}
   <div class="header">
     <div class="logo">
       <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.8</span>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.9</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -603,10 +603,12 @@ function getLiftDay(){
 //   • Stretched part: orange (#FF6B00), thicker stroke (18), soft glow filter
 //   • Label: small orange arrow + boxed muscle name pointing at the orange area
 //   • Wall/doorframe: dashed grey vertical bar where relevant
+// Filter is intentionally a NO-OP — was a Gaussian blur but that made
+// every orange line look smudgy / unrecognizable. References to it in
+// existing SVGs are kept so the markup still parses, but the filter does
+// nothing now. New SVGs should skip the filter attribute entirely.
 const POSE_DEFS = `<defs>
-  <filter id="poseGlow" x="-30%" y="-30%" width="160%" height="160%">
-    <feGaussianBlur stdDeviation="3.5"/>
-  </filter>
+  <filter id="poseGlow"></filter>
   <marker id="poseArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
     <path d="M0,0 L10,5 L0,10 Z" fill="#FF6B00"/>
   </marker>
@@ -767,14 +769,23 @@ const STRETCH_INFO = {
   },
   "Child's Pose with Reach": {
     svg: poseSvg(
-      `<ellipse cx="200" cy="148" rx="20" ry="18" fill="#0a0a0a"/>
-       <line x1="200" y1="160" x2="160" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="185" y1="148" x2="95" y2="158" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="185" y1="148" x2="95" y2="158" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="88" cy="160" r="13" fill="#0a0a0a"/>
-       <circle cx="82" cy="160" r="2" fill="#FFFFFF"/>
-       <line x1="100" y1="158" x2="35" y2="162" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>`,
-      poseLabel(95, 125, 140, 152, "LATS")
+      // Side view, facing LEFT. Butt rests on heels (right side), torso folds
+      // forward and arms extend along the floor toward the left.
+      // - Folded thigh + calf on floor (right side)
+      // - Butt sphere on top of heels
+      // - Torso line going up-and-forward from hips toward shoulders (orange = lats stretched)
+      // - Shoulder joint, arm extending forward along floor
+      // - Head bowed near the leading arm
+      `<line x1="155" y1="167" x2="205" y2="167" stroke="#0a0a0a" stroke-width="13" stroke-linecap="round"/>
+       <line x1="202" y1="167" x2="218" y2="170" stroke="#0a0a0a" stroke-width="9" stroke-linecap="round"/>
+       <circle cx="155" cy="167" r="6" fill="#0a0a0a"/>
+       <circle cx="180" cy="151" r="14" fill="#0a0a0a"/>
+       <line x1="170" y1="148" x2="92" y2="158" stroke="#FF6B00" stroke-width="16" stroke-linecap="round"/>
+       <circle cx="90" cy="158" r="9" fill="#0a0a0a"/>
+       <line x1="87" y1="160" x2="22" y2="167" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
+       <circle cx="60" cy="164" r="11" fill="#0a0a0a"/>
+       <circle cx="53" cy="164" r="2" fill="#FFFFFF"/>`,
+      poseLabel(108, 115, 130, 148, "LATS")
     ),
     what:"Stretches the <b>lats</b> and the <b>lower back</b>. A rest position that's still working — the perfect cooldown after pulls or heavy ab work.",
     how:"Kneel down, knees wide, big toes touching. Sit the hips back onto the heels and walk your hands as far forward along the floor as they'll go. Forehead rests down. Reach the fingertips away from the hips — open the armpits."
@@ -966,6 +977,20 @@ function routineContribution(state, routine){
     }
   }
   return out;
+}
+// PLANNED weekly volume: what the bars would land on if the user does this routine
+// every day for 7 days. Independent of what's been done so far — pure forward-look.
+function plannedMuscleMinutes(state, routine){
+  const contrib = routineContribution(state, routine);
+  const out = {};
+  for(const m of MUSCLE_ORDER) out[m] = (contrib[m] || 0) * 7;
+  return out;
+}
+// Total raw planned minutes for the week (routine hold time × stretch count × 7).
+function plannedWeeklyTotalMinutes(state, routine){
+  const eff = effectiveIndices(state, routine);
+  const holdMin = routineHoldSec(routine) / 60;
+  return eff.all.length * holdMin * 7;
 }
 // "If you finish today's stretch, here's what the week will land on."
 // If today is already logged, projection == actual (no double-counting).
@@ -1311,28 +1336,22 @@ function renderHome(){
   // "+ Add stretch" button at end of list.
   $list.innerHTML += `<button class="add-stretch" onclick="openStretchPicker()">+ ADD STRETCH</button>`;
 
-  // Populate weekly-btn with current minutes total
-  const weekMin = weeklyTotalMinutes(state);
+  // Populate weekly-btn with the PLANNED total for this routine × 7 days.
+  const plannedTotal = plannedWeeklyTotalMinutes(state, routine);
   const $vb = document.querySelector(".weekly-btn .vol-big");
-  if($vb) $vb.textContent = fmtMin(weekMin);
+  if($vb) $vb.textContent = fmtMin(plannedTotal);
 
-  // Volume bars — show PROJECTED weekly state (actual completed + today's routine if not yet done).
-  // Filtered to muscles in the SELECTED routine only (incl. user adds).
+  // Volume bars — PLANNED weekly state (this routine done every day for 7 days).
+  // Forward-looking, independent of what's been completed.
   const muscles = routineMuscleSet(routine, eff);
-  const {projected, todaysContribution} = projectedMuscleMinutes(state, routine);
-  const actual = weeklyMuscleMinutes(state);
-  document.getElementById("vol-section-sub").textContent = todaysContribution
-    ? `After today's ${routine.name.toLowerCase()}`
-    : `Done today · ${muscles.length} muscles`;
+  const planned = plannedMuscleMinutes(state, routine);
+  document.getElementById("vol-section-sub").textContent = `Planned · ${routine.name.toLowerCase()} × 7 days`;
   document.getElementById("vol-list").innerHTML = muscles.map(m => {
     const lm = MUSCLE_LANDMARKS[m];
-    const projMins = projected[m] || 0;
-    const actMins = actual[m] || 0;
-    const cls = classifyVolume(projMins, lm);
-    const scaleMax = Math.max(lm.mrv + 4, projMins + 2);
-    // Two overlaid fills: actual (solid orange) and projected addition (lighter overlay).
-    const actualPct = Math.min(100, (actMins / scaleMax) * 100);
-    const projPct = Math.min(100, (projMins / scaleMax) * 100);
+    const plMins = planned[m] || 0;
+    const cls = classifyVolume(plMins, lm);
+    const scaleMax = Math.max(lm.mrv + 4, plMins + 2);
+    const plPct = Math.min(100, (plMins / scaleMax) * 100);
     const mevPct = (lm.mev / scaleMax) * 100;
     const mav0Pct = (lm.mav[0] / scaleMax) * 100;
     const mav1Pct = (lm.mav[1] / scaleMax) * 100;
@@ -1341,18 +1360,17 @@ function renderHome(){
     return `<div class="vol-card ${cls}">
       <div class="head">
         <span class="nm">${MUSCLE_NAMES[m]}</span>
-        <span class="min">${fmtMin(projMins)}<span class="unit">min</span></span>
+        <span class="min">${fmtMin(plMins)}<span class="unit">min</span></span>
       </div>
       <div class="vol-bar">
-        <div class="fill projected" style="width:${projPct}%"></div>
-        <div class="fill" style="width:${actualPct}%"></div>
+        <div class="fill" style="width:${plPct}%"></div>
         ${lm.mev>0?`<div class="tick" style="left:${mevPct}%"></div>`:''}
         <div class="tick" style="left:${mav0Pct}%"></div>
         <div class="tick" style="left:${mav1Pct}%"></div>
         <div class="tick mrv" style="left:${mrvPct}%"></div>
       </div>
       <div class="vol-foot">
-        <span class="range">${range}${actMins>0?` · now <b>${fmtMin(actMins)}</b>`:''}</span>
+        <span class="range">${range}</span>
         <span class="status ${cls}">${VOLUME_STATUS_LABEL[cls]}</span>
       </div>
     </div>`;
