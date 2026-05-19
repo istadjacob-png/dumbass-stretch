@@ -4,8 +4,8 @@
   "description": "Stretch like you mean it. For people who want their body to bend.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#000000",
+  "background_color": "#FF6B00",
+  "theme_color": "#FF6B00",
   "orientation": "portrait",
   "icons": [
     { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },

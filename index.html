@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#FFFFFF">
+<meta name="theme-color" content="#FF6B00">
 <meta name="color-scheme" content="light">
 <meta name="format-detection" content="telephone=no">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>DUMBASS STRETCH — 5 minutes. Every day.</title>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Crect%20width%3D%2724%27%20height%3D%2724%27%20fill%3D%27%23000%27%2F%3E%3Cpath%20d%3D%27M5%206%20L19%206%20L12%2019%20Z%27%20fill%3D%27%23FF6B00%27%2F%3E%3C%2Fsvg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Crect%20width%3D%2724%27%20height%3D%2724%27%20fill%3D%27%23FF6B00%27%2F%3E%3Cpath%20d%3D%27M5%206%20L19%206%20L12%2019%20Z%27%20fill%3D%27%23FFFFFF%27%2F%3E%3C%2Fsvg%3E">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-title" content="DUMBASS STRETCH">
@@ -139,6 +139,36 @@ button{cursor:pointer;font-family:inherit}
 .done-back{margin:24px 0 8px;width:100%;background:#000;color:#FFF;border:none;padding:20px 0;font-family:'Inter',sans-serif;font-size:16px;font-weight:900;letter-spacing:-.01em;cursor:pointer}
 .done-back:active{background:var(--orange)}
 
+/* DAY TITLE BLOCK — mirrors lift app's per-day title */
+.day-block{padding:8px 0 22px;margin-top:8px}
+.day-block .eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;color:var(--text-faint);text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.day-block .title{font-family:'Inter',sans-serif;font-weight:900;letter-spacing:-.045em;font-size:64px;line-height:.92;color:#000;text-wrap:balance;margin-bottom:8px}
+.day-block .title .accent{color:var(--orange)}
+.day-block .subtitle{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;color:var(--text-mid);line-height:1.6;text-transform:uppercase;font-weight:700}
+
+/* SECTION HEAD — matches lift app */
+.section-head{display:flex;justify-content:space-between;align-items:baseline;margin-top:24px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #000}
+.section-head .t{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;color:#000;text-transform:uppercase;font-weight:700}
+.section-head .c{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.12em}
+
+/* WEEK STRIP — 7 mini cells, one per day */
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:6px}
+.week-cell{background:#FFF;border:1px solid #000;padding:8px 4px 6px;text-align:center;cursor:default;display:flex;flex-direction:column;align-items:center;gap:5px;min-height:74px;justify-content:space-between}
+.week-cell .d{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.18em;color:var(--text-mid);text-transform:uppercase;font-weight:700}
+.week-cell .bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;min-height:18px}
+.week-cell .bar{width:14px;background:var(--steel-mid);min-height:3px}
+.week-cell .m{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-faint);letter-spacing:.04em;font-weight:700}
+.week-cell.done{border-color:#000}
+.week-cell.done .d{color:#000}
+.week-cell.done .bar{background:var(--orange)}
+.week-cell.done .m{color:var(--orange)}
+.week-cell.today{background:#000}
+.week-cell.today .d{color:#FFF}
+.week-cell.today .bar{background:rgba(255,255,255,.25)}
+.week-cell.today .m{color:rgba(255,255,255,.85)}
+.week-cell.today.done .bar{background:var(--orange)}
+.week-cell.today.done .m{color:var(--orange)}
+
 /* LIFT-APP BANNER (only renders if dumbass_state present) */
 .lift-banner{background:#000;color:#FFF;padding:12px 14px;margin:18px 0 6px;display:flex;align-items:center;gap:12px;font-family:'Inter',sans-serif}
 .lift-banner .icon{flex-shrink:0;width:28px;height:28px;background:var(--orange);display:flex;align-items:center;justify-content:center}
@@ -149,6 +179,8 @@ button{cursor:pointer;font-family:inherit}
 .lift-banner .n b{color:var(--orange)}
 .lift-banner .pick{flex-shrink:0;background:var(--orange);border:none;color:#FFF;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:8px 12px;cursor:pointer}
 .lift-banner .pick:active{background:var(--orange-deep)}
+.lift-banner .regret{flex-shrink:0;background:transparent;border:1px solid var(--text-mid);color:var(--text-mid);font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:6px 10px;cursor:pointer}
+.lift-banner .regret:active{background:var(--text-mid);color:#FFF}
 .lift-banner.matched{background:var(--steel);color:#000}
 .lift-banner.matched .n{color:#000}
 .lift-banner.matched .l{color:var(--text-mid)}
@@ -213,8 +245,8 @@ button{cursor:pointer;font-family:inherit}
 <div class="app" id="home">
   <div class="header">
     <div class="logo">
-      <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#000"/><path d="M5 6 L19 6 L12 19 Z" fill="#FF6B00"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.0</span>
+      <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
+      DUMBASS <span class="accent">STRETCH</span><span class="ver">v4.1</span>
     </div>
     <div class="streak-chip" id="streak-chip">
       <span class="num" id="streak-num">0</span>
@@ -223,14 +255,30 @@ button{cursor:pointer;font-family:inherit}
   </div>
 
   <div class="hero">
-    <div class="title">UN<span class="accent">FUCK</span> YOUR BODY.</div>
-    <p class="lede">Static holds, daily. Pair to your lift split. <b>Tap. Breathe. Done.</b></p>
 
     <!-- Lift-day banner — shows what's recommended (if lift app data found) -->
     <div class="lift-banner" id="lift-banner" style="display:none"></div>
 
+    <!-- Day title block — mirrors LIFT app's per-day title -->
+    <div class="day-block">
+      <div class="eyebrow" id="day-eyebrow">Today's stretch</div>
+      <div class="title" id="day-title">REST <span class="accent">DAY</span></div>
+      <div class="subtitle" id="day-sub">Full body recovery</div>
+    </div>
+
+    <!-- WEEKLY 7-DAY STRIP — minutes per day -->
+    <div class="section-head">
+      <span class="t">This week</span>
+      <span class="c" id="week-total-c">0 min</span>
+    </div>
+    <div class="week-strip" id="week-strip"></div>
+
+    <!-- ROUTINE PICKER -->
+    <div class="section-head">
+      <span class="t">Routine</span>
+      <span class="c" id="routine-tag-sub">5:00</span>
+    </div>
     <div class="r-chips" id="r-chips"></div>
-    <div class="routine-tag"><span id="routine-tag-name">Routine</span><span class="sub" id="routine-tag-sub">5:00</span></div>
     <div class="routine-list" id="routine-list"></div>
 
     <button class="begin" onclick="startRoutine()">BEGIN<span class="arrow">→</span></button>
@@ -240,15 +288,13 @@ button{cursor:pointer;font-family:inherit}
     <div class="stats-strip" id="stats-strip"></div>
 
     <!-- Volume bars — filtered to the muscles in the SELECTED routine -->
-    <div class="vol-section" id="vol-section">
-      <div class="vol-section-head">
-        <span class="t">WEEKLY VOLUME</span>
-        <span class="c" id="vol-section-sub">For this routine</span>
-      </div>
-      <div id="vol-list"></div>
-      <div class="vol-legend">
-        <p><b>MEV</b> Below this = no ROM gains. <b>MAV</b> Productive band. <b>MRV</b> Past this = irritation, not gains.</p>
-      </div>
+    <div class="section-head" style="margin-top:24px">
+      <span class="t">Weekly volume</span>
+      <span class="c" id="vol-section-sub">For this routine</span>
+    </div>
+    <div id="vol-list"></div>
+    <div class="vol-legend">
+      <p><b>MEV</b> Below this = no ROM gains. <b>MAV</b> Productive band. <b>MRV</b> Past this = irritation, not gains.</p>
     </div>
 
     <div class="last-done" id="last-done"></div>
@@ -349,19 +395,26 @@ const HOLD_SECONDS = 30;
 // Routine = a named subset of STRETCHES, ordered. Map directly to a DUMBASS LIFT day so the
 // recommend-on-open flow has a 1:1 match. holdSeconds override = "deep mobility" gets 60s for ROM gains.
 const ROUTINES = [
-  { key:"leg",  name:"Leg day",        muscles:"Hams · Hip flex · Quads · Glutes · Calves · Adductors",
+  { key:"leg",  name:"Leg day",        titleMain:"LEG",  titleAccent:"DAY",
+    muscles:"Hams · Hip flex · Quads · Glutes · Calves · Adductors",
     indices:[0,3,4,10,11,15,16,14,17,18] },
-  { key:"push", name:"Push day",       muscles:"Chest · T-spine · Shoulders",
+  { key:"push", name:"Push day",       titleMain:"PUSH", titleAccent:"DAY",
+    muscles:"Chest · T-spine · Shoulders",
     indices:[6,7,8,12,13,9] },
-  { key:"pull", name:"Pull day",       muscles:"Lats · T-spine · Chest",
+  { key:"pull", name:"Pull day",       titleMain:"PULL", titleAccent:"DAY",
+    muscles:"Lats · T-spine · Chest",
     indices:[9,6,7,8,12,13] },
-  { key:"abs",  name:"Abs / core day", muscles:"Hip flexors · Lower back · Obliques",
+  { key:"abs",  name:"Abs / core day", titleMain:"CORE", titleAccent:"DAY",
+    muscles:"Hip flexors · Lower back · Obliques",
     indices:[3,4,9,12,13,5] },
-  { key:"rest", name:"Rest day · full body", muscles:"Everything, lightly",
+  { key:"rest", name:"Rest day",       titleMain:"REST", titleAccent:"DAY",
+    muscles:"Full body recovery",
     indices:[0,1,2,3,4,5,6,7,8,9] },
-  { key:"desk", name:"Desk reset",     muscles:"Chest · T-spine · Hips",
+  { key:"desk", name:"Desk reset",     titleMain:"DESK", titleAccent:"RESET",
+    muscles:"Chest · T-spine · Hips",
     indices:[6,1,2,7,8] },
-  { key:"deep", name:"Deep mobility",  muscles:"Long 60s holds · ROM gains",
+  { key:"deep", name:"Deep mobility",  titleMain:"DEEP", titleAccent:"MOBILITY",
+    muscles:"Long 60s holds · ROM gains",
     indices:[0,3,4,10,11,17,18,14], holdSeconds:60 },
 ];
 function getRoutine(key){
@@ -741,6 +794,25 @@ const VOLUME_STATUS_LABEL = {"under":"Below MEV","mev":"At MEV","mav":"In MAV","
 function setRoutine(key){
   const state = loadState();
   state.routine = key;
+  // User-driven pick clears any pending regret.
+  state.routinePrevious = null;
+  saveState(state);
+  renderHome();
+}
+// PAIR: stash previous, switch to recommendation.
+function pairRoutine(key){
+  const state = loadState();
+  state.routinePrevious = state.routine || null;
+  state.routine = key;
+  saveState(state);
+  renderHome();
+}
+// REGRET: undo the PAIR.
+function regretPair(){
+  const state = loadState();
+  if(!state.routinePrevious) return;
+  state.routine = state.routinePrevious;
+  state.routinePrevious = null;
   saveState(state);
   renderHome();
 }
@@ -802,6 +874,25 @@ function todayRawMinutes(state){
   return sec / 60;
 }
 
+// Minutes done on each of the last 7 calendar days (oldest → today, length 7).
+function lastSevenDays(state){
+  const out = [];
+  const now = new Date();
+  for(let i = 6; i >= 0; i--){
+    const d = new Date(now); d.setDate(d.getDate() - i);
+    const dateStr = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+    // local day letter (M T W T F S S)
+    const letters = ["S","M","T","W","T","F","S"];
+    let sec = 0;
+    for(const session of getSessions(state)){
+      if(session.date !== dateStr) continue;
+      for(const c of (session.completed||[])) sec += (c.sec || 0);
+    }
+    out.push({ date: dateStr, letter: letters[d.getDay()], minutes: sec / 60, isToday: dateStr === todayStr() });
+  }
+  return out;
+}
+
 // Build the routine's relevant muscle list — primary + secondary unions, kept in priority order.
 function routineMuscleSet(routine){
   const set = new Set();
@@ -839,29 +930,54 @@ function renderHome(){
   if(lift){
     const matched = recommendedKey && recommendedKey === routineKey;
     const recRoutine = recommendedKey ? getRoutine(recommendedKey) : null;
+    const canRegret = matched && state.routinePrevious;
     $banner.className = "lift-banner" + (matched ? " matched" : "");
     $banner.style.display = "flex";
+    let pairLine;
+    if(matched && canRegret) pairLine = ` · paired ✓`;
+    else if(matched)         pairLine = ` · paired ✓`;
+    else if(recRoutine)      pairLine = ` · pair with ${recRoutine.name}`;
+    else                     pairLine = "";
     $banner.innerHTML = `
       <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9 H21 M5 5 V19 M19 5 V19 M3 15 H21"/></svg></div>
       <div class="meta">
         <div class="l">From DUMBASS LIFT</div>
-        <div class="n">Today: <b>${lift.name}</b>${recRoutine && !matched ? ` · pair with ${recRoutine.name}` : matched ? ` · paired ✓` : ""}</div>
+        <div class="n">Today: <b>${lift.name}</b>${pairLine}</div>
       </div>
-      ${recRoutine && !matched ? `<button class="pick" onclick="setRoutine('${recommendedKey}')">PAIR</button>` : ""}
+      ${recRoutine && !matched ? `<button class="pick" onclick="pairRoutine('${recommendedKey}')">PAIR</button>` : ""}
+      ${canRegret ? `<button class="regret" onclick="regretPair()" title="Undo pair">UNDO</button>` : ""}
     `;
   } else {
     $banner.style.display = "none";
   }
+
+  // Day title block (mirrors lift app's per-day title)
+  document.getElementById("day-eyebrow").textContent = lift ? "Today's stretch · paired" : "Today's stretch";
+  document.getElementById("day-title").innerHTML = routine.titleMain + ' <span class="accent">' + routine.titleAccent + '</span>';
+  document.getElementById("day-sub").textContent = routine.muscles;
+
+  // Week strip — 7 cells, oldest → today.
+  const week = lastSevenDays(state);
+  const maxMin = Math.max(5, ...week.map(d => d.minutes));
+  document.getElementById("week-total-c").textContent = fmtMin(week.reduce((a,b)=>a+b.minutes,0)) + " min";
+  document.getElementById("week-strip").innerHTML = week.map(d => {
+    const pct = Math.round((d.minutes / maxMin) * 100);
+    const cls = "week-cell" + (d.minutes > 0 ? " done" : "") + (d.isToday ? " today" : "");
+    return `<div class="${cls}">
+      <div class="d">${d.letter}</div>
+      <div class="bar-wrap"><div class="bar" style="height:${Math.max(3, pct * 0.32)}px"></div></div>
+      <div class="m">${d.minutes > 0 ? fmtMin(d.minutes) : "·"}</div>
+    </div>`;
+  }).join("");
 
   // Chip row
   document.getElementById("r-chips").innerHTML = ROUTINES.map(r =>
     `<button class="r-chip${r.key===routineKey?' active':''}" onclick="setRoutine('${r.key}')">${r.name}</button>`
   ).join("");
 
-  // Tag header (name + duration + muscle subtitle)
+  // Routine section subtitle (sits in the "Routine" section-head)
   const durSec = routine.indices.length * holdSec;
-  document.getElementById("routine-tag-name").textContent = routine.name;
-  document.getElementById("routine-tag-sub").textContent = fmtMMSS(durSec) + " · " + routine.muscles;
+  document.getElementById("routine-tag-sub").textContent = routine.name + " · " + fmtMMSS(durSec);
 
   // BEGIN subtitle
   document.getElementById("begin-sub").innerHTML =
