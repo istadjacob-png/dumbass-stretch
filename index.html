@@ -124,14 +124,12 @@ button{cursor:pointer;font-family:inherit}
 .info-name{font-family:'Inter',sans-serif;font-weight:900;font-size:38px;letter-spacing:-.035em;line-height:.95;color:#000;text-wrap:balance;margin:8px 0 4px}
 .info-area{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:18px}
 .info-figure{display:none}
-.info-watch{display:flex;align-items:center;gap:14px;width:100%;background:#000;color:#FFF;border:none;padding:18px 20px;cursor:pointer;text-decoration:none;margin-bottom:24px;transition:background .12s}
-.info-watch:active{background:var(--orange)}
-.info-watch .play{flex-shrink:0;width:44px;height:44px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center}
-.info-watch .play svg{width:18px;height:18px;fill:#FFF}
-.info-watch .copy{flex:1;text-align:left;min-width:0}
-.info-watch .copy .l1{font-family:'Inter',sans-serif;font-weight:900;font-size:17px;letter-spacing:-.02em;line-height:1.1;color:#FFF}
-.info-watch .copy .l2{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-top:3px}
-.info-watch .arr{flex-shrink:0;font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--orange);line-height:1}
+/* Embedded YouTube video — 16:9 responsive, plays inline in the modal */
+.info-video{position:relative;width:100%;padding-top:56.25%;background:#000;margin-bottom:14px;border:1px solid #000}
+.info-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
+.info-video-caption{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.info-video-caption .yt-link{color:var(--orange);text-decoration:none;font-weight:700}
+.info-video-caption .yt-link:active{text-decoration:underline}
 .info-section{margin-bottom:20px}
 .info-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.32em;color:var(--text-faint);font-weight:700;text-transform:uppercase;margin-bottom:6px}
 .info-text{font-family:'Inter',sans-serif;font-size:15px;line-height:1.55;color:var(--text);text-wrap:balance}
@@ -442,14 +440,11 @@ button{cursor:pointer;font-family:inherit}
   </div>
   <div class="info-name" id="info-name">—</div>
   <div class="info-area" id="info-area">—</div>
-  <a class="info-watch" id="info-watch" href="#" target="_blank" rel="noopener">
-    <span class="play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></span>
-    <span class="copy">
-      <span class="l1">Watch a demo</span>
-      <span class="l2">Real person on YouTube</span>
-    </span>
-    <span class="arr">→</span>
-  </a>
+  <div class="info-video" id="info-video"></div>
+  <div class="info-video-caption">
+    <span>▶ Video demo</span>
+    <a class="yt-link" id="info-video-link" href="#" target="_blank" rel="noopener">Open on YouTube ↗</a>
+  </div>
   <div class="info-section">
     <div class="info-label">What it does</div>
     <p class="info-text" id="info-what">—</p>
@@ -479,6 +474,48 @@ button{cursor:pointer;font-family:inherit}
 </div>
 
 <script>
+// ============================================================
+// TEMPORARY DIAGNOSTIC — remove after black-screen bug fixed
+// ============================================================
+(function(){
+  const trace = [];
+  function show(msg){
+    let el = document.getElementById('__diag');
+    if(!el){
+      el = document.createElement('div');
+      el.id = '__diag';
+      el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#FF3300;color:#fff;font-family:monospace;font-size:11px;line-height:1.45;padding:14px 14px 18px;white-space:pre-wrap;word-break:break-word;max-height:80vh;overflow:auto;border-bottom:4px solid #000;-webkit-tap-highlight-color:transparent';
+      el.onclick = () => el.remove();
+      (document.body || document.documentElement).appendChild(el);
+    }
+    el.textContent = msg + '\n\n(tap banner to dismiss)';
+  }
+  window.addEventListener('error', e => {
+    show('JS ERROR\n' + (e.message||'') + '\n@ ' + ((e.filename||'').split('/').pop()) + ':' + e.lineno + ':' + e.colno + '\n\nTRACE:\n' + trace.join('\n') + (e.error && e.error.stack ? '\n\nSTACK:\n' + e.error.stack.slice(0,500) : ''));
+  });
+  window.addEventListener('unhandledrejection', e => {
+    show('PROMISE REJECT\n' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)) + '\n\nTRACE:\n' + trace.join('\n'));
+  });
+  window.__dbg = (m) => { trace.push(m); if(trace.length > 40) trace.shift(); };
+  window.__diagnose = (label) => {
+    const h = document.getElementById('home');
+    const r = document.getElementById('routine');
+    const d = document.getElementById('done');
+    const bs = (id)=>{const e=document.getElementById(id);return e?getComputedStyle(e):{display:'?',backgroundColor:'?'};};
+    const sh = bs('home'), sr = bs('routine'), sd = bs('done');
+    const body = getComputedStyle(document.body);
+    show('DIAG: ' + label + '\n'
+      + 'home: display=' + sh.display + ' inline-style="' + h.style.display + '" children=' + (h?h.children.length:'?') + ' height=' + (h?h.offsetHeight:'?') + '\n'
+      + 'routine: display=' + sr.display + ' active=' + r.classList.contains('active') + '\n'
+      + 'done: display=' + sd.display + ' active=' + d.classList.contains('active') + '\n'
+      + 'body bg: ' + body.backgroundColor + '\n'
+      + 'html bg: ' + getComputedStyle(document.documentElement).backgroundColor + '\n'
+      + 'window: ' + window.innerWidth + 'x' + window.innerHeight + ' scrollY=' + window.scrollY + '\n'
+      + 'standalone: ' + (window.navigator.standalone === true) + '\n\n'
+      + 'TRACE:\n' + trace.join('\n'));
+  };
+})();
+
 // ============================================================
 // DUMBASS STRETCH — daily 5-minute mobility routine
 // ============================================================
@@ -644,6 +681,7 @@ function poseLabel(tx,ty,ax,ay,text){
 
 const STRETCH_INFO = {
   "Standing Forward Fold": {
+    videoId: "g7Uhp5tphAs",
     svg: poseSvg(
       `<line x1="105" y1="170" x2="105" y2="95" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
        <line x1="135" y1="170" x2="135" y2="95" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
@@ -661,6 +699,7 @@ const STRETCH_INFO = {
     how:"Stand feet hip-width. Soft bend in the knees — never lock them. Hinge from the hips, let the upper body hang heavy. Head drops fully. Don't force the hands to the floor — gravity does the work. For <b>extra ROM</b>, bend the knees more on the way down, then slowly try to straighten them while staying folded."
   },
   "World's Greatest Stretch": {
+    videoId: "-CiWQ2IvY34",
     svg: poseSvg(
       `<line x1="155" y1="170" x2="120" y2="115" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
        <line x1="120" y1="115" x2="80" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
@@ -678,6 +717,7 @@ const STRETCH_INFO = {
     how:"Step into a deep lunge. Plant the same-side hand on the floor inside the front foot. Rotate and reach the other arm to the ceiling — chest open, eyes follow the hand. Keep the back leg long and the back hip driving forward. For <b>extra hip flexor</b>, drop the back knee and posterior-tilt the pelvis."
   },
   "Couch Stretch": {
+    videoId: "bCRfS2beNOc",
     svg: poseSvg(
       `<line x1="55" y1="170" x2="55" y2="115" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
        <line x1="55" y1="115" x2="115" y2="115" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
@@ -696,6 +736,7 @@ const STRETCH_INFO = {
     how:"Half-kneel with the back foot up against a wall (toes pointing up, shin against the wall). Front foot planted firmly. <b>Squeeze the back-leg glute hard</b> — that's what makes it work. Tuck the tailbone under and stand the torso tall. Never arch the lower back to fake range."
   },
   "90 / 90 Hip Switch": {
+    videoId: "VYvMMw8z3rE",
     svg: poseSvg(
       `<line x1="70" y1="155" x2="135" y2="155" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
        <line x1="135" y1="155" x2="115" y2="118" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
@@ -715,6 +756,7 @@ const STRETCH_INFO = {
     how:"Sit on the floor with one leg in front bent at 90° (shin parallel to your torso) and the other leg out to the side also bent at 90°. Sit tall — don't slouch. Slowly switch which leg is in front. Press the back knee gently toward the floor. For <b>extra ROM</b>, fold forward over the front shin."
   },
   "Doorway Pec Stretch": {
+    videoId: "M850sCj9LHQ",
     svg: poseSvg(
       `<line x1="120" y1="170" x2="120" y2="125" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
        <line x1="145" y1="170" x2="138" y2="125" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
@@ -734,6 +776,7 @@ const STRETCH_INFO = {
     how:"Stand in a doorway. Forearm on the frame, elbow at shoulder height (or higher for upper chest). Step one foot through the doorway and lean your chest forward. <b>Ribs DOWN</b> — never let them flare. Stretch is across the chest, not in the shoulder joint."
   },
   "Thread the Needle": {
+    videoId: "oAQ_qycUj5o",
     svg: poseSvg(
       `<line x1="170" y1="170" x2="180" y2="120" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
        <line x1="210" y1="170" x2="205" y2="120" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
@@ -750,6 +793,7 @@ const STRETCH_INFO = {
     how:"Start on all fours. Take one arm and thread it under the body, palm up, reaching as far as you can to the opposite side. Let that same-side shoulder and ear sink toward the floor. Keep the other hand pressing into the ground. Exhale long to sink deeper."
   },
   "Pigeon Pose": {
+    videoId: "M1gEGLtF1p0",
     svg: poseSvg(
       `<line x1="220" y1="160" x2="125" y2="145" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
        <line x1="40" y1="155" x2="120" y2="145" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
@@ -767,6 +811,7 @@ const STRETCH_INFO = {
     how:"Bring one shin across in front (front knee bent — the more parallel-to-front the deeper the stretch). Stretch the other leg straight back. <b>Square the hips</b> toward the floor first, then sink. Stay upright or fold over the front shin — only as far as feels strong, never painful."
   },
   "Lying Spinal Twist": {
+    videoId: "KFXvjZnad1g",
     svg: poseSvg(
       `<rect x="102" y="50" width="36" height="68" fill="#FF6B00" rx="10" filter="url(#poseGlow)"/>
        <rect x="102" y="50" width="36" height="68" fill="#FF6B00" rx="10"/>
@@ -783,6 +828,7 @@ const STRETCH_INFO = {
     how:"Lie on your back. Bend both knees, then let them drop together to one side toward the floor. Reach the opposite arm wide, palm up. Look toward the outstretched hand. <b>Keep both shoulder blades on the floor</b> — don't let the opposite shoulder lift to chase range."
   },
   "Child's Pose with Reach": {
+    videoId: "BBZOrpOymEc",
     svg: poseSvg(
       // Side view, facing LEFT. Butt rests on heels (right side), torso folds
       // forward and arms extend along the floor toward the left.
@@ -806,6 +852,7 @@ const STRETCH_INFO = {
     how:"Kneel down, knees wide, big toes touching. Sit the hips back onto the heels and walk your hands as far forward along the floor as they'll go. Forehead rests down. Reach the fingertips away from the hips — open the armpits."
   },
   "Frog Pose": {
+    videoId: "tAR3DWA5NFo",
     svg: poseSvg(
       `<line x1="50" y1="170" x2="100" y2="142" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
        <line x1="100" y1="142" x2="118" y2="112" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
@@ -828,6 +875,7 @@ const STRETCH_INFO = {
     how:"Hands and knees. Walk the knees out as wide as they'll go comfortably — toes pointed out, shins parallel to each other. Forearms drop to the floor. Slowly sit the hips back toward the heels. Stay there. <b>Move only a millimeter at a time</b> — adductors don't like fast loading."
   },
   "Wall Calf Stretch": {
+    videoId: "V1BIsor93LQ",
     svg: poseSvg(
       `<line x1="55" y1="148" x2="55" y2="170" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
        <line x1="55" y1="170" x2="120" y2="100" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
@@ -846,6 +894,7 @@ const STRETCH_INFO = {
     how:"Stand facing a wall. Place the ball of one foot on the wall, heel on the floor. Drive your hips forward toward the wall — keep the back leg straight. Hands support on the wall. For the deeper soleus, bend the front knee slightly while keeping the heel down."
   },
   "Half Split": {
+    videoId: "1wXNELxZI4I",
     svg: poseSvg(
       `<line x1="40" y1="158" x2="120" y2="140" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
        <line x1="40" y1="158" x2="120" y2="140" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
@@ -864,6 +913,7 @@ const STRETCH_INFO = {
     how:"From a kneeling lunge, slide the front foot forward so the front leg is straight. Back knee stays on the floor (cushion it if needed). Pull the front foot's toes up. Hinge the hips back over the back heel — keep the spine long, don't round to chase your toes."
   },
   "Standing Quad Pull": {
+    videoId: "kzAsm4WQqvQ",
     svg: poseSvg(
       `<line x1="115" y1="170" x2="118" y2="92" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
        <line x1="118" y1="92" x2="155" y2="135" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
@@ -1557,8 +1607,10 @@ function cleanupRoutine(){
 }
 
 function finishRoutine(){
+  __dbg('finishRoutine:0 enter');
   cleanupRoutine();
   document.getElementById("routine").classList.remove("active");
+  __dbg('finishRoutine:1 routine-hidden');
 
   // Log today's session with per-stretch credit.
   const state = loadState();
@@ -1584,14 +1636,22 @@ function finishRoutine(){
   document.getElementById("done-quote").innerHTML = `"${q[0]}"<br><span style="font-style:normal;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-faint);font-weight:700">— ${q[1]}</span>`;
 
   document.getElementById("done").classList.add("active");
+  __dbg('finishRoutine:2 done-shown');
   try{ if(navigator.vibrate) navigator.vibrate([60,80,120]); }catch(e){}
 }
 
 function backHome(){
+  __dbg('backHome:0 enter');
   document.getElementById("done").classList.remove("active");
+  __dbg('backHome:1 done-hidden');
   document.getElementById("home").style.display = "";
+  __dbg('backHome:2 home-shown');
   renderHome();
+  __dbg('backHome:3 rendered');
   window.scrollTo(0,0);
+  __dbg('backHome:4 scrolled');
+  // Snapshot DOM state ~200ms after BACK HOME so we can see if the page actually went black
+  setTimeout(() => __diagnose('after-backHome'), 200);
 }
 
 // Pause when the tab goes hidden so the timer doesn't run "in your pocket"
