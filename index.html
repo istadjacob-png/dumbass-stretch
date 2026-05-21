@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#FF6B00">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="color-scheme" content="light">
 <meta name="format-detection" content="telephone=no">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,7 +12,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>DUMBASS STRETCH — 5 minutes. Every day.</title>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Crect%20width%3D%2724%27%20height%3D%2724%27%20fill%3D%27%23FF6B00%27%2F%3E%3Cpath%20d%3D%27M5%206%20L19%206%20L12%2019%20Z%27%20fill%3D%27%23FFFFFF%27%2F%3E%3C%2Fsvg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Crect%20width%3D%2724%27%20height%3D%2724%27%20fill%3D%27%23000%27%2F%3E%3Cpolygon%20points%3D%274.5%2C6.5%2019.5%2C6.5%2012%2C19.5%27%20fill%3D%27%23FF3300%27%2F%3E%3C%2Fsvg%3E">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-title" content="DUMBASS STRETCH">
@@ -23,535 +23,242 @@
 <style>
 :root{
   --bg:#FFFFFF; --bg-deep:#F5F5F5;
-  --orange:#FF6B00; --orange-bright:#FF8533; --orange-deep:#E55A00; --orange-glow:rgba(255,107,0,.18);
-  --steel:#F4F4F4; --steel-mid:#E8E8E8; --steel-light:#DDD;
-  --border:#D8D8D8;
-  --text:#0a0a0a; --text-mid:#555; --text-dim:#888; --text-faint:#BBB;
-  --green:#0a8a3d; --red:#C03030;
+  --steel-dark:#FAFAFA; --steel:#F4F4F4; --steel-mid:#E8E8E8; --steel-light:#C8C8C8;
+  --border:#000000; --border-soft:#D0D0D0;
+  --red:#FF3300; --red-glow:rgba(255,51,0,.22); --red-soft:rgba(255,51,0,.05);
+  --text:#000000; --text-mid:#3A3A3A; --text-dim:#7A7A7A; --text-faint:#B0B0B0;
+  --green:#5cd07a; --amber:#e8b94a;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
 html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overscroll-behavior-y:none;min-height:100dvh}
 body{user-select:none}
-button{cursor:pointer;font-family:inherit}
+button{cursor:pointer;font-family:inherit;font-size:inherit}
+input,textarea{user-select:text}
 
-/* HOME */
-.app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom)}
-.header{padding:18px 0 6px;display:flex;justify-content:space-between;align-items:center}
-.logo{display:inline-flex;align-items:center;font-family:'Inter',sans-serif;font-weight:900;font-size:20px;letter-spacing:-.02em;color:#000}
-.logo-mark{width:26px;height:26px;display:inline-block;margin-right:8px;flex-shrink:0}
-.logo .accent{color:var(--orange)}
-.logo .ver{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-faint);letter-spacing:.3em;font-weight:400;margin-left:8px}
-.streak-chip{display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.18em;font-weight:700;background:var(--steel);padding:8px 12px;border:1px solid var(--border)}
-.streak-chip .num{color:var(--orange);font-size:14px}
+/* Screen system — ONE active at a time. Body and inline styles never touch display. */
+.screen{display:none;min-height:100dvh;max-width:500px;margin:0 auto;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);background:linear-gradient(180deg,var(--bg) 0%,var(--bg-deep) 100%);animation:fadeUp .22s ease-out}
+.screen.active{display:flex;flex-direction:column}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fillBar{from{width:0}}
+
+/* HEADER */
+.header{padding:18px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.04em;color:var(--red);text-shadow:0 0 14px var(--red-glow);line-height:1;display:flex;align-items:baseline;gap:6px}
+.logo .ver{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.25em;color:var(--text-faint);font-weight:600;text-transform:uppercase;text-shadow:none}
+.streak-chip{display:inline-flex;align-items:center;gap:6px;font-family:'Oswald',sans-serif;font-size:10px;color:var(--text);letter-spacing:.28em;font-weight:700;background:#FFF;padding:8px 12px;border:1px solid var(--border);text-transform:uppercase}
+.streak-chip .num{color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.02em;line-height:1}
 .streak-chip.zero .num{color:var(--text-faint)}
 
-.hero{flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px 0 40px}
-.eyebrow{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.35em;color:var(--text-faint);text-transform:uppercase;font-weight:600;margin-bottom:12px}
-.title{font-family:'Inter',sans-serif;font-weight:900;letter-spacing:-.045em;font-size:72px;line-height:.9;color:#000;text-wrap:balance;margin-bottom:18px}
-.title .accent{color:var(--orange)}
-.lede{font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;color:var(--text-mid);max-width:340px;margin-bottom:6px}
-.lede b{color:#000;font-weight:700}
-.routine-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--text-faint);text-transform:uppercase;margin-top:24px;margin-bottom:10px;font-weight:700;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.routine-tag .sub{color:var(--text-dim);letter-spacing:.22em;font-size:9px}
+/* HOME */
+.eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--red);text-transform:uppercase;font-weight:700;margin:18px 0 6px}
+.title{font-family:'Bebas Neue',sans-serif;font-size:54px;line-height:.95;letter-spacing:-.005em;color:var(--text);margin-bottom:6px;text-wrap:balance}
+.title .accent{color:var(--red)}
+.subtitle{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase;font-weight:600;margin-bottom:18px}
+.lift-badge{display:inline-flex;align-items:center;gap:6px;background:var(--text);color:#FFF;font-family:'Oswald',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:4px 8px;margin-left:6px;vertical-align:middle}
+.lift-badge .dot{width:6px;height:6px;background:var(--red);border-radius:50%}
 
-/* ROUTINE CHIPS */
-.r-chips{display:flex;gap:6px;margin-top:18px;margin-bottom:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.btn-primary{width:100%;background:linear-gradient(180deg,#000,#1a1a1a);color:#FFF;border:1px solid var(--red);padding:18px 0;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;box-shadow:0 4px 22px var(--red-glow);transition:transform .12s,box-shadow .2s;margin-bottom:20px}
+.btn-primary:active{transform:scale(.985);box-shadow:0 2px 12px var(--red-glow)}
+.btn-secondary{width:100%;background:#FFF;color:var(--text);border:1px solid var(--border);padding:14px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700}
+.btn-secondary:active{background:var(--steel)}
+.btn-ghost{background:none;border:none;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:600;padding:8px}
+
+/* Routine chips */
+.r-chips{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-20px;margin-right:-20px;padding:0 20px}
 .r-chips::-webkit-scrollbar{display:none}
-.r-chip{flex:0 0 auto;background:#FFF;color:#000;border:1px solid #000;padding:8px 12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .12s,color .12s}
+.r-chip{flex:0 0 auto;background:#FFF;color:var(--text);border:1px solid var(--border);padding:8px 12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;transition:background .12s,color .12s}
 .r-chip:active{transform:scale(.96)}
-.r-chip.active{background:#000;color:#FFF}
-.routine-list{display:flex;flex-direction:column;gap:0;margin-bottom:32px;border-top:1px solid var(--border)}
-.routine-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}
+.r-chip.active{background:var(--text);color:#FFF}
+.r-chip.recommend::before{content:"";display:inline-block;width:6px;height:6px;background:var(--red);border-radius:50%;margin-right:6px;vertical-align:middle}
+
+/* Section heads */
+.section-head{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.section-head .t{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--text);text-transform:uppercase;font-weight:700}
+.section-head .c{font-family:'Oswald',sans-serif;font-size:10px;color:var(--red);letter-spacing:.18em;font-weight:700}
+
+/* Routine list */
+.routine-list{display:flex;flex-direction:column;margin-bottom:8px}
+.routine-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-soft);font-size:14px}
 .routine-item .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);width:22px;font-weight:700}
 .routine-item .nm{flex:1;color:var(--text);font-weight:500}
-.routine-item .t{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.1em}
-.info-btn{flex-shrink:0;width:24px;height:24px;border:1px solid var(--border);background:#FFF;color:var(--text-mid);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;font-style:italic;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;transition:background .12s,color .12s,border-color .12s}
-.info-btn:active{background:var(--orange);color:#FFF;border-color:var(--orange)}
+.routine-item .side{color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;margin-left:4px}
+.routine-item .t{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.08em}
 
-/* ADD STRETCH BUTTON + STRETCH PICKER + ALL-ROUTINES PANEL */
-.add-stretch{width:100%;background:#FFF;color:#000;border:1px dashed #000;padding:14px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;cursor:pointer;margin-top:10px;transition:background .12s,color .12s}
-.add-stretch:active{background:#000;color:#FFF}
-.routine-item.added{background:rgba(255,107,0,.05)}
-.routine-item .rm-btn{flex-shrink:0;width:24px;height:24px;border:1px solid var(--border);background:#FFF;color:var(--text-mid);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;line-height:1;margin-right:4px}
-.routine-item .rm-btn:active{background:var(--red);color:#FFF;border-color:var(--red)}
-.routine-item .added-tag{display:inline-block;background:var(--orange);color:#FFF;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:1px 4px;margin-left:6px;letter-spacing:.04em}
-.routine-tag-line{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.06em;margin-bottom:14px}
-.browse-link{background:none;border:none;color:var(--orange);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;cursor:pointer;padding:0}
-.browse-link:active{opacity:.6}
+/* Volume cards */
+.vol-summary{display:flex;font-family:'Oswald',sans-serif;font-size:10px;color:var(--text-dim);letter-spacing:.18em;text-transform:uppercase;font-weight:600;margin-bottom:10px;gap:14px}
+.vol-summary b{color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.02em;font-weight:400;margin-right:4px}
+.vol-card{background:#FFF;border:1px solid var(--border);border-left:3px solid var(--steel-light);padding:10px 12px;margin-bottom:6px}
+.vol-card.under{border-left-color:var(--red)}
+.vol-card.mev{border-left-color:var(--amber)}
+.vol-card.mav{border-left-color:var(--green)}
+.vol-card.over-mav{border-left-color:var(--amber)}
+.vol-card.over{border-left-color:var(--red)}
+.vol-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:6px}
+.vol-head .name{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.02em;color:var(--text);line-height:1}
+.vol-head .sets{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}
+.vol-head .sets .unit{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-left:3px}
+.vol-bar{position:relative;height:7px;background:var(--steel);overflow:hidden;margin-bottom:4px}
+.vol-bar .fill{position:absolute;top:0;left:0;height:100%;background:var(--steel-light);animation:fillBar .55s ease-out}
+.vol-card.under .vol-bar .fill{background:var(--red)}
+.vol-card.mev .vol-bar .fill{background:var(--amber)}
+.vol-card.mav .vol-bar .fill{background:var(--green)}
+.vol-card.over-mav .vol-bar .fill{background:var(--amber)}
+.vol-card.over .vol-bar .fill{background:var(--red)}
+.vol-bar .tick{position:absolute;top:-2px;width:1px;height:11px;background:var(--text-faint);opacity:.5}
+.vol-foot{display:flex;justify-content:space-between;align-items:center;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase;font-weight:600}
+.vol-foot .status{font-weight:700}
+.vol-foot .status.under{color:var(--red)}
+.vol-foot .status.mev{color:var(--amber)}
+.vol-foot .status.mav{color:var(--green)}
+.vol-foot .status.over-mav{color:var(--amber)}
+.vol-foot .status.over{color:var(--red)}
+.vol-legend{margin-top:10px;background:var(--steel);border:1px solid var(--border-soft);padding:10px 12px;font-size:11px;color:var(--text-mid);line-height:1.55}
+.vol-legend p{margin:0}
+.vol-legend b{color:var(--text);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
 
-.picker,.all-routines{position:fixed;inset:0;background:#FFF;display:none;flex-direction:column;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);z-index:103;overflow-y:auto;animation:fadeUp .25s ease-out}
-.picker.active,.all-routines.active{display:flex}
-.picker-top{display:flex;justify-content:space-between;align-items:center;padding:18px 0 4px}
-.picker-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--text-faint);font-weight:700;text-transform:uppercase}
-.picker-close{background:none;border:none;color:var(--text);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:8px 0;cursor:pointer}
-.picker-title{font-family:'Inter',sans-serif;font-weight:900;font-size:48px;letter-spacing:-.04em;line-height:.95;color:#000;margin:8px 0 4px}
-.picker-title .accent{color:var(--orange)}
-.picker-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.06em;margin-bottom:20px}
-.picker-list{display:flex;flex-direction:column;border-top:1px solid #000;margin-bottom:24px}
-.picker-row{display:flex;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--border);cursor:pointer}
-.picker-row:active{background:var(--steel)}
-.picker-row .nm{flex:1;min-width:0;font-family:'Inter',sans-serif;font-size:14px;color:#000;font-weight:600}
-.picker-row .nm .side-tag{color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em;margin-left:6px}
-.picker-row .area{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.04em;margin-top:2px}
-.picker-row .add{flex-shrink:0;background:#000;color:#FFF;border:none;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:6px 10px;cursor:pointer}
-.picker-row.included .add{background:#FFF;color:var(--text-faint);border:1px solid var(--border);pointer-events:none}
-.picker-row.included .add::before{content:"✓ "}
+.footer{margin-top:auto;padding:28px 0 18px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.28em;color:var(--text-faint);text-align:center;font-weight:700}
 
-.all-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
-.day-card{background:#FFF;border:1px solid #000;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:14px}
-.day-card:active{background:var(--steel)}
-.day-card.active{background:#000;color:#FFF}
-.day-card .num{flex-shrink:0;width:36px;font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.02em;color:#000;line-height:1}
-.day-card.active .num{color:var(--orange)}
-.day-card .meta{flex:1;min-width:0}
-.day-card .d-name{font-family:'Inter',sans-serif;font-weight:900;font-size:18px;letter-spacing:-.02em;line-height:1;margin-bottom:4px;color:#000}
-.day-card.active .d-name{color:#FFF}
-.day-card .d-muscles{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-mid);letter-spacing:.06em;line-height:1.4}
-.day-card.active .d-muscles{color:rgba(255,255,255,.75)}
-.day-card .d-count{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-top:4px}
-.day-card.active .d-count{color:rgba(255,255,255,.55)}
-.day-card .play-btn{flex-shrink:0;width:36px;height:36px;background:#FFF;border:1px solid #000;display:flex;align-items:center;justify-content:center}
-.day-card .play-btn svg{width:12px;height:12px;fill:#000}
-.day-card.active .play-btn{background:var(--orange);border-color:var(--orange)}
-.day-card.active .play-btn svg{fill:#FFF}
+/* ROUTINE (timer) screen */
+#routine{padding:0}
+.r-wrap{flex:1;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);max-width:500px;margin:0 auto;width:100%}
+.r-top{display:flex;justify-content:space-between;align-items:center;padding:18px 0 10px}
+.r-counter{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:.22em;font-weight:700}
+.r-quit{background:none;border:none;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;padding:4px 0}
+.r-bar{display:flex;gap:3px;height:5px;margin-bottom:18px}
+.r-bar .seg{flex:1;background:var(--steel);position:relative;overflow:hidden}
+.r-bar .seg .fill{position:absolute;left:0;top:0;height:100%;background:var(--red);width:0%;transition:width .9s linear}
+.r-bar .seg.done .fill{background:var(--text);width:100%}
+.r-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--red);text-transform:uppercase;font-weight:700;margin-bottom:6px}
+.r-name{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:.95;letter-spacing:-.005em;color:var(--text);margin-bottom:4px;text-wrap:balance}
+.r-side{display:inline-block;font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.18em;background:var(--text);color:#FFF;padding:3px 8px;vertical-align:middle;margin-left:8px;font-weight:700}
+.r-area{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;font-weight:600;margin-bottom:14px}
+.r-figure{background:var(--steel);border:1px solid var(--border-soft);padding:14px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;max-height:280px}
+.r-figure svg{width:100%;max-width:340px;height:auto;display:block}
+.r-cue{font-size:14px;line-height:1.5;color:var(--text-mid);margin-bottom:18px;text-wrap:pretty;min-height:42px}
+.r-timer-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 14px}
+.r-timer{font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:1;letter-spacing:-.02em;color:var(--text);font-variant-numeric:tabular-nums}
+.r-timer.warn{color:var(--red);animation:pulse 1s ease-in-out infinite}
+.r-timer-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.4em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-top:-6px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.r-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:18px}
+.r-btn{padding:16px 0;background:#FFF;color:var(--text);border:1px solid var(--border);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700}
+.r-btn:active{background:var(--steel)}
+.r-btn.pause{background:var(--text);color:#FFF;border-color:var(--text)}
+.r-btn.pause:active{background:#1a1a1a}
 
-/* INFO MODAL */
-.info{position:fixed;inset:0;background:#FFF;display:none;flex-direction:column;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);z-index:102;overflow-y:auto;animation:fadeUp .25s ease-out}
-.info.active{display:flex}
-.info-top{display:flex;justify-content:space-between;align-items:center;padding:18px 0 4px}
-.info-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--text-faint);font-weight:700;text-transform:uppercase}
-.info-close{background:none;border:none;color:var(--text);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:8px 0}
-.info-name{font-family:'Inter',sans-serif;font-weight:900;font-size:38px;letter-spacing:-.035em;line-height:.95;color:#000;text-wrap:balance;margin:8px 0 4px}
-.info-area{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:18px}
-.info-figure{display:none}
-/* Embedded YouTube video — 16:9 responsive, plays inline in the modal */
-.info-video{position:relative;width:100%;padding-top:56.25%;background:#000;margin-bottom:14px;border:1px solid #000}
-.info-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none}
-.info-video-caption{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:22px;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.info-video-caption .yt-link{color:var(--orange);text-decoration:none;font-weight:700}
-.info-video-caption .yt-link:active{text-decoration:underline}
-.info-section{margin-bottom:20px}
-.info-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.32em;color:var(--text-faint);font-weight:700;text-transform:uppercase;margin-bottom:6px}
-.info-text{font-family:'Inter',sans-serif;font-size:15px;line-height:1.55;color:var(--text);text-wrap:balance}
-.info-text b{color:var(--orange);font-weight:700}
-.info-back{margin:8px 0 12px;width:100%;background:#000;color:#FFF;border:none;padding:20px 0;font-family:'Inter',sans-serif;font-size:16px;font-weight:900;letter-spacing:-.01em;cursor:pointer}
-.info-back:active{background:var(--orange)}
-
-.begin{width:100%;background:#000;color:#FFF;border:none;padding:24px 0;font-family:'Inter',sans-serif;font-size:22px;letter-spacing:-.01em;font-weight:900;cursor:pointer;transition:transform .12s,background .15s;position:relative;overflow:hidden}
-.begin:active{transform:scale(.98);background:var(--orange)}
-.begin .arrow{display:inline-block;margin-left:10px;transition:transform .15s}
-.begin:active .arrow{transform:translateX(6px)}
-.begin-sub{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.28em;color:var(--text-faint);text-align:center;margin-top:10px;font-weight:700}
-.begin-sub .dot{color:var(--orange);margin:0 4px}
-
-.last-done{margin-top:28px;text-align:center;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;color:var(--text-faint);font-weight:600;text-transform:uppercase}
-
-/* ROUTINE FULLSCREEN */
-.routine{position:fixed;inset:0;background:#000;color:#FFF;display:none;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);z-index:100}
-.routine.active{display:flex}
-.r-bar{padding:18px 20px 0;display:flex;align-items:center;gap:6px}
-.r-bar .seg{flex:1;height:3px;background:rgba(255,255,255,.12);overflow:hidden}
-.r-bar .seg.done{background:#FFF}
-.r-bar .seg .fill{height:100%;background:var(--orange);width:0%;transition:width .25s linear}
-.r-top{display:flex;justify-content:space-between;align-items:center;padding:14px 20px 0}
-.r-quit{background:none;border:none;color:rgba(255,255,255,.5);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:8px 0}
-.r-counter{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.25em;font-weight:700}
-
-.r-body{flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px 24px;text-align:center}
-.r-eyebrow{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.4em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:18px}
-.r-name{font-family:'Inter',sans-serif;font-weight:900;font-size:42px;letter-spacing:-.035em;line-height:.95;text-wrap:balance;margin-bottom:14px}
-.r-cue{font-family:'Inter',sans-serif;font-size:15px;line-height:1.5;color:rgba(255,255,255,.65);max-width:320px;margin:0 auto 14px;text-wrap:balance}
-.r-figure{width:100%;max-width:300px;margin:0 auto 18px;background:#FFF;border:1px solid rgba(255,255,255,.15);padding:14px 18px;display:flex;align-items:center;justify-content:center}
-.r-figure svg{width:100%;height:auto;max-height:160px}
-.r-side{display:inline-block;margin-top:6px;padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.25em;color:var(--orange);border:1px solid var(--orange);font-weight:700}
-
-.r-timer{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:140px;line-height:1;color:#FFF;letter-spacing:-.06em;margin:auto 0;font-variant-numeric:tabular-nums}
-.r-timer.warn{color:var(--orange);animation:pulse .5s ease-in-out infinite alternate}
-@keyframes pulse{from{opacity:.7}to{opacity:1}}
-
-.r-controls{padding:20px 20px 28px;display:flex;gap:10px}
-.r-btn{flex:1;background:rgba(255,255,255,.08);color:#FFF;border:1px solid rgba(255,255,255,.18);padding:18px 0;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;cursor:pointer;transition:background .12s,transform .12s}
-.r-btn:active{transform:scale(.97);background:rgba(255,255,255,.16)}
-.r-btn.primary{background:var(--orange);border-color:var(--orange);color:#FFF}
-.r-btn.primary:active{background:var(--orange-deep);border-color:var(--orange-deep)}
-
-/* DONE */
-.done{position:fixed;inset:0;background:#FFF;display:none;flex-direction:column;padding:env(safe-area-inset-top) 24px env(safe-area-inset-bottom);z-index:101;animation:fadeUp .3s ease-out}
-.done.active{display:flex}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.done-body{flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center}
-.done-mark{width:96px;height:96px;margin:0 auto 24px;background:var(--orange);display:flex;align-items:center;justify-content:center}
-.done-mark svg{width:56px;height:56px;stroke:#FFF;stroke-width:3.5;fill:none;stroke-linecap:square}
-.done-eyebrow{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.4em;color:var(--text-faint);font-weight:600;text-transform:uppercase;margin-bottom:10px}
-.done-title{font-family:'Inter',sans-serif;font-weight:900;font-size:64px;letter-spacing:-.04em;line-height:.92;color:#000;margin-bottom:16px;text-wrap:balance}
-.done-title .accent{color:var(--orange)}
-.done-streak{margin-top:32px;padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.done-streak .label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;color:var(--text-faint);font-weight:600;text-transform:uppercase;margin-bottom:8px}
-.done-streak .num{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:60px;color:var(--orange);line-height:1;letter-spacing:-.04em}
-.done-streak .unit{font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.3em;color:var(--text-mid);font-weight:700;text-transform:uppercase;margin-left:8px}
-.done-quote{margin-top:18px;font-style:italic;font-size:13px;color:var(--text-mid);line-height:1.5;text-wrap:balance}
-.done-back{margin:24px 0 8px;width:100%;background:#000;color:#FFF;border:none;padding:20px 0;font-family:'Inter',sans-serif;font-size:16px;font-weight:900;letter-spacing:-.01em;cursor:pointer}
-.done-back:active{background:var(--orange)}
-
-/* PROG-ROW — mirror lift app's TODAY view top */
-.prog-row{display:flex;gap:8px;margin-top:14px;margin-bottom:6px}
-.program-btn{flex:1;min-width:0;background:#FFF;border:1px solid #000;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:14px;cursor:pointer;text-align:left;font-family:inherit}
-.program-btn:active{background:var(--steel)}
-.program-btn .program-info{flex:1;min-width:0}
-.program-btn .label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.3em;color:var(--orange);text-transform:uppercase;font-weight:700;margin-bottom:6px}
-.program-btn .current{font-family:'Inter',sans-serif;font-weight:900;font-size:18px;letter-spacing:-.02em;color:#000;line-height:1}
-.program-btn .current .num{color:var(--orange)}
-.program-btn .icon-box{flex-shrink:0;width:40px;height:40px;border:1.5px solid var(--orange);display:flex;align-items:center;justify-content:center}
-.program-btn .icon-box svg{width:18px;height:18px;stroke:var(--orange);stroke-width:1.8;fill:none}
-
-.weekly-btn{flex:0 0 86px;background:#FFF;border:1px solid #000;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-family:inherit}
-.weekly-btn:active{background:#000;color:#FFF}
-.weekly-btn .vol-label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.3em;color:var(--orange);text-transform:uppercase;font-weight:700}
-.weekly-btn .vol-big{font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.02em;line-height:1}
-.weekly-btn svg{width:18px;height:18px;stroke:var(--orange);stroke-width:2;fill:none;stroke-linecap:round;margin-top:2px}
-
-.switch-link{background:none;border:none;color:var(--orange);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;cursor:pointer;padding:8px 0 14px;width:100%;text-align:left}
-.switch-link:active{opacity:.6}
-
-/* BIG EYEBROW + BIG TITLE — mirrors "THURSDAY" / "CHEST & BACK" */
-.big-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.3em;color:var(--text-faint);text-transform:uppercase;margin-top:6px;margin-bottom:8px;font-weight:700}
-.title.big-title{font-family:'Inter',sans-serif;font-weight:900;letter-spacing:-.045em;font-size:62px;line-height:.92;color:#000;text-wrap:balance;margin-bottom:6px}
-.title.big-title .accent{color:var(--orange)}
-
-/* SECTION HEAD — matches lift app */
-.section-head{display:flex;justify-content:space-between;align-items:baseline;margin-top:24px;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #000}
-.section-head .t{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.22em;color:#000;text-transform:uppercase;font-weight:700}
-.section-head .c{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-mid);letter-spacing:.12em}
-
-/* WEEK STRIP — 7 mini cells, one per day */
-.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:6px}
-.week-cell{background:#FFF;border:1px solid #000;padding:8px 4px 6px;text-align:center;cursor:default;display:flex;flex-direction:column;align-items:center;gap:5px;min-height:74px;justify-content:space-between}
-.week-cell .d{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.18em;color:var(--text-mid);text-transform:uppercase;font-weight:700}
-.week-cell .bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;min-height:18px}
-.week-cell .bar{width:14px;background:var(--steel-mid);min-height:3px}
-.week-cell .m{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-faint);letter-spacing:.04em;font-weight:700}
-.week-cell.done{border-color:#000}
-.week-cell.done .d{color:#000}
-.week-cell.done .bar{background:var(--orange)}
-.week-cell.done .m{color:var(--orange)}
-.week-cell.today{background:#000}
-.week-cell.today .d{color:#FFF}
-.week-cell.today .bar{background:rgba(255,255,255,.25)}
-.week-cell.today .m{color:rgba(255,255,255,.85)}
-.week-cell.today.done .bar{background:var(--orange)}
-.week-cell.today.done .m{color:var(--orange)}
-
-
-/* LIFT-APP BANNER (only renders if dumbass_state present) */
-.lift-banner{background:#000;color:#FFF;padding:12px 14px;margin:18px 0 6px;display:flex;align-items:center;gap:12px;font-family:'Inter',sans-serif}
-.lift-banner .icon{flex-shrink:0;width:28px;height:28px;background:var(--orange);display:flex;align-items:center;justify-content:center}
-.lift-banner .icon svg{width:18px;height:18px;stroke:#FFF;stroke-width:2.5;fill:none}
-.lift-banner .meta{flex:1;min-width:0}
-.lift-banner .l{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--orange);font-weight:700;text-transform:uppercase;margin-bottom:3px}
-.lift-banner .n{font-family:'Inter',sans-serif;font-weight:900;font-size:14px;letter-spacing:-.01em;line-height:1.2;color:#FFF}
-.lift-banner .n b{color:var(--orange)}
-.lift-banner .pick{flex-shrink:0;background:var(--orange);border:none;color:#FFF;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:8px 12px;cursor:pointer}
-.lift-banner .pick:active{background:var(--orange-deep)}
-.lift-banner .regret{flex-shrink:0;background:transparent;border:1px solid var(--text-mid);color:var(--text-mid);font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:6px 10px;cursor:pointer}
-.lift-banner .regret:active{background:var(--text-mid);color:#FFF}
-.lift-banner.matched{background:var(--steel);color:#000}
-.lift-banner.matched .n{color:#000}
-.lift-banner.matched .l{color:var(--text-mid)}
-.lift-banner.matched .pick{display:none}
-
-/* STATS STRIP — TODAY / WEEK / STREAK */
-.stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:24px;margin-bottom:6px}
-.stats-strip .stat{background:#FFF;border:1px solid #000;padding:12px 8px;text-align:center}
-.stats-strip .stat .l{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.24em;color:var(--text-mid);text-transform:uppercase;font-weight:700;margin-bottom:6px;line-height:1.2}
-.stats-strip .stat .v{font-family:'Inter',sans-serif;font-weight:900;font-size:26px;letter-spacing:-.04em;line-height:1;color:#000}
-.stats-strip .stat .v.orange{color:var(--orange)}
-.stats-strip .stat .u{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-faint);letter-spacing:.18em;margin-left:3px;font-weight:700}
-
-/* INTEGRATED VOLUME BARS */
-.vol-section{margin-top:28px;border-top:1px solid var(--border);padding-top:18px}
-.vol-section-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:8px}
-.vol-section-head .t{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.32em;color:#000;text-transform:uppercase;font-weight:700}
-.vol-section-head .c{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.08em}
-
-.vol-card{background:#FFF;border:1px solid #000;padding:14px;margin-bottom:8px}
-.vol-card .head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
-.vol-card .nm{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:#000}
-.vol-card .min{font-family:'Inter',sans-serif;font-weight:900;font-size:22px;letter-spacing:-.03em;line-height:1;color:var(--orange);white-space:nowrap}
-.vol-card .min .unit{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-faint);letter-spacing:.18em;margin-left:4px;font-weight:700}
-.vol-bar{position:relative;height:14px;background:var(--steel);border:1px solid var(--border);overflow:visible}
-.vol-bar .fill{position:absolute;left:0;top:0;height:100%;background:var(--orange);transition:width .3s;z-index:2}
-.vol-bar .fill.projected{background:rgba(255,107,0,.35);z-index:1}
-.vol-card.under .fill{background:#9AA0A6}
-.vol-card.mev .fill{background:var(--orange-bright)}
-.vol-card.mav .fill{background:var(--orange)}
-.vol-card.over-mav .fill{background:var(--orange-deep)}
-.vol-card.over .fill{background:var(--red)}
-.vol-bar .tick{position:absolute;top:-3px;bottom:-3px;width:1.5px;background:#000}
-.vol-bar .tick.mrv{background:var(--red)}
-.vol-foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
-.vol-foot .range{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.06em}
-.vol-foot .status{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:3px 7px;border:1px solid var(--border)}
-.vol-foot .status.under,.vol-foot .status.mev{color:var(--text-mid);border-color:var(--text-mid)}
-.vol-foot .status.mav{color:var(--orange);border-color:var(--orange);background:rgba(255,107,0,.08)}
-.vol-foot .status.over-mav{color:var(--orange-deep);border-color:var(--orange-deep)}
-.vol-foot .status.over{color:var(--red);border-color:var(--red)}
-
-.vol-legend{margin-top:24px;padding:16px;background:var(--steel);border:1px solid var(--border)}
-.vol-legend .h{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;color:var(--text-mid);margin-bottom:10px}
-.vol-legend p{font-family:'Inter',sans-serif;font-size:13px;line-height:1.55;color:var(--text);margin-bottom:6px}
-.vol-legend p b{color:var(--orange);font-weight:700;letter-spacing:.02em}
-.vol-legend .note{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:8px;line-height:1.5;letter-spacing:.04em}
-
-.vol-empty{text-align:center;padding:60px 20px;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:600}
-
-@media (max-width:380px){
-  .title{font-size:60px}
-  .r-name{font-size:36px}
-  .r-timer{font-size:120px}
-  .done-title{font-size:54px}
-  .vol-title{font-size:40px}
-}
+/* DONE screen */
+.done-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+.done-eyebrow{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.4em;color:var(--red);text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.done-title{font-family:'Bebas Neue',sans-serif;font-size:90px;line-height:.9;letter-spacing:-.02em;color:var(--text);margin-bottom:18px}
+.done-streak{display:inline-flex;align-items:center;gap:10px;background:var(--text);color:#FFF;padding:14px 22px;margin-bottom:24px}
+.done-streak .l{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase}
+.done-streak .num{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;color:var(--red)}
+.done-quote{max-width:320px;font-size:13px;font-style:italic;line-height:1.5;color:var(--text-mid);margin-bottom:32px;text-wrap:pretty}
+.done-quote .author{display:block;margin-top:6px;font-style:normal;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-faint);font-weight:700}
+.done-back{width:100%;max-width:360px}
 </style>
 </head>
 <body>
 
 <!-- HOME -->
-<div class="app" id="home">
+<section id="home" class="screen active">
   <div class="header">
-    <div class="logo">
-      <svg class="logo-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" fill="#FF6B00"/><path d="M5 6 L19 6 L12 19 Z" fill="#FFFFFF"/></svg>
-      DUMBASS <span class="accent">STRETCH</span><span class="ver">v5.0</span>
-    </div>
-    <div class="streak-chip" id="streak-chip">
-      <span class="num" id="streak-num">0</span>
-      <span>DAY STREAK</span>
-    </div>
+    <div class="logo">DUMBASS <span class="accent" style="color:#000">STRETCH</span><span class="ver">V6.0</span></div>
+    <div id="streak-chip" class="streak-chip zero"><span class="num">0</span><span>DAY</span></div>
   </div>
 
-  <div class="hero">
+  <div class="eyebrow" id="home-eyebrow">TODAY</div>
+  <h1 class="title"><span id="home-title-main">REST</span> <span class="accent" id="home-title-accent">DAY</span></h1>
+  <div class="subtitle" id="home-subtitle">10 stretches · 5 min</div>
 
-    <!-- PROGRAM ROW (mirrors lift app: program card + weekly mini-button) -->
-    <div class="prog-row">
-      <button class="program-btn" onclick="openAllRoutines()">
-        <div class="program-info">
-          <div class="label">DUMBASS STRETCH</div>
-          <div class="current"><span class="num" id="prog-dow">TUE</span> · <span id="prog-name">REST DAY</span></div>
-        </div>
-        <div class="icon-box">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="4" x2="9" y2="20"/></svg>
-        </div>
-      </button>
-      <button class="weekly-btn" onclick="scrollToVolume()">
-        <div class="vol-label">WEEKLY</div>
-        <div class="vol-big">MIN</div>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="20" x2="6" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="18" y1="20" x2="18" y2="14"/></svg>
-      </button>
-    </div>
-    <button class="switch-link" onclick="openAllRoutines()">⇆ SWITCH ROUTINE</button>
+  <button class="btn-primary" onclick="startRoutine()">BEGIN ROUTINE</button>
 
-    <!-- Lift-day banner (if lift app data found) — sits under prog-row -->
-    <div class="lift-banner" id="lift-banner" style="display:none"></div>
+  <div class="r-chips" id="r-chips"></div>
 
-    <!-- Big day-of-week eyebrow + huge routine title (matches lift app's THURSDAY / CHEST & BACK) -->
-    <div class="big-eyebrow" id="day-of-week">TUESDAY</div>
-    <div class="title big-title">
-      <span id="big-title-main">REST</span> <span class="accent" id="big-title-accent">DAY</span>
-    </div>
+  <div class="section-head"><div class="t" id="routine-head-name">REST DAY</div><div class="c" id="routine-head-time">5 MIN</div></div>
+  <div class="routine-list" id="routine-list"></div>
 
-    <!-- TODAY'S STRETCHES section head -->
-    <div class="section-head">
-      <span class="t">Today's stretches</span>
-      <span class="c"><span id="today-count">0</span> / <span id="today-total">10</span></span>
-    </div>
-    <div class="r-chips" id="r-chips"></div>
-    <div class="routine-list" id="routine-list"></div>
-
-    <button class="begin" onclick="startRoutine()">BEGIN<span class="arrow">→</span></button>
-    <div class="begin-sub" id="begin-sub">10 STRETCHES <span class="dot">·</span> 5 MINUTES <span class="dot">·</span> NO EXCUSES</div>
-
-    <!-- WEEKLY VOLUME -->
-    <div class="section-head" id="vol-section-head" style="margin-top:32px">
-      <span class="t">Weekly volume</span>
-      <span class="c" id="vol-section-sub">For this routine</span>
-    </div>
-    <div id="vol-list"></div>
-    <div class="vol-legend">
-      <p><b>MEV</b> Below this = no ROM gains. <b>MAV</b> Productive band. <b>MRV</b> Past this = irritation, not gains.</p>
-    </div>
-
-    <!-- THIS WEEK 7-day strip (footer / calendar view) -->
-    <div class="section-head" style="margin-top:24px">
-      <span class="t">This week</span>
-      <span class="c" id="week-total-c">0 min</span>
-    </div>
-    <div class="week-strip" id="week-strip"></div>
-
-    <div class="last-done" id="last-done"></div>
+  <div class="section-head" id="vol-section-head"><div class="t">Weekly volume plan</div><div class="c">MEV · MAV · MRV</div></div>
+  <div class="vol-summary" id="vol-summary"></div>
+  <div id="vol-cards"></div>
+  <div class="vol-legend">
+    <p><b>MEV</b> minimum to make ROM gains · <b>MAV</b> productive zone · <b>MRV</b> ceiling, past it = irritation. Bars show what the week lands on if you do this routine daily.</p>
   </div>
-</div>
 
-<!-- STRETCH PICKER -->
-<div class="picker" id="picker">
-  <div class="picker-top">
-    <div class="picker-eyebrow">Add to routine</div>
-    <button class="picker-close" onclick="closeStretchPicker()">CLOSE ✕</button>
-  </div>
-  <div class="picker-title">PICK A <span class="accent">STRETCH</span></div>
-  <div class="picker-sub" id="picker-sub">Adds to today's routine</div>
-  <div class="picker-list" id="picker-list"></div>
-</div>
+  <div class="footer">DUMBASS STRETCH · 5 MIN · EVERY DAY</div>
+</section>
 
-<!-- ALL ROUTINES PANEL -->
-<div class="all-routines" id="all-routines">
-  <div class="picker-top">
-    <div class="picker-eyebrow">Browse</div>
-    <button class="picker-close" onclick="closeAllRoutines()">CLOSE ✕</button>
-  </div>
-  <div class="picker-title">ALL <span class="accent">DAYS</span></div>
-  <div class="picker-sub">Pair each lift day to its stretch routine.</div>
-  <div class="all-list" id="all-list"></div>
-</div>
+<!-- ROUTINE (timer) -->
+<section id="routine" class="screen">
+  <div class="r-wrap">
+    <div class="r-top">
+      <div class="r-counter" id="r-counter">1 / 10</div>
+      <button class="r-quit" onclick="quitRoutine()">QUIT</button>
+    </div>
+    <div class="r-bar" id="r-bar"></div>
 
-<!-- ROUTINE -->
-<div class="routine" id="routine">
-  <div class="r-bar" id="r-bar"></div>
-  <div class="r-top">
-    <button class="r-quit" onclick="quitRoutine()">‹ QUIT</button>
-    <div class="r-counter" id="r-counter">1 / 10</div>
-  </div>
-  <div class="r-body">
-    <div class="r-eyebrow" id="r-eyebrow">Stretch 1</div>
-    <div class="r-name" id="r-name">—</div>
-    <div class="r-cue" id="r-cue">—</div>
+    <div class="r-eyebrow" id="r-eyebrow">Stretch 1 of 10</div>
+    <div class="r-name" id="r-name">Standing Forward Fold</div>
+    <div class="r-area" id="r-area">Hamstrings · Low back</div>
+
     <div class="r-figure" id="r-figure"></div>
-    <div class="r-timer" id="r-timer">30</div>
-  </div>
-  <div class="r-controls">
-    <button class="r-btn" id="r-pause" onclick="togglePause()">PAUSE</button>
-    <button class="r-btn primary" onclick="skipStretch()">SKIP →</button>
-  </div>
-</div>
+    <div class="r-cue" id="r-cue">Cue text</div>
 
-<!-- INFO MODAL -->
-<div class="info" id="info">
-  <div class="info-top">
-    <div class="info-eyebrow">Stretch Detail</div>
-    <button class="info-close" onclick="closeInfo()">CLOSE ✕</button>
+    <div class="r-timer-wrap">
+      <div class="r-timer" id="r-timer">30</div>
+      <div class="r-timer-label">SECONDS</div>
+    </div>
+
+    <div class="r-controls">
+      <button class="r-btn pause" id="r-pause" onclick="togglePause()">PAUSE</button>
+      <button class="r-btn" onclick="skipStretch()">SKIP →</button>
+    </div>
   </div>
-  <div class="info-name" id="info-name">—</div>
-  <div class="info-area" id="info-area">—</div>
-  <div class="info-video" id="info-video"></div>
-  <div class="info-video-caption">
-    <span>▶ Video demo</span>
-    <a class="yt-link" id="info-video-link" href="#" target="_blank" rel="noopener">Open on YouTube ↗</a>
-  </div>
-  <div class="info-section">
-    <div class="info-label">What it does</div>
-    <p class="info-text" id="info-what">—</p>
-  </div>
-  <div class="info-section">
-    <div class="info-label">How to do it</div>
-    <p class="info-text" id="info-how">—</p>
-  </div>
-  <button class="info-back" onclick="closeInfo()">GOT IT</button>
-</div>
+</section>
 
 <!-- DONE -->
-<div class="done" id="done">
-  <div class="done-body">
-    <div class="done-mark">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="4,12 10,18 20,6"/></svg>
-    </div>
-    <div class="done-eyebrow">5 Minutes Spent Well</div>
-    <div class="done-title">DONE. <span class="accent">GO LIVE.</span></div>
-    <div class="done-streak">
-      <div class="label">Current Streak</div>
-      <div><span class="num" id="done-streak-num">1</span><span class="unit">DAYS</span></div>
-    </div>
-    <div class="done-quote" id="done-quote">—</div>
+<section id="done" class="screen">
+  <div class="done-wrap">
+    <div class="done-eyebrow">SESSION COMPLETE</div>
+    <div class="done-title">DONE.</div>
+    <div class="done-streak"><span class="l">STREAK</span><span class="num" id="done-streak-num">1</span><span class="l">DAY</span></div>
+    <div class="done-quote" id="done-quote"></div>
+    <button class="btn-primary done-back" onclick="backHome()">BACK HOME</button>
   </div>
-  <button class="done-back" onclick="backHome()">BACK HOME</button>
-</div>
+</section>
 
 <script>
 // ============================================================
-// TEMPORARY DIAGNOSTIC — remove after black-screen bug fixed
+// DUMBASS STRETCH — 5 min daily mobility
 // ============================================================
-(function(){
-  const trace = [];
-  function show(msg){
-    let el = document.getElementById('__diag');
-    if(!el){
-      el = document.createElement('div');
-      el.id = '__diag';
-      el.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;background:#FF3300;color:#fff;font-family:monospace;font-size:11px;line-height:1.45;padding:14px 14px 18px;white-space:pre-wrap;word-break:break-word;max-height:80vh;overflow:auto;border-bottom:4px solid #000;-webkit-tap-highlight-color:transparent';
-      el.onclick = () => el.remove();
-      (document.body || document.documentElement).appendChild(el);
-    }
-    el.textContent = msg + '\n\n(tap banner to dismiss)';
-  }
-  window.addEventListener('error', e => {
-    show('JS ERROR\n' + (e.message||'') + '\n@ ' + ((e.filename||'').split('/').pop()) + ':' + e.lineno + ':' + e.colno + '\n\nTRACE:\n' + trace.join('\n') + (e.error && e.error.stack ? '\n\nSTACK:\n' + e.error.stack.slice(0,500) : ''));
-  });
-  window.addEventListener('unhandledrejection', e => {
-    show('PROMISE REJECT\n' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)) + '\n\nTRACE:\n' + trace.join('\n'));
-  });
-  window.__dbg = (m) => { trace.push(m); if(trace.length > 40) trace.shift(); };
-  window.__diagnose = (label) => {
-    const h = document.getElementById('home');
-    const r = document.getElementById('routine');
-    const d = document.getElementById('done');
-    const bs = (id)=>{const e=document.getElementById(id);return e?getComputedStyle(e):{display:'?',backgroundColor:'?'};};
-    const sh = bs('home'), sr = bs('routine'), sd = bs('done');
-    const body = getComputedStyle(document.body);
-    show('DIAG: ' + label + '\n'
-      + 'home: display=' + sh.display + ' inline-style="' + h.style.display + '" children=' + (h?h.children.length:'?') + ' height=' + (h?h.offsetHeight:'?') + '\n'
-      + 'routine: display=' + sr.display + ' active=' + r.classList.contains('active') + '\n'
-      + 'done: display=' + sd.display + ' active=' + d.classList.contains('active') + '\n'
-      + 'body bg: ' + body.backgroundColor + '\n'
-      + 'html bg: ' + getComputedStyle(document.documentElement).backgroundColor + '\n'
-      + 'window: ' + window.innerWidth + 'x' + window.innerHeight + ' scrollY=' + window.scrollY + '\n'
-      + 'standalone: ' + (window.navigator.standalone === true) + '\n\n'
-      + 'TRACE:\n' + trace.join('\n'));
-  };
-})();
+if('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-// ============================================================
-// DUMBASS STRETCH — daily 5-minute mobility routine
-// ============================================================
-
-// primary = full credit (1.0× hold). secondary = half credit (0.5× hold).
-// Same convention as DUMBASS LIFT — RP/Israetel synergist accounting.
-// Leg-heavy library: 14 of 21 stretches target lower body — to mirror the
-// volume share of leg work in a serious hypertrophy split.
+// ---------- DATA ----------
 const STRETCHES = [
-  // ---- LOWER BODY (0–4, 10–11, 14–20) ----
-  /* 0 */ { name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hinge. Let the head fall heavy. Long, slow exhales.",            area:"Hamstrings · Low back",     side:null,  primary:"hamstrings",   secondary:["lower-back","calves"] },
-  /* 1 */ { name:"World's Greatest Stretch",cue:"Deep lunge. Same-side hand inside the front foot. Open the chest to the ceiling.",            area:"Hip flexors · T-spine",     side:"LEFT", primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
-  /* 2 */ { name:"World's Greatest Stretch",cue:"Switch. Tall reach. Drive the back hip forward, ribs stacked.",                               area:"Hip flexors · T-spine",     side:"RIGHT",primary:"hip-flexors",  secondary:["t-spine","hip-rotators"] },
-  /* 3 */ { name:"Couch Stretch",           cue:"Back foot up against a wall. Squeeze that glute hard. Stand the torso tall.",                 area:"Hip flexor · Quad",         side:"LEFT", primary:"hip-flexors",  secondary:["quads"] },
-  /* 4 */ { name:"Couch Stretch",           cue:"Switch. Tuck the tailbone — never arch the low back to fake range.",                          area:"Hip flexor · Quad",         side:"RIGHT",primary:"hip-flexors",  secondary:["quads"] },
-  /* 5 */ { name:"90 / 90 Hip Switch",      cue:"Both knees bent 90°. Press the back knee toward the floor. Switch slowly.",                   area:"Hip rotators",              side:null,  primary:"hip-rotators", secondary:["glutes"] },
-  /* 6 */ { name:"Doorway Pec Stretch",     cue:"Forearms on the frame, elbows shoulder height. Step through. Ribs DOWN.",                     area:"Chest · Front delt",        side:null,  primary:"chest",        secondary:["shoulders"] },
-  /* 7 */ { name:"Thread the Needle",       cue:"Hands and knees. Thread the arm under the body — shoulder and ear toward the floor.",         area:"T-spine · Rear delt",       side:"LEFT", primary:"t-spine",      secondary:["shoulders"] },
-  /* 8 */ { name:"Thread the Needle",       cue:"Switch sides. Exhale long to sink deeper into the rotation.",                                 area:"T-spine · Rear delt",       side:"RIGHT",primary:"t-spine",      secondary:["shoulders"] },
-  /* 9 */ { name:"Child's Pose with Reach", cue:"Knees wide, hips back to heels. Arms long, fingertips walk forward.",                         area:"Lats · Low back",           side:null,  primary:"lats",         secondary:["lower-back"] },
-  /* 10 */ { name:"Pigeon Pose",            cue:"Front shin across the body. Back leg long. Square the hips, then sink.",                       area:"Glutes · Hip rotators",     side:"LEFT", primary:"glutes",       secondary:["hip-rotators"] },
-  /* 11 */ { name:"Pigeon Pose",            cue:"Switch. Press the front hip down. Fold over the shin only if it stays strong.",                area:"Glutes · Hip rotators",     side:"RIGHT",primary:"glutes",       secondary:["hip-rotators"] },
-  /* 12 */ { name:"Lying Spinal Twist",     cue:"On your back. Drop the bent knee across. Opposite shoulder stays glued to the floor.",         area:"T-spine · Glutes",          side:"LEFT", primary:"t-spine",      secondary:["glutes"] },
-  /* 13 */ { name:"Lying Spinal Twist",     cue:"Switch. Look toward the open hand. Exhale to deepen the twist.",                               area:"T-spine · Glutes",          side:"RIGHT",primary:"t-spine",      secondary:["glutes"] },
-  /* 14 */ { name:"Frog Pose",              cue:"On all fours, knees wide as it allows. Sit hips back toward the heels. Slow.",                 area:"Adductors · Groin",         side:null,  primary:"adductors",    secondary:["hip-rotators","glutes"] },
-  /* 15 */ { name:"Wall Calf Stretch",      cue:"Toes on the wall, heel on the floor. Drive hips forward to load the calf.",                    area:"Calves · Achilles",         side:"LEFT", primary:"calves",       secondary:["hamstrings"] },
-  /* 16 */ { name:"Wall Calf Stretch",      cue:"Switch. Long, steady pressure — calves love time under tension.",                              area:"Calves · Achilles",         side:"RIGHT",primary:"calves",       secondary:["hamstrings"] },
-  /* 17 */ { name:"Half Split",             cue:"Front leg long, back knee down. Hinge the hips back over the heel. Spine long.",                area:"Hamstrings (deep)",         side:"LEFT", primary:"hamstrings",   secondary:["calves"] },
-  /* 18 */ { name:"Half Split",             cue:"Switch. Keep the front foot flexed — toes pulled up to the shin.",                              area:"Hamstrings (deep)",         side:"RIGHT",primary:"hamstrings",   secondary:["calves"] },
-  /* 19 */ { name:"Standing Quad Pull",     cue:"Stand tall. Grab one ankle. Knees together. Squeeze the glute. Tall posture.",                  area:"Quads · Hip flexor",        side:"LEFT", primary:"quads",        secondary:["hip-flexors"] },
-  /* 20 */ { name:"Standing Quad Pull",     cue:"Switch. Don't lean back to fake it — drive the hip forward with the glute.",                    area:"Quads · Hip flexor",        side:"RIGHT",primary:"quads",        secondary:["hip-flexors"] },
+  /* 0 */ { name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hinge at the hips. Let the head fall heavy.",                       area:"Hamstrings · Low back", side:null,   primary:"hamstrings",  secondary:["lower-back","calves"] },
+  /* 1 */ { name:"World's Greatest Stretch",cue:"Deep lunge. Same-side hand inside the front foot. Open the chest to the ceiling.",              area:"Hip flexors · T-spine", side:"LEFT", primary:"hip-flexors", secondary:["t-spine","hip-rotators"] },
+  /* 2 */ { name:"World's Greatest Stretch",cue:"Switch. Tall reach. Drive the back hip forward, ribs stacked.",                                 area:"Hip flexors · T-spine", side:"RIGHT",primary:"hip-flexors", secondary:["t-spine","hip-rotators"] },
+  /* 3 */ { name:"Couch Stretch",           cue:"Back foot up against a wall. Squeeze that glute hard. Tall torso.",                             area:"Hip flexor · Quad",     side:"LEFT", primary:"hip-flexors", secondary:["quads"] },
+  /* 4 */ { name:"Couch Stretch",           cue:"Switch. Tuck the tailbone — never arch the low back to fake range.",                            area:"Hip flexor · Quad",     side:"RIGHT",primary:"hip-flexors", secondary:["quads"] },
+  /* 5 */ { name:"90 / 90 Hip Switch",      cue:"Both knees bent 90°. Press the back knee down. Switch slowly.",                                 area:"Hip rotators",          side:null,   primary:"hip-rotators",secondary:["glutes"] },
+  /* 6 */ { name:"Doorway Pec Stretch",     cue:"Forearm on the frame, elbow at shoulder height. Step through. Ribs DOWN.",                     area:"Chest · Front delt",    side:null,   primary:"chest",       secondary:["shoulders"] },
+  /* 7 */ { name:"Thread the Needle",       cue:"Hands and knees. Thread the arm under the body — shoulder toward the floor.",                  area:"T-spine · Rear delt",   side:"LEFT", primary:"t-spine",     secondary:["shoulders"] },
+  /* 8 */ { name:"Thread the Needle",       cue:"Switch. Exhale long to sink deeper into the rotation.",                                         area:"T-spine · Rear delt",   side:"RIGHT",primary:"t-spine",     secondary:["shoulders"] },
+  /* 9 */ { name:"Child's Pose with Reach", cue:"Knees wide, hips back to heels. Arms long, fingertips walk forward.",                           area:"Lats · Low back",       side:null,   primary:"lats",        secondary:["lower-back"] },
+  /* 10 */ { name:"Pigeon Pose",            cue:"Front shin across the body. Back leg long. Square the hips, then sink.",                        area:"Glutes · Hip rotators", side:"LEFT", primary:"glutes",      secondary:["hip-rotators"] },
+  /* 11 */ { name:"Pigeon Pose",            cue:"Switch. Press the front hip down. Fold over the shin if it stays strong.",                     area:"Glutes · Hip rotators", side:"RIGHT",primary:"glutes",      secondary:["hip-rotators"] },
+  /* 12 */ { name:"Lying Spinal Twist",     cue:"On your back. Drop the bent knee across. Opposite shoulder stays on the floor.",                area:"T-spine · Glutes",      side:"LEFT", primary:"t-spine",     secondary:["glutes"] },
+  /* 13 */ { name:"Lying Spinal Twist",     cue:"Switch. Look toward the open hand. Exhale to deepen.",                                          area:"T-spine · Glutes",      side:"RIGHT",primary:"t-spine",     secondary:["glutes"] },
+  /* 14 */ { name:"Frog Pose",              cue:"On all fours, knees wide. Sit hips back toward the heels. Slow.",                               area:"Adductors · Groin",     side:null,   primary:"adductors",   secondary:["hip-rotators","glutes"] },
+  /* 15 */ { name:"Wall Calf Stretch",      cue:"Toes on the wall, heel on the floor. Drive hips forward to load the calf.",                    area:"Calves · Achilles",     side:"LEFT", primary:"calves",      secondary:["hamstrings"] },
+  /* 16 */ { name:"Wall Calf Stretch",      cue:"Switch. Long, steady pressure — calves love time under tension.",                              area:"Calves · Achilles",     side:"RIGHT",primary:"calves",      secondary:["hamstrings"] },
+  /* 17 */ { name:"Half Split",             cue:"Front leg long, back knee down. Hinge back over the heel. Spine long.",                         area:"Hamstrings (deep)",     side:"LEFT", primary:"hamstrings",  secondary:["calves"] },
+  /* 18 */ { name:"Half Split",             cue:"Switch. Front foot flexed — toes pulled up to the shin.",                                       area:"Hamstrings (deep)",     side:"RIGHT",primary:"hamstrings",  secondary:["calves"] },
+  /* 19 */ { name:"Standing Quad Pull",     cue:"Stand tall. Grab one ankle. Knees together. Squeeze the glute.",                                area:"Quads · Hip flexor",    side:"LEFT", primary:"quads",       secondary:["hip-flexors"] },
+  /* 20 */ { name:"Standing Quad Pull",     cue:"Switch. Don't lean back to fake it — drive the hip forward with the glute.",                    area:"Quads · Hip flexor",    side:"RIGHT",primary:"quads",       secondary:["hip-flexors"] },
 ];
 const HOLD_SECONDS = 30;
 
-// Routine = a named subset of STRETCHES, ordered. Map directly to a DUMBASS LIFT day so the
-// recommend-on-open flow has a 1:1 match. holdSeconds override = "deep mobility" gets 60s for ROM gains.
 const ROUTINES = [
   { key:"leg",  name:"Leg day",        titleMain:"LEG",  titleAccent:"DAY",
     muscles:"Hams · Hip flex · Quads · Glutes · Calves · Adductors",
@@ -562,44 +269,27 @@ const ROUTINES = [
   { key:"pull", name:"Pull day",       titleMain:"PULL", titleAccent:"DAY",
     muscles:"Lats · T-spine · Chest",
     indices:[9,6,7,8,12,13] },
-  { key:"abs",  name:"Abs / core day", titleMain:"CORE", titleAccent:"DAY",
+  { key:"abs",  name:"Core day",       titleMain:"CORE", titleAccent:"DAY",
     muscles:"Hip flexors · Lower back · Obliques",
     indices:[3,4,9,12,13,5] },
   { key:"rest", name:"Rest day",       titleMain:"REST", titleAccent:"DAY",
     muscles:"Full body recovery",
-    indices:[0,1,2,3,4,5,6,7,8,9] },
+    indices:[0,3,4,6,7,8,9,10,11,14,15,16,17,18] },
   { key:"desk", name:"Desk reset",     titleMain:"DESK", titleAccent:"RESET",
     muscles:"Chest · T-spine · Hips",
     indices:[6,1,2,7,8] },
   { key:"deep", name:"Deep mobility",  titleMain:"DEEP", titleAccent:"MOBILITY",
     muscles:"Long 60s holds · ROM gains",
-    indices:[0,3,4,10,11,17,18,14], holdSeconds:60 },
+    indices:[3,4,14,17,18], holdSeconds:60 },
 ];
-function getRoutine(key){
-  return ROUTINES.find(r => r.key === key) || ROUTINES[4]; // default rest/full body
-}
-function routineHoldSec(routine){ return routine.holdSeconds || HOLD_SECONDS; }
+function getRoutine(key){ return ROUTINES.find(r => r.key === key) || ROUTINES[4]; }
+function routineHoldSec(r){ return r.holdSeconds || HOLD_SECONDS; }
 
-// Display names for each muscle group key.
 const MUSCLE_NAMES = {
-  "hamstrings":"Hamstrings",
-  "hip-flexors":"Hip flexors",
-  "quads":"Quads",
-  "glutes":"Glutes",
-  "hip-rotators":"Hip rotators",
-  "adductors":"Adductors",
-  "calves":"Calves",
-  "t-spine":"Thoracic spine",
-  "chest":"Chest",
-  "shoulders":"Shoulders",
-  "lats":"Lats",
-  "lower-back":"Lower back",
+  "hamstrings":"Hamstrings","hip-flexors":"Hip flexors","quads":"Quads","glutes":"Glutes",
+  "hip-rotators":"Hip rotators","adductors":"Adductors","calves":"Calves",
+  "t-spine":"Thoracic spine","chest":"Chest","shoulders":"Shoulders","lats":"Lats","lower-back":"Lower back",
 };
-
-// Weekly minutes-in-stretched-position landmarks. RP/Israetel idea applied to mobility.
-// mev = floor for ROM gain · mav = productive band · mrv = past it = irritation, not gains.
-// Calibrated so every routine × 7 days lands each of its target muscles at the LOW end of
-// MAV. Daily practice = productive ROM gains, not just maintenance.
 const MUSCLE_LANDMARKS = {
   "hip-flexors":  {mev:3,   mav:[6,16],   mrv:25},
   "t-spine":      {mev:4,   mav:[7,16],   mrv:25},
@@ -614,325 +304,7 @@ const MUSCLE_LANDMARKS = {
   "shoulders":    {mev:1.5, mav:[3,10],   mrv:18},
   "lower-back":   {mev:0.5, mav:[1.5,7],  mrv:12},
 };
-// Priority order — desk-shortened first, then leg-day muscles, then upper.
 const MUSCLE_ORDER = ["hip-flexors","t-spine","hamstrings","quads","glutes","hip-rotators","calves","adductors","chest","shoulders","lats","lower-back"];
-
-// Map a DUMBASS LIFT day name → recommended stretch routine.
-// state.today.name comes verbatim from the lift app's schedule ("LEGS A", "PUSH B", etc.)
-function recommendRoutineFromLiftDay(dayName){
-  if(!dayName) return null;
-  const n = String(dayName).toUpperCase();
-  if(n.includes("REST")) return "rest";
-  if(n.includes("LEG") || n.includes("LOWER") || n.includes("QUAD") || n.includes("HAM")) return "leg";
-  if(n.includes("ABS") || n.includes("CORE")) return "abs";
-  if(n.includes("PULL") || n.includes("BACK") || n.includes("LAT")) return "pull";
-  if(n.includes("PUSH") || n.includes("CHEST") || n.includes("SHOULDER")) return "push";
-  if(n.includes("UPPER") || n.includes("ARM") || n.includes("BICEP") || n.includes("TRICEP")) return "push";
-  return null;
-}
-// Read the DUMBASS LIFT app's state out of shared localStorage (same github.io origin).
-function getLiftDay(){
-  try {
-    const raw = localStorage.getItem("dumbass_state");
-    if(!raw) return null;
-    const lift = JSON.parse(raw);
-    if(lift && lift.today && lift.today.name) return {
-      name: lift.today.name,
-      muscles: lift.today.muscles || "",
-      type: lift.today.type || "train",
-    };
-    return null;
-  } catch(e){ return null; }
-}
-
-// Per-stretch detail: pose illustration + plain-English explanation.
-// Keyed by stretch name (sides share the same info).
-//
-// SVG style system (poseSvg helper):
-//   • viewBox 240×180, clean floor bar at y=170
-//   • Body: chunky black rounded strokes (stroke-width ~14)
-//   • Head: filled circle r=13 with a small white "nose" dot showing facing direction
-//   • Stretched part: orange (#FF6B00), thicker stroke (18), soft glow filter
-//   • Label: small orange arrow + boxed muscle name pointing at the orange area
-//   • Wall/doorframe: dashed grey vertical bar where relevant
-// Filter is intentionally a NO-OP — was a Gaussian blur but that made
-// every orange line look smudgy / unrecognizable. References to it in
-// existing SVGs are kept so the markup still parses, but the filter does
-// nothing now. New SVGs should skip the filter attribute entirely.
-const POSE_DEFS = `<defs>
-  <filter id="poseGlow"></filter>
-  <marker id="poseArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-    <path d="M0,0 L10,5 L0,10 Z" fill="#FF6B00"/>
-  </marker>
-</defs>`;
-function poseSvg(body, label, opts){
-  opts = opts || {};
-  const wall = opts.wall ? `<line x1="${opts.wall}" y1="8" x2="${opts.wall}" y2="170" stroke="#C0C0C0" stroke-width="4" stroke-dasharray="6,4"/>` : '';
-  const floor = `<line x1="6" y1="170" x2="234" y2="170" stroke="#B8B8B8" stroke-width="3" stroke-linecap="round"/>
-    <line x1="10" y1="175" x2="230" y2="175" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="3,5"/>`;
-  return `<svg viewBox="0 0 240 180" xmlns="http://www.w3.org/2000/svg">${POSE_DEFS}${floor}${wall}<g class="pose-body">${body}</g>${label||''}</svg>`;
-}
-function poseLabel(tx,ty,ax,ay,text){
-  const w = text.length*7 + 8;
-  return `<line x1="${tx + w/2}" y1="${ty - 7}" x2="${ax}" y2="${ay}" stroke="#FF6B00" stroke-width="2" marker-end="url(#poseArrow)"/>
-    <rect x="${tx-4}" y="${ty-15}" width="${w}" height="16" fill="#FFFFFF" stroke="#FF6B00" stroke-width="1.5" rx="3"/>
-    <text x="${tx}" y="${ty-3}" fill="#FF6B00" font-family="Oswald, sans-serif" font-size="11" font-weight="700" letter-spacing="0.05em">${text}</text>`;
-}
-
-const STRETCH_INFO = {
-  "Standing Forward Fold": {
-    videoId: "g7Uhp5tphAs",
-    svg: poseSvg(
-      `<line x1="105" y1="170" x2="105" y2="95" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="135" y1="170" x2="135" y2="95" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="105" y1="170" x2="105" y2="95" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="135" y1="170" x2="135" y2="95" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="98" y1="95" x2="142" y2="95" stroke="#0a0a0a" stroke-width="16" stroke-linecap="round"/>
-       <line x1="120" y1="95" x2="120" y2="140" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="120" cy="155" r="13" fill="#0a0a0a"/>
-       <circle cx="120" cy="161" r="2" fill="#FFFFFF"/>
-       <line x1="108" y1="100" x2="100" y2="160" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <line x1="132" y1="100" x2="140" y2="160" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
-      poseLabel(165, 130, 142, 130, "HAMSTRING")
-    ),
-    what:"Lengthens the <b>hamstrings</b> and decompresses the spine. The classic antidote to a day in a chair.",
-    how:"Stand feet hip-width. Soft bend in the knees — never lock them. Hinge from the hips, let the upper body hang heavy. Head drops fully. Don't force the hands to the floor — gravity does the work. For <b>extra ROM</b>, bend the knees more on the way down, then slowly try to straighten them while staying folded."
-  },
-  "World's Greatest Stretch": {
-    videoId: "-CiWQ2IvY34",
-    svg: poseSvg(
-      `<line x1="155" y1="170" x2="120" y2="115" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="120" y1="115" x2="80" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="120" y1="115" x2="200" y2="155" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="120" y1="115" x2="200" y2="155" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="120" y1="115" x2="135" y2="65" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="138" cy="52" r="13" fill="#0a0a0a"/>
-       <circle cx="144" cy="51" r="2" fill="#FFFFFF"/>
-       <line x1="128" y1="78" x2="105" y2="138" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <line x1="145" y1="68" x2="200" y2="22" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="145" y1="68" x2="200" y2="22" stroke="#FF6B00" stroke-width="12" stroke-linecap="round"/>`,
-      poseLabel(15, 165, 165, 155, "HIP FLEXOR") + poseLabel(140, 18, 195, 24, "REACH UP")
-    ),
-    what:"Opens the <b>hip flexors</b> and rotates the <b>upper back</b> — one move, two huge wins. The all-time best bang for your 30 seconds.",
-    how:"Step into a deep lunge. Plant the same-side hand on the floor inside the front foot. Rotate and reach the other arm to the ceiling — chest open, eyes follow the hand. Keep the back leg long and the back hip driving forward. For <b>extra hip flexor</b>, drop the back knee and posterior-tilt the pelvis."
-  },
-  "Couch Stretch": {
-    videoId: "bCRfS2beNOc",
-    svg: poseSvg(
-      `<line x1="55" y1="170" x2="55" y2="115" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="55" y1="115" x2="115" y2="115" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="55" y1="170" x2="55" y2="115" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="55" y1="115" x2="115" y2="115" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="115" y1="115" x2="155" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="155" y1="170" x2="195" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="115" y1="115" x2="125" y2="55" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="115" y1="55" x2="142" y2="55" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="130" cy="35" r="13" fill="#0a0a0a"/>
-       <circle cx="138" cy="35" r="2" fill="#FFFFFF"/>`,
-      poseLabel(155, 90, 95, 118, "QUAD + HIP"),
-      {wall: 42}
-    ),
-    what:"Loaded stretch for the <b>hip flexors</b> and <b>quad</b> on the back leg — the muscles that get short from sitting all day. The single highest-leverage move for desk life.",
-    how:"Half-kneel with the back foot up against a wall (toes pointing up, shin against the wall). Front foot planted firmly. <b>Squeeze the back-leg glute hard</b> — that's what makes it work. Tuck the tailbone under and stand the torso tall. Never arch the lower back to fake range."
-  },
-  "90 / 90 Hip Switch": {
-    videoId: "VYvMMw8z3rE",
-    svg: poseSvg(
-      `<line x1="70" y1="155" x2="135" y2="155" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="135" y1="155" x2="115" y2="118" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="70" y1="155" x2="135" y2="155" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="135" y1="155" x2="115" y2="118" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="135" y1="155" x2="200" y2="155" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="200" y1="155" x2="180" y2="118" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="135" y1="155" x2="135" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="122" y1="75" x2="148" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="135" cy="58" r="13" fill="#0a0a0a"/>
-       <circle cx="135" cy="64" r="2" fill="#FFFFFF"/>
-       <line x1="124" y1="80" x2="105" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <line x1="146" y1="80" x2="165" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
-      poseLabel(15, 145, 70, 158, "HIP ROTATORS")
-    ),
-    what:"Unlocks the <b>hip rotators</b> — internal on one side, external on the other. Fixes hips that feel \"stuck\" and improves squat depth.",
-    how:"Sit on the floor with one leg in front bent at 90° (shin parallel to your torso) and the other leg out to the side also bent at 90°. Sit tall — don't slouch. Slowly switch which leg is in front. Press the back knee gently toward the floor. For <b>extra ROM</b>, fold forward over the front shin."
-  },
-  "Doorway Pec Stretch": {
-    videoId: "M850sCj9LHQ",
-    svg: poseSvg(
-      `<line x1="120" y1="170" x2="120" y2="125" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="145" y1="170" x2="138" y2="125" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="115" y1="125" x2="143" y2="125" stroke="#0a0a0a" stroke-width="16" stroke-linecap="round"/>
-       <line x1="129" y1="125" x2="129" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="116" y1="75" x2="142" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="129" cy="58" r="13" fill="#0a0a0a"/>
-       <circle cx="121" cy="58" r="2" fill="#FFFFFF"/>
-       <line x1="116" y1="75" x2="75" y2="58" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="116" y1="75" x2="75" y2="58" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="75" y1="58" x2="62" y2="22" stroke="#0a0a0a" stroke-width="13" stroke-linecap="round"/>
-       <line x1="142" y1="78" x2="162" y2="108" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
-      poseLabel(155, 50, 110, 73, "CHEST"),
-      {wall: 55}
-    ),
-    what:"Opens the <b>chest</b> and the <b>front of the shoulder</b>. The direct counter to the rounded posture from phones, keyboards, and bench pressing.",
-    how:"Stand in a doorway. Forearm on the frame, elbow at shoulder height (or higher for upper chest). Step one foot through the doorway and lean your chest forward. <b>Ribs DOWN</b> — never let them flare. Stretch is across the chest, not in the shoulder joint."
-  },
-  "Thread the Needle": {
-    videoId: "oAQ_qycUj5o",
-    svg: poseSvg(
-      `<line x1="170" y1="170" x2="180" y2="120" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="210" y1="170" x2="205" y2="120" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="180" y1="120" x2="205" y2="120" stroke="#0a0a0a" stroke-width="16" stroke-linecap="round"/>
-       <line x1="190" y1="125" x2="115" y2="150" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="190" y1="125" x2="115" y2="150" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="115" y1="150" x2="138" y2="170" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-       <line x1="115" y1="150" x2="50" y2="160" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="103" cy="155" r="13" fill="#0a0a0a"/>
-       <circle cx="97" cy="153" r="2" fill="#FFFFFF"/>`,
-      poseLabel(110, 100, 155, 132, "SHOULDER + T-SPINE")
-    ),
-    what:"Rotates the <b>thoracic spine</b> and stretches the <b>rear shoulder</b>. Huge for anyone who lifts heavy or sits a lot.",
-    how:"Start on all fours. Take one arm and thread it under the body, palm up, reaching as far as you can to the opposite side. Let that same-side shoulder and ear sink toward the floor. Keep the other hand pressing into the ground. Exhale long to sink deeper."
-  },
-  "Pigeon Pose": {
-    videoId: "M1gEGLtF1p0",
-    svg: poseSvg(
-      `<line x1="220" y1="160" x2="125" y2="145" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="40" y1="155" x2="120" y2="145" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="40" y1="155" x2="120" y2="145" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <ellipse cx="125" cy="140" rx="16" ry="14" fill="#0a0a0a"/>
-       <line x1="125" y1="130" x2="138" y2="65" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="122" y1="65" x2="152" y2="65" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="138" cy="48" r="13" fill="#0a0a0a"/>
-       <circle cx="130" cy="48" r="2" fill="#FFFFFF"/>
-       <line x1="122" y1="68" x2="105" y2="110" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <line x1="152" y1="68" x2="165" y2="110" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
-      poseLabel(20, 120, 85, 145, "GLUTE")
-    ),
-    what:"Targets the <b>glutes</b> and <b>external hip rotators</b>. The single best counter for a tight, locked-up backside — and the most-needed post-squat stretch.",
-    how:"Bring one shin across in front (front knee bent — the more parallel-to-front the deeper the stretch). Stretch the other leg straight back. <b>Square the hips</b> toward the floor first, then sink. Stay upright or fold over the front shin — only as far as feels strong, never painful."
-  },
-  "Lying Spinal Twist": {
-    videoId: "KFXvjZnad1g",
-    svg: poseSvg(
-      `<rect x="102" y="50" width="36" height="68" fill="#FF6B00" rx="10" filter="url(#poseGlow)"/>
-       <rect x="102" y="50" width="36" height="68" fill="#FF6B00" rx="10"/>
-       <circle cx="92" cy="38" r="14" fill="#0a0a0a"/>
-       <circle cx="86" cy="38" r="2" fill="#FFFFFF"/>
-       <line x1="102" y1="68" x2="40" y2="68" stroke="#0a0a0a" stroke-width="12" stroke-linecap="round"/>
-       <line x1="138" y1="68" x2="200" y2="68" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="100" y1="118" x2="138" y2="118" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="132" y1="118" x2="200" y2="138" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="200" y1="138" x2="208" y2="162" stroke="#0a0a0a" stroke-width="13" stroke-linecap="round"/>`,
-      poseLabel(150, 35, 132, 60, "T-SPINE TWIST")
-    ),
-    what:"Rotates the <b>thoracic spine</b> while gently stretching the <b>glutes</b> and obliques. Resets a stiff back without loading it.",
-    how:"Lie on your back. Bend both knees, then let them drop together to one side toward the floor. Reach the opposite arm wide, palm up. Look toward the outstretched hand. <b>Keep both shoulder blades on the floor</b> — don't let the opposite shoulder lift to chase range."
-  },
-  "Child's Pose with Reach": {
-    videoId: "BBZOrpOymEc",
-    svg: poseSvg(
-      // Side view, facing LEFT. Butt rests on heels (right side), torso folds
-      // forward and arms extend along the floor toward the left.
-      // - Folded thigh + calf on floor (right side)
-      // - Butt sphere on top of heels
-      // - Torso line going up-and-forward from hips toward shoulders (orange = lats stretched)
-      // - Shoulder joint, arm extending forward along floor
-      // - Head bowed near the leading arm
-      `<line x1="155" y1="167" x2="205" y2="167" stroke="#0a0a0a" stroke-width="13" stroke-linecap="round"/>
-       <line x1="202" y1="167" x2="218" y2="170" stroke="#0a0a0a" stroke-width="9" stroke-linecap="round"/>
-       <circle cx="155" cy="167" r="6" fill="#0a0a0a"/>
-       <circle cx="180" cy="151" r="14" fill="#0a0a0a"/>
-       <line x1="170" y1="148" x2="92" y2="158" stroke="#FF6B00" stroke-width="16" stroke-linecap="round"/>
-       <circle cx="90" cy="158" r="9" fill="#0a0a0a"/>
-       <line x1="87" y1="160" x2="22" y2="167" stroke="#0a0a0a" stroke-width="11" stroke-linecap="round"/>
-       <circle cx="60" cy="164" r="11" fill="#0a0a0a"/>
-       <circle cx="53" cy="164" r="2" fill="#FFFFFF"/>`,
-      poseLabel(108, 115, 130, 148, "LATS")
-    ),
-    what:"Stretches the <b>lats</b> and the <b>lower back</b>. A rest position that's still working — the perfect cooldown after pulls or heavy ab work.",
-    how:"Kneel down, knees wide, big toes touching. Sit the hips back onto the heels and walk your hands as far forward along the floor as they'll go. Forehead rests down. Reach the fingertips away from the hips — open the armpits."
-  },
-  "Frog Pose": {
-    videoId: "tAR3DWA5NFo",
-    svg: poseSvg(
-      `<line x1="50" y1="170" x2="100" y2="142" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="100" y1="142" x2="118" y2="112" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="190" y1="170" x2="140" y2="142" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="140" y1="142" x2="122" y2="112" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="50" y1="170" x2="100" y2="142" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="100" y1="142" x2="118" y2="112" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="190" y1="170" x2="140" y2="142" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="140" y1="142" x2="122" y2="112" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="105" y1="112" x2="135" y2="112" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="120" y1="115" x2="120" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="105" y1="75" x2="135" y2="75" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="105" y1="78" x2="75" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <line x1="135" y1="78" x2="165" y2="130" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <circle cx="120" cy="58" r="13" fill="#0a0a0a"/>
-       <circle cx="120" cy="64" r="2" fill="#FFFFFF"/>`,
-      poseLabel(15, 130, 70, 160, "ADDUCTORS")
-    ),
-    what:"Opens the <b>adductors</b> (inner thighs) and the <b>hip rotators</b>. The unlock move for deep squats and ATG mobility.",
-    how:"Hands and knees. Walk the knees out as wide as they'll go comfortably — toes pointed out, shins parallel to each other. Forearms drop to the floor. Slowly sit the hips back toward the heels. Stay there. <b>Move only a millimeter at a time</b> — adductors don't like fast loading."
-  },
-  "Wall Calf Stretch": {
-    videoId: "V1BIsor93LQ",
-    svg: poseSvg(
-      `<line x1="55" y1="148" x2="55" y2="170" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="55" y1="170" x2="120" y2="100" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="55" y1="148" x2="55" y2="170" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="55" y1="170" x2="120" y2="100" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="195" y1="170" x2="130" y2="100" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="125" y1="100" x2="100" y2="52" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="88" y1="52" x2="115" y2="52" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="100" cy="35" r="13" fill="#0a0a0a"/>
-       <circle cx="92" cy="35" r="2" fill="#FFFFFF"/>
-       <line x1="100" y1="58" x2="50" y2="68" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
-      poseLabel(165, 135, 100, 135, "CALF"),
-      {wall: 42}
-    ),
-    what:"Loads the <b>calf</b> (gastrocnemius) and the Achilles. Tight calves shorten your squat depth and shift load to the lower back — fix them.",
-    how:"Stand facing a wall. Place the ball of one foot on the wall, heel on the floor. Drive your hips forward toward the wall — keep the back leg straight. Hands support on the wall. For the deeper soleus, bend the front knee slightly while keeping the heel down."
-  },
-  "Half Split": {
-    videoId: "1wXNELxZI4I",
-    svg: poseSvg(
-      `<line x1="40" y1="158" x2="120" y2="140" stroke="#FF6B00" stroke-width="22" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="40" y1="158" x2="120" y2="140" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="40" y1="158" x2="40" y2="138" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="120" y1="140" x2="170" y2="170" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="170" y1="170" x2="210" y2="165" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="120" y1="140" x2="140" y2="78" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="125" y1="78" x2="155" y2="78" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="145" cy="60" r="13" fill="#0a0a0a"/>
-       <circle cx="138" cy="58" r="2" fill="#FFFFFF"/>
-       <line x1="125" y1="80" x2="90" y2="128" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <line x1="155" y1="80" x2="120" y2="128" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
-      poseLabel(25, 125, 75, 150, "HAMSTRING")
-    ),
-    what:"The deepest <b>hamstring</b> stretch in the library — way past what Forward Fold can reach. Best stretch you can do post-deadlift or post-leg day.",
-    how:"From a kneeling lunge, slide the front foot forward so the front leg is straight. Back knee stays on the floor (cushion it if needed). Pull the front foot's toes up. Hinge the hips back over the back heel — keep the spine long, don't round to chase your toes."
-  },
-  "Standing Quad Pull": {
-    videoId: "kzAsm4WQqvQ",
-    svg: poseSvg(
-      `<line x1="115" y1="170" x2="118" y2="92" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="118" y1="92" x2="155" y2="135" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="155" y1="135" x2="130" y2="108" stroke="#FF6B00" stroke-width="20" stroke-linecap="round" filter="url(#poseGlow)"/>
-       <line x1="118" y1="92" x2="155" y2="135" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="155" y1="135" x2="130" y2="108" stroke="#FF6B00" stroke-width="14" stroke-linecap="round"/>
-       <line x1="106" y1="92" x2="136" y2="92" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="120" y1="95" x2="120" y2="42" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <line x1="106" y1="42" x2="138" y2="42" stroke="#0a0a0a" stroke-width="14" stroke-linecap="round"/>
-       <circle cx="122" cy="22" r="13" fill="#0a0a0a"/>
-       <circle cx="128" cy="22" r="2" fill="#FFFFFF"/>
-       <line x1="136" y1="44" x2="150" y2="118" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>
-       <line x1="106" y1="44" x2="78" y2="62" stroke="#0a0a0a" stroke-width="10" stroke-linecap="round"/>`,
-      poseLabel(185, 110, 152, 125, "QUAD")
-    ),
-    what:"Isolates the <b>quad</b> (and a little hip flexor). The simplest, most accessible quad stretch you can do anywhere.",
-    how:"Stand tall. Grab one ankle and pull the heel toward the butt. <b>Knees stay touching</b> — don't let the lifted knee drift out. Squeeze the glute of the lifted leg and drive the hip forward. Don't lean back to fake more range. Hold the wall lightly for balance if you need."
-  },
-};
 
 const QUOTES = [
   ["Suppleness is the price of admission for everything else.", "Kelly Starrett"],
@@ -941,41 +313,42 @@ const QUOTES = [
   ["Don't cushion the work. Be the work.", "DUMBASS"],
   ["A flexible mind in a flexible body.", "B.K.S. Iyengar"],
   ["Discipline equals freedom.", "Jocko Willink"],
-  ["What gets measured gets managed.", "Peter Drucker"],
-  ["The body achieves what the mind believes.", "—"],
   ["Five minutes today beats sixty minutes someday.", "DUMBASS"],
   ["Stiff body, stiff mind.", "DUMBASS"],
 ];
 
-// ============================================================
-// STORAGE
-// ============================================================
-const KEY = "dumbass_stretch_v2";
-function loadState(){
-  try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }
-  catch(e){ return {}; }
+// ---------- LIFT PAIRING ----------
+function recommendFromLiftDay(name){
+  if(!name) return null;
+  const n = String(name).toUpperCase();
+  if(n.includes("REST")) return "rest";
+  if(n.includes("LEG") || n.includes("LOWER") || n.includes("QUAD") || n.includes("HAM")) return "leg";
+  if(n.includes("ABS") || n.includes("CORE")) return "abs";
+  if(n.includes("PULL") || n.includes("BACK") || n.includes("LAT")) return "pull";
+  if(n.includes("PUSH") || n.includes("CHEST") || n.includes("SHOULDER")) return "push";
+  if(n.includes("UPPER") || n.includes("ARM") || n.includes("BICEP") || n.includes("TRICEP")) return "push";
+  return null;
 }
-function saveState(s){
-  try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
-}
-function todayStr(){
-  const d = new Date();
-  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-}
-function daysBetween(aStr, bStr){
-  const a = new Date(aStr+"T00:00:00"), b = new Date(bStr+"T00:00:00");
-  return Math.round((b-a) / 86400000);
+function getLiftDay(){
+  try{
+    const raw = localStorage.getItem("dumbass_state");
+    if(!raw) return null;
+    const lift = JSON.parse(raw);
+    if(lift && lift.today && lift.today.name) return { name: lift.today.name };
+    return null;
+  } catch(e){ return null; }
 }
 
-// Session log normalization. Two formats live in storage:
-//   legacy:  state.log = ["2026-05-19", ...]                                   (date string)
-//   current: state.sessions = [{date, completed:[{i, sec}]}]                    (per-stretch credit)
-// Legacy strings are interpreted as full completion of all stretches at HOLD_SECONDS.
+// ---------- STORAGE ----------
+const KEY = "dumbass_stretch_v2";
+function loadState(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; } }
+function saveState(s){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+function todayStr(){ const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function daysBetween(a, b){ return Math.round((new Date(b+"T00:00:00") - new Date(a+"T00:00:00")) / 86400000); }
+
 function getSessions(state){
   const out = [];
-  if(Array.isArray(state.sessions)){
-    for(const s of state.sessions) out.push(s);
-  }
+  if(Array.isArray(state.sessions)) for(const s of state.sessions) out.push(s);
   if(Array.isArray(state.log)){
     const seen = new Set(out.map(s=>s.date));
     for(const d of state.log){
@@ -985,17 +358,12 @@ function getSessions(state){
   }
   return out;
 }
-function getSessionDates(state){
-  return Array.from(new Set(getSessions(state).map(s=>s.date)));
-}
 function computeStreak(state){
-  const dates = getSessionDates(state);
+  const dates = Array.from(new Set(getSessions(state).map(s=>s.date)));
   if(!dates.length) return 0;
   const today = todayStr();
   const days = dates.slice().sort().reverse();
-  const last = days[0];
-  const gap = daysBetween(last, today);
-  if(gap > 1) return 0;
+  if(daysBetween(days[0], today) > 1) return 0;
   let streak = 1;
   for(let i=1;i<days.length;i++){
     if(daysBetween(days[i], days[i-1]) === 1) streak++;
@@ -1004,568 +372,533 @@ function computeStreak(state){
   return streak;
 }
 
-// Sum stretched-minutes per muscle across the last 7 days (rolling, inclusive of today).
-// Primary credit = sec / 60. Secondary credit = (sec / 60) * 0.5.
-function weeklyMuscleMinutes(state){
-  const totals = {};
-  for(const m of MUSCLE_ORDER) totals[m] = 0;
-  const today = todayStr();
-  for(const session of getSessions(state)){
-    const gap = daysBetween(session.date, today);
-    if(gap < 0 || gap > 6) continue;
-    for(const c of (session.completed||[])){
-      const s = STRETCHES[c.i];
-      if(!s) continue;
-      const min = (c.sec||0) / 60;
-      if(s.primary && totals.hasOwnProperty(s.primary)) totals[s.primary] += min;
-      for(const sec of (s.secondary||[])){
-        if(totals.hasOwnProperty(sec)) totals[sec] += min * 0.5;
-      }
-    }
-  }
-  return totals;
-}
-
-// Per-muscle minutes ONE pass of the given routine would contribute.
-// primary = full credit · secondary = half credit. Uses effective indices (incl. user adds).
-function routineContribution(state, routine){
+function plannedMuscleMinutes(routine){
   const holdMin = routineHoldSec(routine) / 60;
-  const eff = effectiveIndices(state, routine);
   const out = {};
   for(const m of MUSCLE_ORDER) out[m] = 0;
-  for(const idx of eff.all){
-    const s = STRETCHES[idx];
-    if(!s) continue;
+  for(const idx of routine.indices){
+    const s = STRETCHES[idx]; if(!s) continue;
     if(s.primary && out.hasOwnProperty(s.primary)) out[s.primary] += holdMin;
-    for(const sec of (s.secondary||[])){
-      if(out.hasOwnProperty(sec)) out[sec] += holdMin * 0.5;
-    }
+    for(const sec of (s.secondary||[])) if(out.hasOwnProperty(sec)) out[sec] += holdMin * 0.5;
   }
+  for(const m of MUSCLE_ORDER) out[m] *= 7;
   return out;
 }
-// PLANNED weekly volume: what the bars would land on if the user does this routine
-// every day for 7 days. Independent of what's been done so far — pure forward-look.
-function plannedMuscleMinutes(state, routine){
-  const contrib = routineContribution(state, routine);
-  const out = {};
-  for(const m of MUSCLE_ORDER) out[m] = (contrib[m] || 0) * 7;
-  return out;
-}
-// Total raw planned minutes for the week (routine hold time × stretch count × 7).
-function plannedWeeklyTotalMinutes(state, routine){
-  const eff = effectiveIndices(state, routine);
-  const holdMin = routineHoldSec(routine) / 60;
-  return eff.all.length * holdMin * 7;
-}
-// "If you finish today's stretch, here's what the week will land on."
-// If today is already logged, projection == actual (no double-counting).
-function projectedMuscleMinutes(state, routine){
-  const actual = weeklyMuscleMinutes(state);
-  const today = todayStr();
-  const doneToday = getSessions(state).some(s => s.date === today);
-  if(doneToday) return {projected: actual, todaysContribution: null};
-  const contrib = routineContribution(state, routine);
-  const proj = {};
-  for(const m of MUSCLE_ORDER) proj[m] = (actual[m] || 0) + (contrib[m] || 0);
-  return {projected: proj, todaysContribution: contrib};
-}
-
-function classifyVolume(minutes, lm){
-  if(minutes < lm.mev) return "under";
-  if(minutes < lm.mav[0]) return "mev";
-  if(minutes <= lm.mav[1]) return "mav";
-  if(minutes <= lm.mrv) return "over-mav";
+function classifyVolume(min, lm){
+  if(min < lm.mev) return "under";
+  if(min < lm.mav[0]) return "mev";
+  if(min <= lm.mav[1]) return "mav";
+  if(min <= lm.mrv) return "over-mav";
   return "over";
 }
-const VOLUME_STATUS_LABEL = {"under":"Below MEV","mev":"At MEV","mav":"In MAV","over-mav":"Above MAV","over":"Past MRV"};
+const VOL_LABEL = {"under":"Below MEV","mev":"At MEV","mav":"In MAV","over-mav":"Above MAV","over":"Past MRV"};
 
-// ============================================================
-// HOME (single-screen, no view routing)
-// ============================================================
-function setRoutine(key){
+// ---------- POSE / ILLUSTRATION SYSTEM ----------
+// Joint-based stick figures. Each pose declares named joints, bones connecting
+// them, optional head, and which bones are highlighted (the stretched muscle).
+//
+// Coordinate system: viewBox 0 0 240 200. Floor at y=190.
+//
+// Bone color codes: 'b' = black (default), 'o' = orange (stretched/highlighted).
+// Joints: small white circles with black ring at every kink. Head: solid black
+// circle with a small white "facing" dot.
+
+function pose(spec){
+  const j = spec.j;          // {name: [x,y]}
+  const bones = spec.b;      // [['fromName','toName','b'|'o'], ...]
+  const head = spec.h;       // ['jointName', facingDx, facingDy]  (head positioned at joint, facing dot offset)
+  const label = spec.l;      // {text, tx, ty, fx, fy}
+  const wall = spec.w;       // x coord of dashed wall
+  const tag = spec.tag;      // small text label for floor/wall ("FLOOR", "WALL")
+
+  let out = '';
+  // Floor (always)
+  out += `<line x1="6" y1="190" x2="234" y2="190" stroke="#B8B8B8" stroke-width="2" stroke-linecap="round"/>`;
+  out += `<line x1="10" y1="195" x2="230" y2="195" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="3,5"/>`;
+  // Wall (optional)
+  if(wall !== undefined){
+    out += `<line x1="${wall}" y1="10" x2="${wall}" y2="190" stroke="#B8B8B8" stroke-width="3" stroke-dasharray="6,5"/>`;
+  }
+  // Bones — orange ones first so joints draw over orange/black equally
+  for(const bn of bones){
+    const [a, bj, c] = bn;
+    const [x1,y1] = j[a], [x2,y2] = j[bj];
+    const stroke = c === 'o' ? '#FF3300' : '#0a0a0a';
+    const w = c === 'o' ? 9 : 7;
+    out += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round"/>`;
+  }
+  // Joints — drawn on top, at every name that appears in bones
+  const seen = new Set();
+  for(const bn of bones){ for(const k of [bn[0], bn[1]]) seen.add(k); }
+  // Skip the joint marker at the head joint (the head circle replaces it)
+  if(head) seen.delete(head[0]);
+  for(const name of seen){
+    const [x,y] = j[name];
+    out += `<circle cx="${x}" cy="${y}" r="4" fill="#FFF" stroke="#0a0a0a" stroke-width="1.8"/>`;
+  }
+  // Head
+  if(head){
+    const [hn, dx, dy] = head;
+    const [hx, hy] = j[hn];
+    out += `<circle cx="${hx}" cy="${hy}" r="11" fill="#0a0a0a"/>`;
+    out += `<circle cx="${hx + dx}" cy="${hy + dy}" r="2.2" fill="#FFF"/>`;
+  }
+  // Label (orange callout box pointing at the highlighted area)
+  if(label){
+    const w = label.text.length * 7 + 12;
+    const lx = label.tx, ly = label.ty;
+    out += `<line x1="${lx + w/2}" y1="${ly - 7}" x2="${label.fx}" y2="${label.fy}" stroke="#FF3300" stroke-width="1.8" marker-end="url(#arr)"/>`;
+    out += `<rect x="${lx-6}" y="${ly-16}" width="${w}" height="18" fill="#FFF" stroke="#FF3300" stroke-width="1.5" rx="3"/>`;
+    out += `<text x="${lx}" y="${ly-3}" fill="#FF3300" font-family="Oswald,sans-serif" font-size="11" font-weight="700" letter-spacing="0.04em">${label.text}</text>`;
+  }
+  if(tag){
+    out += `<text x="${tag.x}" y="${tag.y}" fill="#C8C8C8" font-family="Oswald,sans-serif" font-size="9" font-weight="700" letter-spacing="0.18em">${tag.t}</text>`;
+  }
+  return `<svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FF3300"/></marker></defs>${out}</svg>`;
+}
+
+// Each pose stored by stretch name (L/R variants share the same pose).
+const POSES = {
+"Standing Forward Fold": pose({
+  j: { ankleL:[100,188], kneeL:[102,140], hipL:[110,92], hipR:[130,92], kneeR:[138,140], ankleR:[140,188],
+       hip:[120,92], spine:[120,110], shoulderL:[110,128], shoulderR:[130,128],
+       elbowL:[102,150], elbowR:[138,150], handL:[100,176], handR:[140,176], head:[120,148] },
+  b: [
+    ['ankleL','kneeL','o'], ['kneeL','hipL','o'],
+    ['ankleR','kneeR','o'], ['kneeR','hipR','o'],
+    ['hipL','hip','b'], ['hipR','hip','b'],
+    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 0, 6],
+  l: { text:'HAMSTRING', tx:160, ty:135, fx:142, fy:122 }
+}),
+
+"World's Greatest Stretch": pose({
+  // Deep lunge facing right. Front leg bent 90, back leg long.
+  j: { backAnkle:[40,188], backKnee:[78,150], hip:[120,118], frontKnee:[160,150], frontAnkle:[185,188],
+       shoulder:[130,90], elbowDown:[148,140], handDown:[160,168],
+       elbowUp:[150,55], handUp:[195,18], head:[130,72] },
+  b: [
+    ['backAnkle','backKnee','o'], ['backKnee','hip','o'],
+    ['frontAnkle','frontKnee','b'], ['frontKnee','hip','b'],
+    ['hip','shoulder','b'],
+    ['shoulder','elbowDown','b'], ['elbowDown','handDown','b'],
+    ['shoulder','elbowUp','o'], ['elbowUp','handUp','o'],
+  ],
+  h: ['head', 6, 0],
+  l: { text:'HIP FLEXOR', tx:8, ty:170, fx:60, fy:165 }
+}),
+
+"Couch Stretch": pose({
+  // Half-kneel against a wall (back foot up). Front foot planted, back leg vertical against wall.
+  j: { backFoot:[55,112], backKnee:[55,165], hip:[100,150], spine:[110,110], shoulder:[120,82],
+       elbowL:[100,108], handL:[88,138], elbowR:[140,108], handR:[152,138],
+       frontKnee:[150,148], frontAnkle:[180,188], head:[122,64] },
+  b: [
+    ['backFoot','backKnee','o'], ['backKnee','hip','o'],
+    ['frontKnee','hip','b'], ['frontKnee','frontAnkle','b'],
+    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 6, 0],
+  w: 42,
+  l: { text:'QUAD + HIP', tx:158, ty:90, fx:78, fy:140 }
+}),
+
+"90 / 90 Hip Switch": pose({
+  // Seated, both knees bent 90. Front leg out in front, back leg out to side.
+  // Top-down-ish view simplified to side view: hip in middle, two legs bent.
+  j: { frontFoot:[55,158], frontKnee:[115,140], hip:[135,140], backKnee:[185,140], backFoot:[195,108],
+       spine:[135,80], shoulder:[135,70], elbowL:[115,108], handL:[100,135], elbowR:[155,108], handR:[170,135],
+       head:[135,52] },
+  b: [
+    ['frontFoot','frontKnee','o'], ['frontKnee','hip','o'],
+    ['hip','backKnee','o'], ['backKnee','backFoot','o'],
+    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 0, 6],
+  l: { text:'HIP ROTATORS', tx:60, ty:185, fx:120, fy:148 }
+}),
+
+"Doorway Pec Stretch": pose({
+  // Standing in doorway. One arm up on the frame (orange), torso turning away.
+  j: { ankleL:[112,188], kneeL:[112,150], ankleR:[148,188], kneeR:[148,150], hip:[130,118],
+       spine:[130,80], shoulderL:[115,72], shoulderR:[145,72],
+       elbowL:[78,55], handL:[60,18], elbowR:[162,108], handR:[178,138], head:[130,52] },
+  b: [
+    ['ankleL','kneeL','b'], ['kneeL','hip','b'],
+    ['ankleR','kneeR','b'], ['kneeR','hip','b'],
+    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 6, 0],
+  w: 55,
+  l: { text:'CHEST', tx:160, ty:50, fx:108, fy:62 }
+}),
+
+"Thread the Needle": pose({
+  // On hands and knees, one arm threaded under the body.
+  j: { kneeL:[150,168], kneeR:[200,168], hip:[180,135], spine:[160,128], shoulderR:[145,130],
+       elbowR:[125,138], handR:[105,150], shoulderL:[160,118],
+       elbowL:[120,150], handL:[55,160], head:[150,118] },
+  b: [
+    ['kneeL','hip','b'], ['kneeR','hip','b'],
+    ['hip','spine','b'], ['spine','shoulderR','b'], ['spine','shoulderL','b'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
+  ],
+  h: ['head', -6, 2],
+  l: { text:'T-SPINE', tx:170, ty:90, fx:160, fy:115 }
+}),
+
+"Child's Pose with Reach": pose({
+  // Hips at heels, arms long out front, head between arms.
+  j: { footL:[180,188], footR:[210,188], kneeL:[175,170], kneeR:[205,170],
+       hip:[195,162], spine:[160,150], shoulderL:[145,140], shoulderR:[160,140],
+       elbowL:[90,145], elbowR:[105,145], handL:[35,150], handR:[50,150], head:[140,150] },
+  b: [
+    ['footL','kneeL','b'], ['footR','kneeR','b'],
+    ['kneeL','hip','b'], ['kneeR','hip','b'],
+    ['hip','spine','o'], ['spine','shoulderL','o'], ['spine','shoulderR','o'],
+    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
+    ['shoulderR','elbowR','o'], ['elbowR','handR','o'],
+  ],
+  h: ['head', -6, 0],
+  l: { text:'LATS', tx:155, ty:120, fx:120, fy:142 }
+}),
+
+"Pigeon Pose": pose({
+  // Front shin across, back leg long out behind.
+  j: { frontFoot:[70,160], frontKnee:[100,158], hipFront:[135,150], hipBack:[150,150],
+       backKnee:[195,158], backFoot:[225,158],
+       spine:[140,115], shoulderL:[125,108], shoulderR:[155,108],
+       elbowL:[115,140], handL:[110,168], elbowR:[165,140], handR:[170,168], head:[140,90] },
+  b: [
+    ['frontFoot','frontKnee','o'], ['frontKnee','hipFront','o'],
+    ['hipBack','backKnee','b'], ['backKnee','backFoot','b'],
+    ['hipFront','hipBack','b'], ['hipFront','spine','b'],
+    ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 0, 6],
+  l: { text:'GLUTE', tx:30, ty:140, fx:95, fy:155 }
+}),
+
+"Lying Spinal Twist": pose({
+  // Lying on back, one knee crossed over to the opposite side.
+  j: { footStraight:[225,168], hipL:[145,162], hipR:[160,162],
+       kneeBent:[100,140], footBent:[60,150],
+       spine:[170,140], shoulderL:[180,130], shoulderR:[200,140],
+       elbowL:[155,108], handL:[130,90], elbowR:[225,118], handR:[235,90],
+       head:[210,118] },
+  b: [
+    ['hipR','footStraight','b'],
+    ['hipL','kneeBent','o'], ['kneeBent','footBent','o'],
+    ['hipL','hipR','b'], ['hipR','spine','b'],
+    ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 4, -6],
+  l: { text:'T-SPINE', tx:8, ty:60, fx:130, fy:100 }
+}),
+
+"Frog Pose": pose({
+  // On all fours, knees very wide, hips sinking back.
+  j: { kneeL:[55,168], kneeR:[185,168], footL:[35,188], footR:[205,188],
+       hip:[120,160], spine:[120,128], shoulderL:[100,118], shoulderR:[140,118],
+       elbowL:[90,150], handL:[80,178], elbowR:[150,150], handR:[160,178], head:[120,100] },
+  b: [
+    ['footL','kneeL','o'], ['footR','kneeR','o'],
+    ['kneeL','hip','o'], ['kneeR','hip','o'],
+    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 0, -6],
+  l: { text:'ADDUCTOR', tx:14, ty:128, fx:78, fy:160 }
+}),
+
+"Wall Calf Stretch": pose({
+  // Standing facing a wall, ball of foot on wall, heel down. Body leaning in.
+  j: { backAnkle:[170,188], backKnee:[160,150], hip:[140,115], spine:[130,80], shoulder:[120,68],
+       elbowL:[100,90], handL:[80,108], elbowR:[105,80], handR:[78,72],
+       frontAnkle:[58,160], frontToe:[42,140], frontHeel:[68,188], head:[112,46] },
+  b: [
+    ['backAnkle','backKnee','b'], ['backKnee','hip','b'],
+    ['hip','frontAnkle','o'], ['frontAnkle','frontToe','o'], ['frontAnkle','frontHeel','o'],
+    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', -5, 2],
+  w: 36,
+  l: { text:'CALF', tx:160, ty:172, fx:75, fy:175 }
+}),
+
+"Half Split": pose({
+  // Back knee down, front leg long out front, hinging back.
+  j: { frontHeel:[55,168], frontToe:[35,150], frontKnee:[105,160], hipFront:[140,138],
+       backKnee:[170,178], backFoot:[200,188],
+       spine:[150,100], shoulder:[148,82],
+       elbowL:[125,108], handL:[110,138], elbowR:[170,110], handR:[185,138], head:[150,64] },
+  b: [
+    ['frontToe','frontHeel','o'], ['frontHeel','frontKnee','o'], ['frontKnee','hipFront','o'],
+    ['backKnee','hipFront','b'], ['backKnee','backFoot','b'],
+    ['hipFront','spine','b'], ['spine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', -5, 2],
+  l: { text:'HAMSTRING', tx:18, ty:138, fx:85, fy:165 }
+}),
+
+"Standing Quad Pull": pose({
+  // Standing on one leg, other foot pulled up to butt.
+  j: { ankle:[120,188], knee:[120,138], hip:[120,98], spine:[120,68], shoulderL:[108,60], shoulderR:[132,60],
+       elbowL:[92,90], handL:[80,118],
+       pullKnee:[138,142], pullAnkle:[148,98], elbowR:[152,82], handR:[152,108],
+       head:[120,42] },
+  b: [
+    ['ankle','knee','b'], ['knee','hip','b'],
+    ['hip','pullKnee','o'], ['pullKnee','pullAnkle','o'],
+    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'], ['handR','pullAnkle','b'],
+  ],
+  h: ['head', 0, -6],
+  l: { text:'QUAD', tx:170, ty:130, fx:144, fy:130 }
+}),
+};
+
+// ---------- HOME RENDER ----------
+function renderHome(){
   const state = loadState();
-  state.routine = key;
-  // User-driven pick clears any pending regret.
-  state.routinePrevious = null;
-  saveState(state);
-  renderHome();
+
+  // 1. Decide today's routine. Priority: explicit user pick → lift pairing → rest day.
+  const liftDay = getLiftDay();
+  const liftRec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
+  // Auto-follow LIFT unless the user has explicitly overridden today.
+  let routineKey = state.routine;
+  let following = false;
+  if(liftRec && (!routineKey || state.followLift !== false)){
+    routineKey = liftRec; following = true;
+  }
+  if(!routineKey) routineKey = "rest";
+  const routine = getRoutine(routineKey);
+
+  // 2. Title + subtitle
+  document.getElementById('home-title-main').textContent = routine.titleMain;
+  document.getElementById('home-title-accent').textContent = routine.titleAccent;
+  const eyebrow = following ? `TODAY · PAIRED WITH ${liftDay.name.toUpperCase()}` : "TODAY";
+  document.getElementById('home-eyebrow').textContent = eyebrow;
+  const holdSec = routineHoldSec(routine);
+  const totalMin = Math.round(routine.indices.length * holdSec / 60);
+  document.getElementById('home-subtitle').textContent = `${routine.indices.length} stretches · ${totalMin} min`;
+
+  // 3. Streak
+  const streak = computeStreak(state);
+  const chip = document.getElementById('streak-chip');
+  chip.querySelector('.num').textContent = streak;
+  chip.classList.toggle('zero', streak === 0);
+
+  // 4. Chips
+  const $chips = document.getElementById('r-chips');
+  $chips.innerHTML = ROUTINES.map(r => {
+    const active = r.key === routine.key ? 'active' : '';
+    const rec = (r.key === liftRec && r.key !== routine.key) ? 'recommend' : '';
+    return `<button class="r-chip ${active} ${rec}" onclick="pickRoutine('${r.key}')">${r.titleMain} ${r.titleAccent}</button>`;
+  }).join('');
+
+  // 5. Routine list
+  document.getElementById('routine-head-name').textContent = `${routine.titleMain} ${routine.titleAccent}`;
+  document.getElementById('routine-head-time').textContent = `${totalMin} MIN`;
+  const $list = document.getElementById('routine-list');
+  $list.innerHTML = routine.indices.map((idx, n) => {
+    const s = STRETCHES[idx];
+    const side = s.side ? `<span class="side">${s.side[0]}</span>` : '';
+    return `<div class="routine-item"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${s.name}${side}</span><span class="t">${holdSec}s</span></div>`;
+  }).join('');
+
+  // 6. Volume cards
+  const minutes = plannedMuscleMinutes(routine);
+  const muscleSet = new Set();
+  for(const idx of routine.indices){
+    const s = STRETCHES[idx]; if(!s) continue;
+    if(s.primary) muscleSet.add(s.primary);
+    for(const sec of (s.secondary||[])) muscleSet.add(sec);
+  }
+  const orderedMuscles = MUSCLE_ORDER.filter(m => muscleSet.has(m));
+
+  let mevCount = 0, mavCount = 0, missCount = 0;
+  for(const m of orderedMuscles){
+    const cls = classifyVolume(minutes[m]||0, MUSCLE_LANDMARKS[m]);
+    if(cls === 'mav' || cls === 'over-mav') mavCount++;
+    else if(cls === 'mev') mevCount++;
+    else if(cls === 'under') missCount++;
+  }
+  document.getElementById('vol-summary').innerHTML =
+    `<span><b>${mavCount}</b>IN MAV</span><span><b>${mevCount}</b>AT MEV</span><span><b>${missCount}</b>UNDER</span>`;
+
+  document.getElementById('vol-cards').innerHTML = orderedMuscles.map(m => {
+    const lm = MUSCLE_LANDMARKS[m];
+    const min = minutes[m] || 0;
+    const cls = classifyVolume(min, lm);
+    const maxScale = lm.mrv * 1.2;
+    const pct = Math.min(100, (min / maxScale) * 100);
+    const tickMev = (lm.mev / maxScale) * 100;
+    const tickMavLow = (lm.mav[0] / maxScale) * 100;
+    const tickMavHigh = (lm.mav[1] / maxScale) * 100;
+    const tickMrv = (lm.mrv / maxScale) * 100;
+    return `
+      <div class="vol-card ${cls}">
+        <div class="vol-head"><div class="name">${MUSCLE_NAMES[m]}</div><div class="sets">${fmtMin(min)}<span class="unit">MIN/WK</span></div></div>
+        <div class="vol-bar">
+          <div class="fill" style="width:${pct}%"></div>
+          <div class="tick" style="left:${tickMev}%"></div>
+          <div class="tick" style="left:${tickMavLow}%"></div>
+          <div class="tick" style="left:${tickMavHigh}%"></div>
+          <div class="tick" style="left:${tickMrv}%"></div>
+        </div>
+        <div class="vol-foot"><span>MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv}</span><span class="status ${cls}">${VOL_LABEL[cls]}</span></div>
+      </div>`;
+  }).join('');
 }
-// PAIR: stash previous, switch to recommendation.
-function pairRoutine(key){
-  const state = loadState();
-  state.routinePrevious = state.routine || null;
-  state.routine = key;
-  saveState(state);
-  renderHome();
-}
-// REGRET: undo the PAIR.
-function regretPair(){
-  const state = loadState();
-  if(!state.routinePrevious) return;
-  state.routine = state.routinePrevious;
-  state.routinePrevious = null;
-  saveState(state);
-  renderHome();
-}
-function fmtMMSS(totalSec){
-  const m = Math.floor(totalSec / 60);
-  const s = totalSec % 60;
-  return m + ":" + String(s).padStart(2, "0");
-}
+
 function fmtMin(m){
   if(m >= 10) return Math.round(m).toString();
   return (Math.round(m*10)/10).toFixed(1);
 }
-// Minutes done today (single-day, not weekly). Same crediting rule as weekly: primary 1.0, secondary 0.5.
-function todayMuscleMinutes(state){
-  const totals = {};
-  for(const m of MUSCLE_ORDER) totals[m] = 0;
-  let total = 0;
-  const today = todayStr();
-  for(const session of getSessions(state)){
-    if(session.date !== today) continue;
-    for(const c of (session.completed||[])){
-      const s = STRETCHES[c.i];
-      if(!s) continue;
-      const min = (c.sec||0) / 60;
-      total += min;
-      if(s.primary && totals.hasOwnProperty(s.primary)) totals[s.primary] += min;
-      for(const sec of (s.secondary||[])){
-        if(totals.hasOwnProperty(sec)) totals[sec] += min * 0.5;
-      }
-    }
-  }
-  return {totals, total};
-}
-// Total weekly minutes (sum across all muscles — already includes 0.5x for secondaries).
-function weeklyTotalMinutes(state){
-  const totals = weeklyMuscleMinutes(state);
-  let sum = 0;
-  for(const k in totals) sum += totals[k];
-  // Subtract double-counting: actually the per-stretch minutes go into 1 primary + N×0.5 secondaries,
-  // so summing across muscles overcounts. For the headline "stretching minutes" stat we want raw time.
-  // Recompute simply: sum sec across all sessions in last 7 days.
-  let rawSec = 0;
-  const today = todayStr();
-  for(const session of getSessions(state)){
-    const gap = daysBetween(session.date, today);
-    if(gap < 0 || gap > 6) continue;
-    for(const c of (session.completed||[])) rawSec += (c.sec || 0);
-  }
-  return rawSec / 60;
-}
-// Raw minutes done today (sum of held seconds, ignoring muscle crediting).
-function todayRawMinutes(state){
-  const today = todayStr();
-  let sec = 0;
-  for(const session of getSessions(state)){
-    if(session.date !== today) continue;
-    for(const c of (session.completed||[])) sec += (c.sec || 0);
-  }
-  return sec / 60;
-}
 
-// Minutes done on each of the last 7 calendar days (oldest → today, length 7).
-function lastSevenDays(state){
-  const out = [];
-  const now = new Date();
-  for(let i = 6; i >= 0; i--){
-    const d = new Date(now); d.setDate(d.getDate() - i);
-    const dateStr = d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
-    // local day letter (M T W T F S S)
-    const letters = ["S","M","T","W","T","F","S"];
-    let sec = 0;
-    for(const session of getSessions(state)){
-      if(session.date !== dateStr) continue;
-      for(const c of (session.completed||[])) sec += (c.sec || 0);
-    }
-    out.push({ date: dateStr, letter: letters[d.getDay()], minutes: sec / 60, isToday: dateStr === todayStr() });
-  }
-  return out;
-}
-
-// Effective indices for a routine = defaults + user-added (state.customRoutines[key].add).
-// User additions stick at the END of the routine so the curated order stays.
-function effectiveIndices(state, routine){
-  const custom = (state.customRoutines && state.customRoutines[routine.key]) || {};
-  const added = Array.isArray(custom.add) ? custom.add.filter(i => Number.isInteger(i) && i >= 0 && i < STRETCHES.length) : [];
-  // Build a Set of defaults so an "add" that's already in the default routine doesn't duplicate.
-  const defaults = new Set(routine.indices);
-  const dedupedAdds = added.filter(i => !defaults.has(i));
-  return { all: [...routine.indices, ...dedupedAdds], adds: new Set(dedupedAdds) };
-}
-
-// Build the routine's relevant muscle list — primary + secondary unions, kept in priority order.
-function routineMuscleSet(routine, eff){
-  const set = new Set();
-  const indices = eff ? eff.all : routine.indices;
-  for(const idx of indices){
-    const s = STRETCHES[idx];
-    if(!s) continue;
-    if(s.primary) set.add(s.primary);
-    for(const sec of (s.secondary||[])) set.add(sec);
-  }
-  return MUSCLE_ORDER.filter(m => set.has(m));
-}
-
-// Scroll the page to the WEEKLY VOLUME section (weekly-btn target)
-function scrollToVolume(){
-  const el = document.getElementById("vol-section-head");
-  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
-}
-
-// STRETCH PICKER — open / close / render
-function openStretchPicker(){
+function pickRoutine(key){
   const state = loadState();
-  const routine = getRoutine(state.routine || "rest");
-  const eff = effectiveIndices(state, routine);
-  const included = new Set(eff.all);
-  document.getElementById("picker-sub").textContent = `Adds to ${routine.name}`;
-  document.getElementById("picker-list").innerHTML = STRETCHES.map((s, i) => {
-    const isIncluded = included.has(i);
-    const sideTag = s.side ? `<span class="side-tag">${s.side[0]}</span>` : "";
-    const click = isIncluded ? "" : `onclick="addStretchToRoutine(${i})"`;
-    return `<div class="picker-row${isIncluded ? ' included' : ''}" ${click}>
-      <div class="nm">${s.name}${sideTag}<div class="area">${s.area}</div></div>
-      <button class="add" ${isIncluded ? 'disabled' : `onclick="addStretchToRoutine(${i})"`}>${isIncluded ? 'In' : '+ Add'}</button>
-    </div>`;
-  }).join("");
-  document.getElementById("picker").classList.add("active");
-  document.getElementById("picker").scrollTop = 0;
-}
-function closeStretchPicker(){
-  document.getElementById("picker").classList.remove("active");
-}
-
-// ALL ROUTINES PANEL — open / close / render
-function openAllRoutines(){
-  const state = loadState();
-  const activeKey = state.routine || "rest";
-  document.getElementById("all-list").innerHTML = ROUTINES.map((r, i) => {
-    const eff = effectiveIndices(state, r);
-    const holdSec = routineHoldSec(r);
-    const durSec = eff.all.length * holdSec;
-    const isActive = r.key === activeKey;
-    return `<div class="day-card${isActive ? ' active' : ''}" onclick="pickRoutineFromBrowser('${r.key}')">
-      <div class="num">${String(i+1).padStart(2,"0")}</div>
-      <div class="meta">
-        <div class="d-name">${r.titleMain} ${r.titleAccent}</div>
-        <div class="d-muscles">${r.muscles}</div>
-        <div class="d-count">${eff.all.length} stretches · ${fmtMMSS(durSec)}${holdSec !== HOLD_SECONDS ? ` · ${holdSec}s holds` : ''}</div>
-      </div>
-      <div class="play-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5 L19 12 L7 19 Z"/></svg></div>
-    </div>`;
-  }).join("");
-  document.getElementById("all-routines").classList.add("active");
-  document.getElementById("all-routines").scrollTop = 0;
-}
-function closeAllRoutines(){
-  document.getElementById("all-routines").classList.remove("active");
-}
-function pickRoutineFromBrowser(key){
-  setRoutine(key);
-  closeAllRoutines();
-}
-
-// Add / remove user-added stretches.
-function addStretchToRoutine(masterIdx){
-  const state = loadState();
-  state.customRoutines = state.customRoutines || {};
-  const routineKey = state.routine || "rest";
-  state.customRoutines[routineKey] = state.customRoutines[routineKey] || {add:[]};
-  const arr = state.customRoutines[routineKey].add;
-  if(!arr.includes(masterIdx)) arr.push(masterIdx);
-  saveState(state);
-  closeStretchPicker();
-  renderHome();
-}
-function removeAddedStretch(masterIdx){
-  const state = loadState();
-  const routineKey = state.routine || "rest";
-  if(!state.customRoutines || !state.customRoutines[routineKey]) return;
-  state.customRoutines[routineKey].add = (state.customRoutines[routineKey].add || []).filter(i => i !== masterIdx);
+  state.routine = key;
+  // If user manually picks a routine that differs from lift recommendation, turn off auto-follow.
+  const liftDay = getLiftDay();
+  const liftRec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
+  state.followLift = (liftRec === key);
   saveState(state);
   renderHome();
 }
 
-function renderHome(){
-  const state = loadState();
-  const streak = computeStreak(state);
-  const $num = document.getElementById("streak-num");
-  const $chip = document.getElementById("streak-chip");
-  $num.textContent = streak;
-  $chip.classList.toggle("zero", streak === 0);
-
-  // Resolve lift-app day → recommendation. Auto-pick on first visit; respect explicit later choices.
-  const lift = getLiftDay();
-  const recommendedKey = lift ? recommendRoutineFromLiftDay(lift.name) : null;
-  let routineKey = state.routine;
-  if(!routineKey){
-    routineKey = recommendedKey || "rest";
-    state.routine = routineKey;
-    saveState(state);
-  }
-  const routine = getRoutine(routineKey);
-  const holdSec = routineHoldSec(routine);
-
-  // Lift banner — only render if lift state was found.
-  const $banner = document.getElementById("lift-banner");
-  if(lift){
-    const matched = recommendedKey && recommendedKey === routineKey;
-    const recRoutine = recommendedKey ? getRoutine(recommendedKey) : null;
-    const canRegret = matched && state.routinePrevious;
-    $banner.className = "lift-banner" + (matched ? " matched" : "");
-    $banner.style.display = "flex";
-    let pairLine;
-    if(matched && canRegret) pairLine = ` · paired ✓`;
-    else if(matched)         pairLine = ` · paired ✓`;
-    else if(recRoutine)      pairLine = ` · pair with ${recRoutine.name}`;
-    else                     pairLine = "";
-    $banner.innerHTML = `
-      <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9 H21 M5 5 V19 M19 5 V19 M3 15 H21"/></svg></div>
-      <div class="meta">
-        <div class="l">From DUMBASS LIFT</div>
-        <div class="n">Today: <b>${lift.name}</b>${pairLine}</div>
-      </div>
-      ${recRoutine && !matched ? `<button class="pick" onclick="pairRoutine('${recommendedKey}')">PAIR</button>` : ""}
-      ${canRegret ? `<button class="regret" onclick="regretPair()" title="Undo pair">UNDO</button>` : ""}
-    `;
-  } else {
-    $banner.style.display = "none";
-  }
-
-  // Top program-row + big day title (mirrors lift app's TODAY view)
-  const dowNames = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
-  const dowLong = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
-  const dow = new Date().getDay();
-  document.getElementById("prog-dow").textContent = dowNames[dow];
-  document.getElementById("prog-name").textContent = (routine.titleMain + " " + routine.titleAccent);
-  document.getElementById("day-of-week").textContent = dowLong[dow];
-  document.getElementById("big-title-main").textContent = routine.titleMain;
-  document.getElementById("big-title-accent").textContent = routine.titleAccent;
-
-  // Week strip — 7 cells, oldest → today.
-  const week = lastSevenDays(state);
-  const maxMin = Math.max(5, ...week.map(d => d.minutes));
-  const weekTotal = week.reduce((a,b)=>a+b.minutes,0);
-  // Section-head right-side text — keep it as a question, the big number is in the verdict card.
-  document.getElementById("week-total-c").textContent = "Will I progress?";
-  document.getElementById("week-strip").innerHTML = week.map(d => {
-    const pct = Math.round((d.minutes / maxMin) * 100);
-    const cls = "week-cell" + (d.minutes > 0 ? " done" : "") + (d.isToday ? " today" : "");
-    return `<div class="${cls}">
-      <div class="d">${d.letter}</div>
-      <div class="bar-wrap"><div class="bar" style="height:${Math.max(3, pct * 0.32)}px"></div></div>
-      <div class="m">${d.minutes > 0 ? fmtMin(d.minutes) : "·"}</div>
-    </div>`;
-  }).join("");
-
-  // Section-head right side — show weekly total minutes.
-  document.getElementById("week-total-c").textContent = fmtMin(weekTotal) + " min";
-
-  // Chip row
-  document.getElementById("r-chips").innerHTML = ROUTINES.map(r =>
-    `<button class="r-chip${r.key===routineKey?' active':''}" onclick="setRoutine('${r.key}')">${r.name}</button>`
-  ).join("");
-
-  // Effective indices (defaults + user adds)
-  const eff = effectiveIndices(state, routine);
-  const totalCount = eff.all.length;
-  const durSec = totalCount * holdSec;
-
-  // "Today's stretches" header count (X / Y) — X = done today, Y = total
-  const todaySessions = getSessions(state).filter(s => s.date === todayStr());
-  const doneCount = todaySessions.reduce((sum, s) => sum + (s.completed||[]).length, 0);
-  document.getElementById("today-count").textContent = Math.min(doneCount, totalCount);
-  document.getElementById("today-total").textContent = totalCount;
-
-  document.getElementById("begin-sub").innerHTML =
-    `${totalCount} STRETCHES <span class="dot">·</span> ${fmtMMSS(durSec)}` +
-    (holdSec !== HOLD_SECONDS ? ` <span class="dot">·</span> ${holdSec}S HOLDS` : ` <span class="dot">·</span> NO EXCUSES`);
-
-  // Routine list — defaults render as normal; user-added stretches get a remove (×) button.
-  const $list = document.getElementById("routine-list");
-  $list.innerHTML = eff.all.map((idx, i) => {
-    const s = STRETCHES[idx];
-    const sideTag = s.side ? ` <span style="color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.15em">${s.side[0]}</span>` : "";
-    const isAdded = eff.adds.has(idx);
-    const removeBtn = isAdded ? `<button class="rm-btn" onclick="removeAddedStretch(${idx})" aria-label="Remove">×</button>` : "";
-    return `<div class="routine-item${isAdded ? ' added' : ''}">
-      <span class="n">${String(i+1).padStart(2,"0")}</span>
-      <span class="nm">${s.name}${sideTag}${isAdded ? ' <span class="added-tag">+</span>' : ''}</span>
-      ${removeBtn}
-      <button class="info-btn" onclick="openInfo(${idx})" aria-label="How to do ${s.name}">i</button>
-      <span class="t">${holdSec}s</span>
-    </div>`;
-  }).join("");
-  // "+ Add stretch" button at end of list.
-  $list.innerHTML += `<button class="add-stretch" onclick="openStretchPicker()">+ ADD STRETCH</button>`;
-
-  // Populate weekly-btn with the PLANNED total for this routine × 7 days.
-  const plannedTotal = plannedWeeklyTotalMinutes(state, routine);
-  const $vb = document.querySelector(".weekly-btn .vol-big");
-  if($vb) $vb.textContent = fmtMin(plannedTotal);
-
-  // Volume bars — PLANNED weekly state (this routine done every day for 7 days).
-  // Forward-looking, independent of what's been completed.
-  const muscles = routineMuscleSet(routine, eff);
-  const planned = plannedMuscleMinutes(state, routine);
-  document.getElementById("vol-section-sub").textContent = `Planned · ${routine.name.toLowerCase()} × 7 days`;
-  document.getElementById("vol-list").innerHTML = muscles.map(m => {
-    const lm = MUSCLE_LANDMARKS[m];
-    const plMins = planned[m] || 0;
-    const cls = classifyVolume(plMins, lm);
-    const scaleMax = Math.max(lm.mrv + 4, plMins + 2);
-    const plPct = Math.min(100, (plMins / scaleMax) * 100);
-    const mevPct = (lm.mev / scaleMax) * 100;
-    const mav0Pct = (lm.mav[0] / scaleMax) * 100;
-    const mav1Pct = (lm.mav[1] / scaleMax) * 100;
-    const mrvPct = (lm.mrv / scaleMax) * 100;
-    const range = `MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv}`;
-    return `<div class="vol-card ${cls}">
-      <div class="head">
-        <span class="nm">${MUSCLE_NAMES[m]}</span>
-        <span class="min">${fmtMin(plMins)}<span class="unit">min</span></span>
-      </div>
-      <div class="vol-bar">
-        <div class="fill" style="width:${plPct}%"></div>
-        ${lm.mev>0?`<div class="tick" style="left:${mevPct}%"></div>`:''}
-        <div class="tick" style="left:${mav0Pct}%"></div>
-        <div class="tick" style="left:${mav1Pct}%"></div>
-        <div class="tick mrv" style="left:${mrvPct}%"></div>
-      </div>
-      <div class="vol-foot">
-        <span class="range">${range}</span>
-        <span class="status ${cls}">${VOLUME_STATUS_LABEL[cls]}</span>
-      </div>
-    </div>`;
-  }).join("");
-
-  const $last = document.getElementById("last-done");
-  const dates = getSessionDates(state);
-  if(dates.length){
-    const lastDay = dates.slice().sort().reverse()[0];
-    const gap = daysBetween(lastDay, todayStr());
-    if(gap === 0) $last.textContent = "Done today · come back tomorrow";
-    else if(gap === 1) $last.textContent = "Last done yesterday";
-    else $last.textContent = "Last done " + gap + " days ago";
-  } else {
-    $last.textContent = "Your first session — let's go.";
-  }
+// ---------- SCREEN SWITCHING ----------
+function showScreen(id){
+  // ONE source of truth: every .screen toggled via the same class. No inline styles.
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-// ============================================================
-// INFO MODAL
-// ============================================================
-function openInfo(i){
-  const s = STRETCHES[i];
-  const info = STRETCH_INFO[s.name];
-  if(!info) return;
-  document.getElementById("info-name").textContent = s.name + (s.side ? " — " + s.side : "");
-  document.getElementById("info-area").textContent = s.area;
-  // Real demo: open a YouTube search for this exact stretch in a new tab.
-  // Search-URLs are deterministic and never rot — no hardcoded video IDs to break.
-  const q = encodeURIComponent(s.name + " stretch how to");
-  document.getElementById("info-watch").href = "https://www.youtube.com/results?search_query=" + q;
-  document.getElementById("info-what").innerHTML = info.what;
-  document.getElementById("info-how").innerHTML = info.how;
-  document.getElementById("info").classList.add("active");
-  document.getElementById("info").scrollTop = 0;
-}
-function closeInfo(){
-  document.getElementById("info").classList.remove("active");
-}
+// On bfcache restore (iOS PWA), ensure we land on home in a clean state.
+window.addEventListener('pageshow', () => {
+  if(R){ cleanupRoutine(); }
+  R = null;
+  showScreen('home');
+  renderHome();
+});
 
-// ============================================================
-// ROUTINE ENGINE
-// ============================================================
+// ---------- ROUTINE ENGINE ----------
 let R = null;
 
 function startRoutine(){
   const state = loadState();
-  const routine = getRoutine(state.routine || "rest");
+  const liftDay = getLiftDay();
+  const liftRec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
+  let routineKey = state.routine;
+  if(liftRec && (!routineKey || state.followLift !== false)) routineKey = liftRec;
+  if(!routineKey) routineKey = "rest";
+  const routine = getRoutine(routineKey);
   const holdSec = routineHoldSec(routine);
-  const eff = effectiveIndices(state, routine);
-  // R.list = the stretches to run for THIS session (each with its master STRETCHES index baked in).
-  // Completion records use masterIdx so volume tracking always credits the same global muscle map.
-  const list = eff.all.map(masterIdx => ({...STRETCHES[masterIdx], masterIdx}));
-  R = { i:0, secLeft:holdSec, paused:false, ticker:null, wakeLock:null,
-        completed:[], list, routineKey:routine.key, holdSec };
-  document.getElementById("home").style.display = "none";
-  document.getElementById("routine").classList.add("active");
 
-  // Build segment bar
-  const $bar = document.getElementById("r-bar");
-  $bar.innerHTML = R.list.map((_,i) => `<div class="seg" data-i="${i}"><div class="fill"></div></div>`).join("");
+  R = {
+    i: 0,
+    holdSec,
+    secLeft: holdSec,
+    paused: false,
+    ticker: null,
+    wakeLock: null,
+    list: routine.indices.map(idx => ({ ...STRETCHES[idx], masterIdx: idx })),
+    completed: [],
+    routineKey: routine.key,
+  };
 
-  // Try to keep screen awake (best effort, iOS PWA may not support)
-  try {
-    if("wakeLock" in navigator) navigator.wakeLock.request("screen").then(w => { R.wakeLock = w; }).catch(()=>{});
-  } catch(e){}
+  // Segment bar
+  document.getElementById('r-bar').innerHTML =
+    R.list.map((_, i) => `<div class="seg" data-i="${i}"><div class="fill"></div></div>`).join('');
 
+  // Wake lock (best effort)
+  try{
+    if('wakeLock' in navigator){
+      navigator.wakeLock.request('screen').then(w => { R.wakeLock = w; }).catch(()=>{});
+    }
+  }catch(e){}
+
+  document.getElementById('r-pause').textContent = 'PAUSE';
   showStretch(0);
+  showScreen('routine');
   startTicker();
 }
 
 function showStretch(i){
   const s = R.list[i];
-  document.getElementById("r-eyebrow").textContent = "Stretch " + (i+1) + " of " + R.list.length;
-  document.getElementById("r-name").innerHTML = s.name + (s.side ? ` <span class="r-side">${s.side}</span>` : "");
-  document.getElementById("r-cue").textContent = s.cue;
-  document.getElementById("r-counter").textContent = (i+1) + " / " + R.list.length;
+  document.getElementById('r-counter').textContent = `${i+1} / ${R.list.length}`;
+  document.getElementById('r-eyebrow').textContent = `Stretch ${i+1} of ${R.list.length}`;
+  const side = s.side ? ` <span class="r-side">${s.side}</span>` : '';
+  document.getElementById('r-name').innerHTML = s.name + side;
+  document.getElementById('r-area').textContent = s.area;
+  document.getElementById('r-cue').textContent = s.cue;
+  document.getElementById('r-figure').innerHTML = POSES[s.name] || '';
 
-  // Pose illustration — render inside a white card so the existing colors work.
-  const info = STRETCH_INFO[s.name];
-  const $fig = document.getElementById("r-figure");
-  $fig.innerHTML = (info && info.svg) ? info.svg : "";
-  $fig.style.display = (info && info.svg) ? "flex" : "none";
-  // Reset segment fills
-  document.querySelectorAll("#r-bar .seg").forEach((seg, idx) => {
-    const fill = seg.querySelector(".fill");
-    if(idx < i){ seg.classList.add("done"); fill.style.width = "0%"; }
-    else { seg.classList.remove("done"); fill.style.width = "0%"; }
+  // Segment bar reset
+  document.querySelectorAll('#r-bar .seg').forEach((seg, idx) => {
+    const fill = seg.querySelector('.fill');
+    if(idx < i){ seg.classList.add('done'); fill.style.width = '100%'; }
+    else { seg.classList.remove('done'); fill.style.width = '0%'; }
   });
+
   R.secLeft = R.holdSec;
-  updateTimerDisplay();
+  updateTimer();
 }
 
-function updateTimerDisplay(){
-  const $t = document.getElementById("r-timer");
-  $t.textContent = R.secLeft;
-  $t.classList.toggle("warn", R.secLeft <= 5 && R.secLeft > 0);
-
-  // Update current segment fill
+function updateTimer(){
+  document.getElementById('r-timer').textContent = R.secLeft;
+  document.getElementById('r-timer').classList.toggle('warn', R.secLeft <= 5 && R.secLeft > 0);
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){
-    const fill = seg.querySelector(".fill");
+    const fill = seg.querySelector('.fill');
     const pct = ((R.holdSec - R.secLeft) / R.holdSec) * 100;
-    fill.style.width = pct + "%";
+    fill.style.width = pct + '%';
   }
 }
 
 function startTicker(){
   if(R.ticker) clearInterval(R.ticker);
   R.ticker = setInterval(() => {
-    if(R.paused) return;
+    if(!R || R.paused) return;
     R.secLeft--;
     if(R.secLeft <= 0){
-      // Mark done, move on. Credit goes to the MASTER stretch index so volume
-      // tracking treats this stretch the same regardless of which routine ran.
-      R.completed.push({i:R.list[R.i].masterIdx, sec:R.holdSec});
+      R.completed.push({ i: R.list[R.i].masterIdx, sec: R.holdSec });
       const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
-      if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
+      if(seg){ seg.classList.add('done'); seg.querySelector('.fill').style.width = '100%'; }
       if(R.i + 1 >= R.list.length){
         finishRoutine();
         return;
       }
       R.i++;
       showStretch(R.i);
-      // tiny haptic if available
       try{ if(navigator.vibrate) navigator.vibrate(40); }catch(e){}
     } else {
-      updateTimerDisplay();
-      if(R.secLeft === 3 || R.secLeft === 2 || R.secLeft === 1){
-        try{ if(navigator.vibrate) navigator.vibrate(20); }catch(e){}
+      updateTimer();
+      if(R.secLeft <= 3){
+        try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){}
       }
     }
   }, 1000);
@@ -1574,16 +907,15 @@ function startTicker(){
 function togglePause(){
   if(!R) return;
   R.paused = !R.paused;
-  document.getElementById("r-pause").textContent = R.paused ? "RESUME" : "PAUSE";
+  document.getElementById('r-pause').textContent = R.paused ? 'RESUME' : 'PAUSE';
 }
 
 function skipStretch(){
   if(!R) return;
-  // Credit the time actually held — skip mid-hold = partial credit.
-  const heldSec = Math.max(0, R.holdSec - R.secLeft);
-  R.completed.push({i:R.list[R.i].masterIdx, sec:heldSec});
+  const held = Math.max(0, R.holdSec - R.secLeft);
+  R.completed.push({ i: R.list[R.i].masterIdx, sec: held });
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
-  if(seg){ seg.classList.add("done"); seg.querySelector(".fill").style.width = "0%"; }
+  if(seg){ seg.classList.add('done'); seg.querySelector('.fill').style.width = '100%'; }
   if(R.i + 1 >= R.list.length){
     finishRoutine();
     return;
@@ -1595,71 +927,52 @@ function skipStretch(){
 function quitRoutine(){
   if(!confirm("Quit this session? Today won't count.")) return;
   cleanupRoutine();
-  document.getElementById("routine").classList.remove("active");
-  document.getElementById("home").style.display = "";
+  R = null;
+  showScreen('home');
   renderHome();
-  window.scrollTo(0,0);
 }
 
 function cleanupRoutine(){
-  if(R && R.ticker){ clearInterval(R.ticker); R.ticker = null; }
-  if(R && R.wakeLock){ try{ R.wakeLock.release(); }catch(e){} R.wakeLock = null; }
+  if(!R) return;
+  if(R.ticker){ clearInterval(R.ticker); R.ticker = null; }
+  if(R.wakeLock){ try{ R.wakeLock.release(); }catch(e){} R.wakeLock = null; }
 }
 
 function finishRoutine(){
-  __dbg('finishRoutine:0 enter');
   cleanupRoutine();
-  document.getElementById("routine").classList.remove("active");
-  __dbg('finishRoutine:1 routine-hidden');
-
-  // Log today's session with per-stretch credit.
   const state = loadState();
   state.sessions = state.sessions || [];
   const t = todayStr();
-  // Replace any existing session for today with the most recent one.
   state.sessions = state.sessions.filter(s => s.date !== t);
-  state.sessions.push({date:t, completed:R.completed.slice()});
-  // Keep last 90 sessions.
+  state.sessions.push({ date: t, completed: R.completed.slice() });
   state.sessions = state.sessions.slice(-90);
-  // Also keep legacy `log` array in sync so old streak views still work if rolled back.
   state.log = state.log || [];
   if(!state.log.includes(t)) state.log.push(t);
   state.log = state.log.slice(-365);
   saveState(state);
 
   const streak = computeStreak(state);
-  document.getElementById("done-streak-num").textContent = streak;
-
-  // pick a quote, deterministic by day-of-year
+  document.getElementById('done-streak-num').textContent = streak;
   const day = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
   const q = QUOTES[day % QUOTES.length];
-  document.getElementById("done-quote").innerHTML = `"${q[0]}"<br><span style="font-style:normal;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-faint);font-weight:700">— ${q[1]}</span>`;
+  document.getElementById('done-quote').innerHTML = `"${q[0]}"<span class="author">— ${q[1]}</span>`;
 
-  document.getElementById("done").classList.add("active");
-  __dbg('finishRoutine:2 done-shown');
-  try{ if(navigator.vibrate) navigator.vibrate([60,80,120]); }catch(e){}
+  R = null;
+  showScreen('done');
+  try{ if(navigator.vibrate) navigator.vibrate([50,80,120]); }catch(e){}
 }
 
 function backHome(){
-  __dbg('backHome:0 enter');
-  document.getElementById("done").classList.remove("active");
-  __dbg('backHome:1 done-hidden');
-  document.getElementById("home").style.display = "";
-  __dbg('backHome:2 home-shown');
+  showScreen('home');
   renderHome();
-  __dbg('backHome:3 rendered');
-  window.scrollTo(0,0);
-  __dbg('backHome:4 scrolled');
-  // Snapshot DOM state ~200ms after BACK HOME so we can see if the page actually went black
-  setTimeout(() => __diagnose('after-backHome'), 200);
 }
 
-// Pause when the tab goes hidden so the timer doesn't run "in your pocket"
-document.addEventListener("visibilitychange", () => {
+// Pause if tab/window hidden during routine.
+document.addEventListener('visibilitychange', () => {
   if(document.hidden && R && !R.paused){
     R.paused = true;
-    const btn = document.getElementById("r-pause");
-    if(btn) btn.textContent = "RESUME";
+    const btn = document.getElementById('r-pause');
+    if(btn) btn.textContent = 'RESUME';
   }
 });
 
