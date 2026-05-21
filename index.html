@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>DUMBASS STRETCH — 5 minutes. Every day.</title>
+<title>DUMBASS STRETCH — Stretch + Mobility. 5 min. Every day.</title>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Crect%20width%3D%2724%27%20height%3D%2724%27%20fill%3D%27%23000%27%2F%3E%3Cpolygon%20points%3D%274.5%2C6.5%2019.5%2C6.5%2012%2C19.5%27%20fill%3D%27%23FF3300%27%2F%3E%3C%2Fsvg%3E">
 <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
@@ -25,7 +25,8 @@
   --bg:#FFFFFF; --bg-deep:#F5F5F5;
   --steel-dark:#FAFAFA; --steel:#F4F4F4; --steel-mid:#E8E8E8; --steel-light:#C8C8C8;
   --border:#000000; --border-soft:#D0D0D0;
-  --red:#FF3300; --red-glow:rgba(255,51,0,.22); --red-soft:rgba(255,51,0,.05);
+  --red:#FF3300; --red-glow:rgba(255,51,0,.22);
+  --blue:#0066FF; --blue-glow:rgba(0,102,255,.22);
   --text:#000000; --text-mid:#3A3A3A; --text-dim:#7A7A7A; --text-faint:#B0B0B0;
   --green:#5cd07a; --amber:#e8b94a;
 }
@@ -33,56 +34,78 @@
 html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overscroll-behavior-y:none;min-height:100dvh}
 body{user-select:none}
 button{cursor:pointer;font-family:inherit;font-size:inherit}
-input,textarea{user-select:text}
+input,textarea{user-select:text;font-family:inherit}
 
-/* Screen system — ONE active at a time. Body and inline styles never touch display. */
-.screen{display:none;min-height:100dvh;max-width:500px;margin:0 auto;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);background:linear-gradient(180deg,var(--bg) 0%,var(--bg-deep) 100%);animation:fadeUp .22s ease-out}
+/* Mode accent: switches between red (stretch) and blue (mobility) */
+body[data-mode="mobility"]{--accent:var(--blue); --accent-glow:var(--blue-glow);}
+body[data-mode="stretch"]{--accent:var(--red); --accent-glow:var(--red-glow);}
+
+/* Screen system */
+.screen{display:none;min-height:100dvh;max-width:500px;margin:0 auto;padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);background:linear-gradient(180deg,var(--bg) 0%,var(--bg-deep) 100%);animation:fadeUp .2s ease-out}
 .screen.active{display:flex;flex-direction:column}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fillBar{from{width:0}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 
 /* HEADER */
 .header{padding:18px 0 10px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.04em;color:var(--red);text-shadow:0 0 14px var(--red-glow);line-height:1;display:flex;align-items:baseline;gap:6px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:.04em;color:var(--accent);text-shadow:0 0 14px var(--accent-glow);line-height:1;display:flex;align-items:baseline;gap:6px}
 .logo .ver{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.25em;color:var(--text-faint);font-weight:600;text-transform:uppercase;text-shadow:none}
 .streak-chip{display:inline-flex;align-items:center;gap:6px;font-family:'Oswald',sans-serif;font-size:10px;color:var(--text);letter-spacing:.28em;font-weight:700;background:#FFF;padding:8px 12px;border:1px solid var(--border);text-transform:uppercase}
-.streak-chip .num{color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.02em;line-height:1}
+.streak-chip .num{color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.02em;line-height:1}
 .streak-chip.zero .num{color:var(--text-faint)}
 
-/* HOME */
-.eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--red);text-transform:uppercase;font-weight:700;margin:18px 0 6px}
-.title{font-family:'Bebas Neue',sans-serif;font-size:54px;line-height:.95;letter-spacing:-.005em;color:var(--text);margin-bottom:6px;text-wrap:balance}
-.title .accent{color:var(--red)}
-.subtitle{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase;font-weight:600;margin-bottom:18px}
-.lift-badge{display:inline-flex;align-items:center;gap:6px;background:var(--text);color:#FFF;font-family:'Oswald',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:4px 8px;margin-left:6px;vertical-align:middle}
-.lift-badge .dot{width:6px;height:6px;background:var(--red);border-radius:50%}
+/* MODE TABS (slides) */
+.mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:6px 0 14px;border:1px solid var(--border);background:#FFF;position:relative}
+.mode-tab{background:transparent;border:none;padding:14px 0;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;color:var(--text-dim);text-align:center;position:relative;z-index:1;transition:color .2s}
+.mode-tab.active{color:#FFF}
+.mode-tabs::before{content:'';position:absolute;top:0;left:0;width:50%;height:100%;background:linear-gradient(180deg,#000,#1a1a1a);transition:transform .25s cubic-bezier(.2,.8,.2,1);box-shadow:inset 0 -3px 0 var(--accent)}
+body[data-mode="mobility"] .mode-tabs::before{transform:translateX(100%)}
 
-.btn-primary{width:100%;background:linear-gradient(180deg,#000,#1a1a1a);color:#FFF;border:1px solid var(--red);padding:18px 0;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;box-shadow:0 4px 22px var(--red-glow);transition:transform .12s,box-shadow .2s;margin-bottom:20px}
-.btn-primary:active{transform:scale(.985);box-shadow:0 2px 12px var(--red-glow)}
+/* Slides — both rendered, only one visible */
+.slide{display:none;flex-direction:column}
+.slide.active{display:flex;animation:fadeUp .2s ease-out}
+
+/* HOME */
+.eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--accent);text-transform:uppercase;font-weight:700;margin:6px 0 6px}
+.title{font-family:'Bebas Neue',sans-serif;font-size:54px;line-height:.95;letter-spacing:-.005em;color:var(--text);margin-bottom:6px;text-wrap:balance}
+.title .accent{color:var(--accent)}
+.subtitle{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.18em;color:var(--text-dim);text-transform:uppercase;font-weight:600;margin-bottom:18px}
+
+.btn-primary{width:100%;background:linear-gradient(180deg,#000,#1a1a1a);color:#FFF;border:1px solid var(--accent);padding:18px 0;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.4em;text-transform:uppercase;font-weight:700;box-shadow:0 4px 22px var(--accent-glow);transition:transform .12s,box-shadow .2s;margin-bottom:18px}
+.btn-primary:active{transform:scale(.985);box-shadow:0 2px 12px var(--accent-glow)}
 .btn-secondary{width:100%;background:#FFF;color:var(--text);border:1px solid var(--border);padding:14px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700}
 .btn-secondary:active{background:var(--steel)}
 .btn-ghost{background:none;border:none;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:600;padding:8px}
+.btn-add{width:100%;background:#FFF;color:var(--text);border:1px dashed var(--text);padding:12px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;margin-top:6px}
+.btn-add:active{background:var(--text);color:#FFF}
 
 /* Routine chips */
-.r-chips{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-20px;margin-right:-20px;padding:0 20px}
+.r-chips{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-20px;margin-right:-20px;padding:0 20px 4px}
 .r-chips::-webkit-scrollbar{display:none}
 .r-chip{flex:0 0 auto;background:#FFF;color:var(--text);border:1px solid var(--border);padding:8px 12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;transition:background .12s,color .12s}
 .r-chip:active{transform:scale(.96)}
 .r-chip.active{background:var(--text);color:#FFF}
-.r-chip.recommend::before{content:"";display:inline-block;width:6px;height:6px;background:var(--red);border-radius:50%;margin-right:6px;vertical-align:middle}
+.r-chip.recommend::before{content:"";display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-right:6px;vertical-align:middle}
+.r-chip.custom{border-style:dashed}
 
 /* Section heads */
 .section-head{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .section-head .t{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--text);text-transform:uppercase;font-weight:700}
-.section-head .c{font-family:'Oswald',sans-serif;font-size:10px;color:var(--red);letter-spacing:.18em;font-weight:700}
+.section-head .c{font-family:'Oswald',sans-serif;font-size:10px;color:var(--accent);letter-spacing:.18em;font-weight:700}
 
 /* Routine list */
-.routine-list{display:flex;flex-direction:column;margin-bottom:8px}
-.routine-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-soft);font-size:14px}
+.routine-list{display:flex;flex-direction:column;margin-bottom:6px}
+.routine-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border-soft);font-size:14px}
 .routine-item .n{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-faint);width:22px;font-weight:700}
 .routine-item .nm{flex:1;color:var(--text);font-weight:500}
 .routine-item .side{color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;margin-left:4px}
+.routine-item .tag{color:var(--accent);font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-left:4px;font-weight:700}
 .routine-item .t{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:.08em}
+.routine-item .rm{flex-shrink:0;width:24px;height:24px;border:1px solid var(--border-soft);background:#FFF;color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;display:none;align-items:center;justify-content:center;padding:0;line-height:1}
+.routine-item.added{background:rgba(255,51,0,.04)}
+.routine-item.added .rm{display:inline-flex}
+body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
 
 /* Volume cards */
 .vol-summary{display:flex;font-family:'Oswald',sans-serif;font-size:10px;color:var(--text-dim);letter-spacing:.18em;text-transform:uppercase;font-weight:600;margin-bottom:10px;gap:14px}
@@ -98,7 +121,7 @@ input,textarea{user-select:text}
 .vol-head .sets{font-family:'Bebas Neue',sans-serif;font-size:20px;line-height:1;font-variant-numeric:tabular-nums}
 .vol-head .sets .unit{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-left:3px}
 .vol-bar{position:relative;height:7px;background:var(--steel);overflow:hidden;margin-bottom:4px}
-.vol-bar .fill{position:absolute;top:0;left:0;height:100%;background:var(--steel-light);animation:fillBar .55s ease-out}
+.vol-bar .fill{position:absolute;top:0;left:0;height:100%;background:var(--steel-light);animation:fillBar .5s ease-out}
 .vol-card.under .vol-bar .fill{background:var(--red)}
 .vol-card.mev .vol-bar .fill{background:var(--amber)}
 .vol-card.mav .vol-bar .fill{background:var(--green)}
@@ -112,11 +135,21 @@ input,textarea{user-select:text}
 .vol-foot .status.mav{color:var(--green)}
 .vol-foot .status.over-mav{color:var(--amber)}
 .vol-foot .status.over{color:var(--red)}
-.vol-legend{margin-top:10px;background:var(--steel);border:1px solid var(--border-soft);padding:10px 12px;font-size:11px;color:var(--text-mid);line-height:1.55}
-.vol-legend p{margin:0}
+.vol-legend{margin-top:10px;background:var(--steel);border:1px solid var(--border-soft);padding:10px 12px;font-size:11px;color:var(--text-mid);line-height:1.5}
 .vol-legend b{color:var(--text);font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700}
 
-.footer{margin-top:auto;padding:28px 0 18px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.28em;color:var(--text-faint);text-align:center;font-weight:700}
+/* Mobility joint card */
+.mob-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.mob-stat{background:#FFF;border:1px solid var(--border);padding:14px 8px;text-align:center}
+.mob-stat .l{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.25em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:4px}
+.mob-stat .v{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--text);line-height:1;font-variant-numeric:tabular-nums}
+.mob-stat .v .unit{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-left:3px}
+.mob-joint{background:#FFF;border:1px solid var(--border);border-left:3px solid var(--blue);padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.mob-joint .nm{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.02em;color:var(--text)}
+.mob-joint .v{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);font-variant-numeric:tabular-nums}
+.mob-joint .v .unit{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-left:3px}
+
+.footer{margin-top:auto;padding:24px 0 16px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.28em;color:var(--text-faint);text-align:center;font-weight:700}
 
 /* ROUTINE (timer) screen */
 #routine{padding:0}
@@ -126,20 +159,21 @@ input,textarea{user-select:text}
 .r-quit{background:none;border:none;color:var(--text-dim);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;font-weight:700;padding:4px 0}
 .r-bar{display:flex;gap:3px;height:5px;margin-bottom:18px}
 .r-bar .seg{flex:1;background:var(--steel);position:relative;overflow:hidden}
-.r-bar .seg .fill{position:absolute;left:0;top:0;height:100%;background:var(--red);width:0%;transition:width .9s linear}
+.r-bar .seg .fill{position:absolute;left:0;top:0;height:100%;background:var(--accent);width:0%;transition:width .9s linear}
 .r-bar .seg.done .fill{background:var(--text);width:100%}
-.r-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--red);text-transform:uppercase;font-weight:700;margin-bottom:6px}
-.r-name{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:.95;letter-spacing:-.005em;color:var(--text);margin-bottom:4px;text-wrap:balance}
-.r-side{display:inline-block;font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.18em;background:var(--text);color:#FFF;padding:3px 8px;vertical-align:middle;margin-left:8px;font-weight:700}
-.r-area{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;font-weight:600;margin-bottom:14px}
-.r-figure{background:var(--steel);border:1px solid var(--border-soft);padding:14px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;max-height:280px}
+.r-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--accent);text-transform:uppercase;font-weight:700;margin-bottom:6px}
+.r-name{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:.95;letter-spacing:-.005em;color:var(--text);margin-bottom:4px;text-wrap:balance}
+.r-side{display:inline-block;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.18em;background:var(--text);color:#FFF;padding:3px 8px;vertical-align:middle;margin-left:8px;font-weight:700}
+.r-tag{display:inline-block;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.18em;background:var(--accent);color:#FFF;padding:3px 8px;vertical-align:middle;margin-left:8px;font-weight:700;text-transform:uppercase}
+.r-area{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;font-weight:600;margin-bottom:12px}
+.r-figure{background:var(--steel);border:1px solid var(--border-soft);padding:14px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;max-height:260px}
 .r-figure svg{width:100%;max-width:340px;height:auto;display:block}
-.r-cue{font-size:14px;line-height:1.5;color:var(--text-mid);margin-bottom:18px;text-wrap:pretty;min-height:42px}
-.r-timer-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 14px}
-.r-timer{font-family:'Bebas Neue',sans-serif;font-size:120px;line-height:1;letter-spacing:-.02em;color:var(--text);font-variant-numeric:tabular-nums}
-.r-timer.warn{color:var(--red);animation:pulse 1s ease-in-out infinite}
+.r-figure.placeholder{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;color:var(--text-faint);text-transform:uppercase;font-weight:700;min-height:140px}
+.r-cue{font-size:14px;line-height:1.5;color:var(--text-mid);margin-bottom:14px;text-wrap:pretty;min-height:42px}
+.r-timer-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 0 12px}
+.r-timer{font-family:'Bebas Neue',sans-serif;font-size:110px;line-height:1;letter-spacing:-.02em;color:var(--text);font-variant-numeric:tabular-nums}
+.r-timer.warn{color:var(--accent);animation:pulse 1s ease-in-out infinite}
 .r-timer-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.4em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-top:-6px}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 .r-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:18px}
 .r-btn{padding:16px 0;background:#FFF;color:var(--text);border:1px solid var(--border);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700}
 .r-btn:active{background:var(--steel)}
@@ -148,44 +182,105 @@ input,textarea{user-select:text}
 
 /* DONE screen */
 .done-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
-.done-eyebrow{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.4em;color:var(--red);text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.done-eyebrow{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.4em;color:var(--accent);text-transform:uppercase;font-weight:700;margin-bottom:12px}
 .done-title{font-family:'Bebas Neue',sans-serif;font-size:90px;line-height:.9;letter-spacing:-.02em;color:var(--text);margin-bottom:18px}
-.done-streak{display:inline-flex;align-items:center;gap:10px;background:var(--text);color:#FFF;padding:14px 22px;margin-bottom:24px}
+.done-streak{display:inline-flex;align-items:center;gap:10px;background:var(--text);color:#FFF;padding:14px 22px;margin-bottom:22px}
 .done-streak .l{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;color:rgba(255,255,255,.85);font-weight:700;text-transform:uppercase}
-.done-streak .num{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;color:var(--red)}
+.done-streak .num{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;color:var(--accent)}
 .done-quote{max-width:320px;font-size:13px;font-style:italic;line-height:1.5;color:var(--text-mid);margin-bottom:32px;text-wrap:pretty}
 .done-quote .author{display:block;margin-top:6px;font-style:normal;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--text-faint);font-weight:700}
 .done-back{width:100%;max-width:360px}
+
+/* ADD overlay (picker) */
+.overlay{position:fixed;inset:0;background:#FFF;display:none;flex-direction:column;z-index:200;animation:slideUp .25s ease-out}
+.overlay.active{display:flex}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.ov-top{display:flex;justify-content:space-between;align-items:center;padding:18px 20px 8px;max-width:500px;margin:0 auto;width:100%}
+.ov-eyebrow{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.35em;color:var(--text-faint);text-transform:uppercase;font-weight:700}
+.ov-close{background:none;border:none;color:var(--text);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;padding:8px}
+.ov-title{font-family:'Bebas Neue',sans-serif;font-size:38px;letter-spacing:-.01em;line-height:.95;color:var(--text);padding:0 20px;max-width:500px;margin:0 auto 4px;width:100%}
+.ov-title .accent{color:var(--accent)}
+.ov-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-dim);letter-spacing:.06em;padding:0 20px;max-width:500px;margin:0 auto 14px;width:100%}
+.ov-tabs{display:flex;gap:0;padding:0 20px;max-width:500px;margin:0 auto 14px;width:100%;border-bottom:1px solid var(--border)}
+.ov-tab{flex:1;background:none;border:none;padding:12px 0;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.25em;text-transform:uppercase;font-weight:700;color:var(--text-faint);border-bottom:2px solid transparent;margin-bottom:-1px}
+.ov-tab.active{color:var(--text);border-bottom-color:var(--accent)}
+.ov-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 20px env(safe-area-inset-bottom);max-width:500px;margin:0 auto;width:100%}
+.ov-row{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-soft);cursor:pointer}
+.ov-row:active{background:var(--steel)}
+.ov-row .info{flex:1;min-width:0}
+.ov-row .nm{font-family:'Inter',sans-serif;font-size:14px;color:var(--text);font-weight:600;line-height:1.2}
+.ov-row .nm .side{color:var(--text-faint);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;margin-left:4px}
+.ov-row .area{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--text-dim);letter-spacing:.04em;margin-top:2px}
+.ov-row .add{flex-shrink:0;background:var(--text);color:#FFF;border:none;font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;padding:7px 10px}
+.ov-row.included .add{background:#FFF;color:var(--text-faint);border:1px solid var(--border-soft);pointer-events:none}
+.ov-row.included .add::before{content:"✓ "}
+
+.form-section{padding:16px 0}
+.form-label{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.25em;color:var(--text-mid);text-transform:uppercase;font-weight:700;margin-bottom:6px;display:block}
+.form-input{width:100%;background:#FFF;border:1px solid var(--border);padding:14px;font-size:15px;color:var(--text);margin-bottom:14px;font-family:'Inter',sans-serif}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-area-select{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.form-area-select button{background:#FFF;border:1px solid var(--border);padding:7px 10px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--text)}
+.form-area-select button.on{background:var(--accent);color:#FFF;border-color:var(--accent)}
+.form-error{color:var(--red);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.15em;margin-bottom:8px;text-transform:uppercase;font-weight:700;min-height:14px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--text-faint);font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;font-weight:700}
 </style>
 </head>
-<body>
+<body data-mode="stretch">
 
 <!-- HOME -->
 <section id="home" class="screen active">
   <div class="header">
-    <div class="logo">DUMBASS <span class="accent" style="color:#000">STRETCH</span><span class="ver">V6.0</span></div>
+    <div class="logo">DUMBASS <span id="logo-mode" style="color:#000">STRETCH</span><span class="ver">V7.0</span></div>
     <div id="streak-chip" class="streak-chip zero"><span class="num">0</span><span>DAY</span></div>
   </div>
 
-  <div class="eyebrow" id="home-eyebrow">TODAY</div>
-  <h1 class="title"><span id="home-title-main">REST</span> <span class="accent" id="home-title-accent">DAY</span></h1>
-  <div class="subtitle" id="home-subtitle">10 stretches · 5 min</div>
-
-  <button class="btn-primary" onclick="startRoutine()">BEGIN ROUTINE</button>
-
-  <div class="r-chips" id="r-chips"></div>
-
-  <div class="section-head"><div class="t" id="routine-head-name">REST DAY</div><div class="c" id="routine-head-time">5 MIN</div></div>
-  <div class="routine-list" id="routine-list"></div>
-
-  <div class="section-head" id="vol-section-head"><div class="t">Weekly volume plan</div><div class="c">MEV · MAV · MRV</div></div>
-  <div class="vol-summary" id="vol-summary"></div>
-  <div id="vol-cards"></div>
-  <div class="vol-legend">
-    <p><b>MEV</b> minimum to make ROM gains · <b>MAV</b> productive zone · <b>MRV</b> ceiling, past it = irritation. Bars show what the week lands on if you do this routine daily.</p>
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="stretch" onclick="setMode('stretch')">STRETCH</button>
+    <button class="mode-tab" data-mode="mobility" onclick="setMode('mobility')">MOBILITY</button>
   </div>
 
-  <div class="footer">DUMBASS STRETCH · 5 MIN · EVERY DAY</div>
+  <!-- STRETCH SLIDE -->
+  <div class="slide active" data-slide="stretch">
+    <div class="eyebrow" id="s-eyebrow">TODAY</div>
+    <h1 class="title"><span id="s-title-main">REST</span> <span class="accent" id="s-title-accent">DAY</span></h1>
+    <div class="subtitle" id="s-subtitle">14 stretches · 7 min</div>
+    <button class="btn-primary" onclick="startRoutine()">BEGIN ROUTINE</button>
+
+    <div class="r-chips" id="s-chips"></div>
+
+    <div class="section-head"><div class="t" id="s-head-name">REST DAY</div><div class="c" id="s-head-time">7 MIN</div></div>
+    <div class="routine-list" id="s-list"></div>
+    <button class="btn-add" onclick="openAdd()">+ ADD STRETCH</button>
+
+    <div class="section-head"><div class="t">Weekly volume plan</div><div class="c">MEV · MAV · MRV</div></div>
+    <div class="vol-summary" id="s-vol-summary"></div>
+    <div id="s-vol-cards"></div>
+    <div class="vol-legend"><b>MEV</b> minimum to make ROM gains · <b>MAV</b> productive zone · <b>MRV</b> ceiling. Bars show what the week lands on if you do this routine daily.</div>
+  </div>
+
+  <!-- MOBILITY SLIDE -->
+  <div class="slide" data-slide="mobility">
+    <div class="eyebrow" id="m-eyebrow">TODAY</div>
+    <h1 class="title"><span id="m-title-main">FULL</span> <span class="accent" id="m-title-accent">BODY</span></h1>
+    <div class="subtitle" id="m-subtitle">8 moves · 4 min</div>
+    <button class="btn-primary" onclick="startRoutine()">BEGIN MOBILITY</button>
+
+    <div class="r-chips" id="m-chips"></div>
+
+    <div class="section-head"><div class="t" id="m-head-name">FULL BODY</div><div class="c" id="m-head-time">4 MIN</div></div>
+    <div class="routine-list" id="m-list"></div>
+    <button class="btn-add" onclick="openAdd()">+ ADD MOVEMENT</button>
+
+    <div class="section-head"><div class="t">This week</div><div class="c">JOINTS WORKED</div></div>
+    <div class="mob-stats" id="m-stats"></div>
+    <div id="m-joints"></div>
+    <div class="vol-legend"><b>Daily mobility</b> keeps joints healthy and unlocks range of motion. Aim for 3–5 sessions/week minimum.</div>
+  </div>
+
+  <div class="footer">DUMBASS STRETCH · STRETCH + MOBILITY · EVERY DAY</div>
 </section>
 
 <!-- ROUTINE (timer) -->
@@ -196,19 +291,15 @@ input,textarea{user-select:text}
       <button class="r-quit" onclick="quitRoutine()">QUIT</button>
     </div>
     <div class="r-bar" id="r-bar"></div>
-
     <div class="r-eyebrow" id="r-eyebrow">Stretch 1 of 10</div>
     <div class="r-name" id="r-name">Standing Forward Fold</div>
     <div class="r-area" id="r-area">Hamstrings · Low back</div>
-
     <div class="r-figure" id="r-figure"></div>
     <div class="r-cue" id="r-cue">Cue text</div>
-
     <div class="r-timer-wrap">
       <div class="r-timer" id="r-timer">30</div>
-      <div class="r-timer-label">SECONDS</div>
+      <div class="r-timer-label" id="r-timer-label">SECONDS</div>
     </div>
-
     <div class="r-controls">
       <button class="r-btn pause" id="r-pause" onclick="togglePause()">PAUSE</button>
       <button class="r-btn" onclick="skipStretch()">SKIP →</button>
@@ -227,63 +318,111 @@ input,textarea{user-select:text}
   </div>
 </section>
 
+<!-- ADD overlay -->
+<div id="ov-add" class="overlay">
+  <div class="ov-top">
+    <div class="ov-eyebrow" id="ov-eyebrow">ADD TO STRETCH</div>
+    <button class="ov-close" onclick="closeOverlay()">CLOSE ✕</button>
+  </div>
+  <div class="ov-title">+ <span class="accent" id="ov-title-2">ADD</span></div>
+  <div class="ov-sub" id="ov-sub">Add to today's routine</div>
+  <div class="ov-tabs">
+    <button class="ov-tab active" data-tab="library" onclick="setAddTab('library')">LIBRARY</button>
+    <button class="ov-tab" data-tab="routines" onclick="setAddTab('routines')">MY ROUTINES</button>
+    <button class="ov-tab" data-tab="new" onclick="setAddTab('new')">NEW EXERCISE</button>
+  </div>
+  <div class="ov-body" id="ov-body"></div>
+</div>
+
 <script>
 // ============================================================
-// DUMBASS STRETCH — 5 min daily mobility
+// DUMBASS STRETCH v7.0 — stretch + mobility, custom exercises
 // ============================================================
 if('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-// ---------- DATA ----------
+// ---------- EXERCISE LIBRARY ----------
+// Stretches use integer ids (legacy compat with sessions stored in v6).
 const STRETCHES = [
-  /* 0 */ { name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hinge at the hips. Let the head fall heavy.",                       area:"Hamstrings · Low back", side:null,   primary:"hamstrings",  secondary:["lower-back","calves"] },
-  /* 1 */ { name:"World's Greatest Stretch",cue:"Deep lunge. Same-side hand inside the front foot. Open the chest to the ceiling.",              area:"Hip flexors · T-spine", side:"LEFT", primary:"hip-flexors", secondary:["t-spine","hip-rotators"] },
-  /* 2 */ { name:"World's Greatest Stretch",cue:"Switch. Tall reach. Drive the back hip forward, ribs stacked.",                                 area:"Hip flexors · T-spine", side:"RIGHT",primary:"hip-flexors", secondary:["t-spine","hip-rotators"] },
-  /* 3 */ { name:"Couch Stretch",           cue:"Back foot up against a wall. Squeeze that glute hard. Tall torso.",                             area:"Hip flexor · Quad",     side:"LEFT", primary:"hip-flexors", secondary:["quads"] },
-  /* 4 */ { name:"Couch Stretch",           cue:"Switch. Tuck the tailbone — never arch the low back to fake range.",                            area:"Hip flexor · Quad",     side:"RIGHT",primary:"hip-flexors", secondary:["quads"] },
-  /* 5 */ { name:"90 / 90 Hip Switch",      cue:"Both knees bent 90°. Press the back knee down. Switch slowly.",                                 area:"Hip rotators",          side:null,   primary:"hip-rotators",secondary:["glutes"] },
-  /* 6 */ { name:"Doorway Pec Stretch",     cue:"Forearm on the frame, elbow at shoulder height. Step through. Ribs DOWN.",                     area:"Chest · Front delt",    side:null,   primary:"chest",       secondary:["shoulders"] },
-  /* 7 */ { name:"Thread the Needle",       cue:"Hands and knees. Thread the arm under the body — shoulder toward the floor.",                  area:"T-spine · Rear delt",   side:"LEFT", primary:"t-spine",     secondary:["shoulders"] },
-  /* 8 */ { name:"Thread the Needle",       cue:"Switch. Exhale long to sink deeper into the rotation.",                                         area:"T-spine · Rear delt",   side:"RIGHT",primary:"t-spine",     secondary:["shoulders"] },
-  /* 9 */ { name:"Child's Pose with Reach", cue:"Knees wide, hips back to heels. Arms long, fingertips walk forward.",                           area:"Lats · Low back",       side:null,   primary:"lats",        secondary:["lower-back"] },
-  /* 10 */ { name:"Pigeon Pose",            cue:"Front shin across the body. Back leg long. Square the hips, then sink.",                        area:"Glutes · Hip rotators", side:"LEFT", primary:"glutes",      secondary:["hip-rotators"] },
-  /* 11 */ { name:"Pigeon Pose",            cue:"Switch. Press the front hip down. Fold over the shin if it stays strong.",                     area:"Glutes · Hip rotators", side:"RIGHT",primary:"glutes",      secondary:["hip-rotators"] },
-  /* 12 */ { name:"Lying Spinal Twist",     cue:"On your back. Drop the bent knee across. Opposite shoulder stays on the floor.",                area:"T-spine · Glutes",      side:"LEFT", primary:"t-spine",     secondary:["glutes"] },
-  /* 13 */ { name:"Lying Spinal Twist",     cue:"Switch. Look toward the open hand. Exhale to deepen.",                                          area:"T-spine · Glutes",      side:"RIGHT",primary:"t-spine",     secondary:["glutes"] },
-  /* 14 */ { name:"Frog Pose",              cue:"On all fours, knees wide. Sit hips back toward the heels. Slow.",                               area:"Adductors · Groin",     side:null,   primary:"adductors",   secondary:["hip-rotators","glutes"] },
-  /* 15 */ { name:"Wall Calf Stretch",      cue:"Toes on the wall, heel on the floor. Drive hips forward to load the calf.",                    area:"Calves · Achilles",     side:"LEFT", primary:"calves",      secondary:["hamstrings"] },
-  /* 16 */ { name:"Wall Calf Stretch",      cue:"Switch. Long, steady pressure — calves love time under tension.",                              area:"Calves · Achilles",     side:"RIGHT",primary:"calves",      secondary:["hamstrings"] },
-  /* 17 */ { name:"Half Split",             cue:"Front leg long, back knee down. Hinge back over the heel. Spine long.",                         area:"Hamstrings (deep)",     side:"LEFT", primary:"hamstrings",  secondary:["calves"] },
-  /* 18 */ { name:"Half Split",             cue:"Switch. Front foot flexed — toes pulled up to the shin.",                                       area:"Hamstrings (deep)",     side:"RIGHT",primary:"hamstrings",  secondary:["calves"] },
-  /* 19 */ { name:"Standing Quad Pull",     cue:"Stand tall. Grab one ankle. Knees together. Squeeze the glute.",                                area:"Quads · Hip flexor",    side:"LEFT", primary:"quads",       secondary:["hip-flexors"] },
-  /* 20 */ { name:"Standing Quad Pull",     cue:"Switch. Don't lean back to fake it — drive the hip forward with the glute.",                    area:"Quads · Hip flexor",    side:"RIGHT",primary:"quads",       secondary:["hip-flexors"] },
+  /* 0 */ {name:"Standing Forward Fold",   cue:"Feet hip-width. Soft knees. Hinge at the hips. Let the head fall heavy.",                       area:"Hamstrings · Low back", side:null,   primary:"hamstrings",  secondary:["lower-back","calves"]},
+  /* 1 */ {name:"World's Greatest Stretch",cue:"Deep lunge. Same-side hand inside the front foot. Open the chest to the ceiling.",              area:"Hip flexors · T-spine", side:"LEFT", primary:"hip-flexors", secondary:["t-spine","hip-rotators"]},
+  /* 2 */ {name:"World's Greatest Stretch",cue:"Switch. Tall reach. Drive the back hip forward, ribs stacked.",                                 area:"Hip flexors · T-spine", side:"RIGHT",primary:"hip-flexors", secondary:["t-spine","hip-rotators"]},
+  /* 3 */ {name:"Couch Stretch",           cue:"Back foot up against a wall. Squeeze that glute hard. Tall torso.",                             area:"Hip flexor · Quad",     side:"LEFT", primary:"hip-flexors", secondary:["quads"]},
+  /* 4 */ {name:"Couch Stretch",           cue:"Switch. Tuck the tailbone — never arch the low back to fake range.",                            area:"Hip flexor · Quad",     side:"RIGHT",primary:"hip-flexors", secondary:["quads"]},
+  /* 5 */ {name:"90 / 90 Hip Switch",      cue:"Both knees bent 90°. Press the back knee down. Switch slowly.",                                 area:"Hip rotators",          side:null,   primary:"hip-rotators",secondary:["glutes"]},
+  /* 6 */ {name:"Doorway Pec Stretch",     cue:"Forearm on the frame, elbow at shoulder height. Step through. Ribs DOWN.",                     area:"Chest · Front delt",    side:null,   primary:"chest",       secondary:["shoulders"]},
+  /* 7 */ {name:"Thread the Needle",       cue:"Hands and knees. Thread the arm under the body — shoulder toward the floor.",                  area:"T-spine · Rear delt",   side:"LEFT", primary:"t-spine",     secondary:["shoulders"]},
+  /* 8 */ {name:"Thread the Needle",       cue:"Switch. Exhale long to sink deeper into the rotation.",                                         area:"T-spine · Rear delt",   side:"RIGHT",primary:"t-spine",     secondary:["shoulders"]},
+  /* 9 */ {name:"Child's Pose with Reach", cue:"Knees wide, hips back to heels. Arms long, fingertips walk forward.",                           area:"Lats · Low back",       side:null,   primary:"lats",        secondary:["lower-back"]},
+  /* 10 */ {name:"Pigeon Pose",            cue:"Front shin across the body. Back leg long. Square the hips, then sink.",                        area:"Glutes · Hip rotators", side:"LEFT", primary:"glutes",      secondary:["hip-rotators"]},
+  /* 11 */ {name:"Pigeon Pose",            cue:"Switch. Press the front hip down. Fold over the shin if it stays strong.",                     area:"Glutes · Hip rotators", side:"RIGHT",primary:"glutes",      secondary:["hip-rotators"]},
+  /* 12 */ {name:"Lying Spinal Twist",     cue:"On your back. Drop the bent knee across. Opposite shoulder stays on the floor.",                area:"T-spine · Glutes",      side:"LEFT", primary:"t-spine",     secondary:["glutes"]},
+  /* 13 */ {name:"Lying Spinal Twist",     cue:"Switch. Look toward the open hand. Exhale to deepen.",                                          area:"T-spine · Glutes",      side:"RIGHT",primary:"t-spine",     secondary:["glutes"]},
+  /* 14 */ {name:"Frog Pose",              cue:"On all fours, knees wide. Sit hips back toward the heels. Slow.",                               area:"Adductors · Groin",     side:null,   primary:"adductors",   secondary:["hip-rotators","glutes"]},
+  /* 15 */ {name:"Wall Calf Stretch",      cue:"Toes on the wall, heel on the floor. Drive hips forward to load the calf.",                    area:"Calves · Achilles",     side:"LEFT", primary:"calves",      secondary:["hamstrings"]},
+  /* 16 */ {name:"Wall Calf Stretch",      cue:"Switch. Long, steady pressure — calves love time under tension.",                              area:"Calves · Achilles",     side:"RIGHT",primary:"calves",      secondary:["hamstrings"]},
+  /* 17 */ {name:"Half Split",             cue:"Front leg long, back knee down. Hinge back over the heel. Spine long.",                         area:"Hamstrings (deep)",     side:"LEFT", primary:"hamstrings",  secondary:["calves"]},
+  /* 18 */ {name:"Half Split",             cue:"Switch. Front foot flexed — toes pulled up to the shin.",                                       area:"Hamstrings (deep)",     side:"RIGHT",primary:"hamstrings",  secondary:["calves"]},
+  /* 19 */ {name:"Standing Quad Pull",     cue:"Stand tall. Grab one ankle. Knees together. Squeeze the glute.",                                area:"Quads · Hip flexor",    side:"LEFT", primary:"quads",       secondary:["hip-flexors"]},
+  /* 20 */ {name:"Standing Quad Pull",     cue:"Switch. Don't lean back to fake it — drive the hip forward with the glute.",                    area:"Quads · Hip flexor",    side:"RIGHT",primary:"quads",       secondary:["hip-flexors"]},
 ];
 const HOLD_SECONDS = 30;
 
+// Mobility uses string ids — keyed by joint group for volume.
+// Type 'reps' = slow controlled reps. Type 'flow' = continuous movement.
+// All run a 30s timer with label tweaked.
+const MOBILITY = {
+  "sh-cars-l": {name:"Shoulder CARs",            cue:"Slow, controlled circles. Lock the ribs. Make the biggest circle the joint allows.",       area:"Shoulder · Rotator cuff", side:"LEFT", type:"reps", sec:30, joint:"shoulder"},
+  "sh-cars-r": {name:"Shoulder CARs",            cue:"Switch. Same tempo. If the circle gets sloppy, slow down further.",                         area:"Shoulder · Rotator cuff", side:"RIGHT",type:"reps", sec:30, joint:"shoulder"},
+  "hip-cars-l":{name:"Hip CARs",                 cue:"Hands and knees. Lift the knee, drive it out, back, then down. Big slow circle.",           area:"Hip · Capsule",           side:"LEFT", type:"reps", sec:30, joint:"hip"},
+  "hip-cars-r":{name:"Hip CARs",                 cue:"Switch. Square the hips. Don't let the back compensate — work the joint, not the spine.",   area:"Hip · Capsule",           side:"RIGHT",type:"reps", sec:30, joint:"hip"},
+  "cat-cow":   {name:"Cat–Cow",                  cue:"Hands and knees. Inhale arch and look up. Exhale round, tuck the tail. Slow flow.",         area:"Spine · Full length",     side:null,   type:"flow", sec:30, joint:"spine"},
+  "thx-rot-l": {name:"Quadruped T-Spine Rotation",cue:"Hand behind the head. Rotate the elbow up to the ceiling. Lead with the chest.",            area:"Thoracic spine",          side:"LEFT", type:"reps", sec:30, joint:"spine"},
+  "thx-rot-r": {name:"Quadruped T-Spine Rotation",cue:"Switch. Hips stay square. Big rotation through the upper back only.",                       area:"Thoracic spine",          side:"RIGHT",type:"reps", sec:30, joint:"spine"},
+  "wgs-flow":  {name:"World's Greatest Flow",    cue:"Lunge in, hand inside the foot, open the chest up, reach DOWN through the foot. Switch sides each rep.",area:"Hip · T-spine flow",       side:null,   type:"flow", sec:30, joint:"hip"},
+  "90-90-flow":{name:"90/90 Transition Flow",    cue:"Sit 90/90, drive the back knee down, then rotate hips to switch sides. Smooth, no hands.",   area:"Hip rotators",            side:null,   type:"flow", sec:30, joint:"hip"},
+  "squat-stand":{name:"Deep Squat to Stand",    cue:"Hinge, grab the toes, sit into the deepest squat you can. Stand tall. Repeat slow.",         area:"Hips · Ankles · T-spine", side:null,   type:"reps", sec:30, joint:"hip"},
+  "ankle-cars-l":{name:"Ankle CARs",            cue:"Sit or stand. Big slow circles with the foot. Heel stays put — only the foot moves.",        area:"Ankle · Calf",            side:"LEFT", type:"reps", sec:30, joint:"ankle"},
+  "ankle-cars-r":{name:"Ankle CARs",            cue:"Switch. Reverse direction halfway through. Edges of the circle are where the ROM lives.",    area:"Ankle · Calf",            side:"RIGHT",type:"reps", sec:30, joint:"ankle"},
+  "scap-slides":{name:"Scapular Wall Slides",   cue:"Back, hips, hands against a wall. Slide arms up to a Y, down to a W. Slow, full contact.",   area:"Scapula · Shoulders",     side:null,   type:"reps", sec:30, joint:"shoulder"},
+};
+const MOBILITY_JOINTS = ["shoulder","spine","hip","ankle"];
+const JOINT_NAMES = {shoulder:"Shoulders", spine:"Spine", hip:"Hips", ankle:"Ankles"};
+
+// ---------- ROUTINES ----------
+// Items are 'item refs': 's:<idx>' (stretch) | 'm:<id>' (mobility) | 'c:<id>' (custom).
 const ROUTINES = [
-  { key:"leg",  name:"Leg day",        titleMain:"LEG",  titleAccent:"DAY",
-    muscles:"Hams · Hip flex · Quads · Glutes · Calves · Adductors",
-    indices:[0,3,4,10,11,15,16,14,17,18] },
-  { key:"push", name:"Push day",       titleMain:"PUSH", titleAccent:"DAY",
-    muscles:"Chest · T-spine · Shoulders",
-    indices:[6,7,8,12,13,9] },
-  { key:"pull", name:"Pull day",       titleMain:"PULL", titleAccent:"DAY",
-    muscles:"Lats · T-spine · Chest",
-    indices:[9,6,7,8,12,13] },
-  { key:"abs",  name:"Core day",       titleMain:"CORE", titleAccent:"DAY",
-    muscles:"Hip flexors · Lower back · Obliques",
-    indices:[3,4,9,12,13,5] },
-  { key:"rest", name:"Rest day",       titleMain:"REST", titleAccent:"DAY",
-    muscles:"Full body recovery",
-    indices:[0,3,4,6,7,8,9,10,11,14,15,16,17,18] },
-  { key:"desk", name:"Desk reset",     titleMain:"DESK", titleAccent:"RESET",
-    muscles:"Chest · T-spine · Hips",
-    indices:[6,1,2,7,8] },
-  { key:"deep", name:"Deep mobility",  titleMain:"DEEP", titleAccent:"MOBILITY",
-    muscles:"Long 60s holds · ROM gains",
-    indices:[3,4,14,17,18], holdSeconds:60 },
+  // STRETCH routines
+  {key:"leg",  mode:"stretch", name:"Leg day",   titleMain:"LEG",  titleAccent:"DAY",
+   items:['s:0','s:3','s:4','s:10','s:11','s:15','s:16','s:14','s:17','s:18']},
+  {key:"push", mode:"stretch", name:"Push day",  titleMain:"PUSH", titleAccent:"DAY",
+   items:['s:6','s:7','s:8','s:12','s:13','s:9']},
+  {key:"pull", mode:"stretch", name:"Pull day",  titleMain:"PULL", titleAccent:"DAY",
+   items:['s:9','s:6','s:7','s:8','s:12','s:13']},
+  {key:"abs",  mode:"stretch", name:"Core day",  titleMain:"CORE", titleAccent:"DAY",
+   items:['s:3','s:4','s:9','s:12','s:13','s:5']},
+  {key:"rest", mode:"stretch", name:"Rest day",  titleMain:"REST", titleAccent:"DAY",
+   items:['s:0','s:3','s:4','s:6','s:7','s:8','s:9','s:10','s:11','s:14','s:15','s:16','s:17','s:18']},
+  {key:"desk", mode:"stretch", name:"Desk reset",titleMain:"DESK", titleAccent:"RESET",
+   items:['s:6','s:1','s:2','s:7','s:8']},
+  {key:"deep", mode:"stretch", name:"Deep mobility hold", titleMain:"DEEP", titleAccent:"HOLD",
+   items:['s:3','s:4','s:14','s:17','s:18'], holdSec:60},
+
+  // MOBILITY routines
+  {key:"full", mode:"mobility", name:"Full body warmup", titleMain:"FULL", titleAccent:"BODY",
+   items:['m:cat-cow','m:sh-cars-l','m:sh-cars-r','m:hip-cars-l','m:hip-cars-r','m:thx-rot-l','m:thx-rot-r','m:squat-stand']},
+  {key:"upper",mode:"mobility", name:"Upper body",       titleMain:"UPPER",titleAccent:"BODY",
+   items:['m:cat-cow','m:sh-cars-l','m:sh-cars-r','m:thx-rot-l','m:thx-rot-r','m:scap-slides']},
+  {key:"lower",mode:"mobility", name:"Lower body",       titleMain:"LOWER",titleAccent:"BODY",
+   items:['m:hip-cars-l','m:hip-cars-r','m:ankle-cars-l','m:ankle-cars-r','m:90-90-flow','m:squat-stand']},
+  {key:"spine",mode:"mobility", name:"Spine flow",       titleMain:"SPINE",titleAccent:"FLOW",
+   items:['m:cat-cow','m:thx-rot-l','m:thx-rot-r','m:wgs-flow']},
+  {key:"mflow",mode:"mobility", name:"Full flow",        titleMain:"FULL",titleAccent:"FLOW",
+   items:['m:cat-cow','m:wgs-flow','m:90-90-flow','m:squat-stand','m:scap-slides'], holdSec:45},
 ];
-function getRoutine(key){ return ROUTINES.find(r => r.key === key) || ROUTINES[4]; }
-function routineHoldSec(r){ return r.holdSeconds || HOLD_SECONDS; }
+function getRoutine(key, mode){
+  return ROUTINES.find(r => r.key === key && r.mode === mode) || ROUTINES.find(r => r.mode === mode);
+}
+function routineHoldSec(r){ return r.holdSec || HOLD_SECONDS; }
 
 const MUSCLE_NAMES = {
   "hamstrings":"Hamstrings","hip-flexors":"Hip flexors","quads":"Quads","glutes":"Glutes",
@@ -311,7 +450,7 @@ const QUOTES = [
   ["You are as young as your spine is flexible.", "Joseph Pilates"],
   ["Take care of your body. It's the only place you have to live.", "Jim Rohn"],
   ["Don't cushion the work. Be the work.", "DUMBASS"],
-  ["A flexible mind in a flexible body.", "B.K.S. Iyengar"],
+  ["Range of motion you don't use, you lose.", "Functional Range Conditioning"],
   ["Discipline equals freedom.", "Jocko Willink"],
   ["Five minutes today beats sixty minutes someday.", "DUMBASS"],
   ["Stiff body, stiff mind.", "DUMBASS"],
@@ -329,22 +468,34 @@ function recommendFromLiftDay(name){
   if(n.includes("UPPER") || n.includes("ARM") || n.includes("BICEP") || n.includes("TRICEP")) return "push";
   return null;
 }
+function recommendMobilityFromLiftDay(name){
+  if(!name) return null;
+  const n = String(name).toUpperCase();
+  if(n.includes("LEG") || n.includes("LOWER")) return "lower";
+  if(n.includes("PUSH") || n.includes("PULL") || n.includes("UPPER") || n.includes("CHEST") || n.includes("BACK") || n.includes("SHOULDER") || n.includes("ARM")) return "upper";
+  return "full";
+}
 function getLiftDay(){
   try{
     const raw = localStorage.getItem("dumbass_state");
     if(!raw) return null;
     const lift = JSON.parse(raw);
-    if(lift && lift.today && lift.today.name) return { name: lift.today.name };
+    if(lift && lift.today && lift.today.name) return {name: lift.today.name};
     return null;
   } catch(e){ return null; }
 }
 
 // ---------- STORAGE ----------
 const KEY = "dumbass_stretch_v2";
-function loadState(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; } }
-function saveState(s){ try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){} }
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; }
+}
+function saveState(s){
+  try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+}
 function todayStr(){ const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function daysBetween(a, b){ return Math.round((new Date(b+"T00:00:00") - new Date(a+"T00:00:00")) / 86400000); }
+function uid(){ return Math.random().toString(36).slice(2,9); }
 
 function getSessions(state){
   const out = [];
@@ -353,7 +504,7 @@ function getSessions(state){
     const seen = new Set(out.map(s=>s.date));
     for(const d of state.log){
       if(typeof d !== "string" || seen.has(d)) continue;
-      out.push({date:d, completed:STRETCHES.map((_,i)=>({i, sec:HOLD_SECONDS})), legacy:true});
+      out.push({date:d, completed:STRETCHES.map((_,i)=>({ref:'s:'+i, sec:HOLD_SECONDS})), legacy:true, mode:'stretch'});
     }
   }
   return out;
@@ -372,14 +523,55 @@ function computeStreak(state){
   return streak;
 }
 
-function plannedMuscleMinutes(routine){
+// Resolve an item ref ('s:0' | 'm:cat-cow' | 'c:xyz123') to an exercise descriptor.
+// Returns null if the ref doesn't resolve (e.g. deleted custom exercise).
+function resolveItem(ref, state){
+  if(!ref) return null;
+  const colon = ref.indexOf(':');
+  if(colon < 0) return null;
+  const src = ref.slice(0,colon);
+  const key = ref.slice(colon+1);
+  if(src === 's'){
+    const s = STRETCHES[+key];
+    if(!s) return null;
+    return {ref, name:s.name, cue:s.cue, area:s.area, side:s.side, primary:s.primary, secondary:s.secondary, type:'hold', src:'s'};
+  }
+  if(src === 'm'){
+    const m = MOBILITY[key];
+    if(!m) return null;
+    return {ref, name:m.name, cue:m.cue, area:m.area, side:m.side, type:m.type, joint:m.joint, src:'m'};
+  }
+  if(src === 'c'){
+    const customs = (state && state.customExercises) || [];
+    const c = customs.find(x => x.id === key);
+    if(!c) return null;
+    return {ref, name:c.name, cue:c.cue || '', area:c.area || 'Custom', side:null, primary:c.primary||null, secondary:c.secondary||[], type:c.type || 'hold', src:'c', sec:c.sec, joint:c.joint};
+  }
+  return null;
+}
+
+// All items currently in a routine (defaults + user-added).
+function routineItems(routine, state){
+  const m = routine.mode;
+  const customAdds = (state.routineAdds && state.routineAdds[m] && state.routineAdds[m][routine.key]) || [];
+  const defaults = routine.items;
+  // De-dup: an add that already appears in the default list is ignored.
+  const dedup = customAdds.filter(r => !defaults.includes(r));
+  return [...defaults, ...dedup];
+}
+
+// Volume planning (stretch mode): minutes/wk per muscle if routine done daily.
+function plannedMuscleMinutes(routine, state){
   const holdMin = routineHoldSec(routine) / 60;
   const out = {};
   for(const m of MUSCLE_ORDER) out[m] = 0;
-  for(const idx of routine.indices){
-    const s = STRETCHES[idx]; if(!s) continue;
-    if(s.primary && out.hasOwnProperty(s.primary)) out[s.primary] += holdMin;
-    for(const sec of (s.secondary||[])) if(out.hasOwnProperty(sec)) out[sec] += holdMin * 0.5;
+  for(const ref of routineItems(routine, state)){
+    const ex = resolveItem(ref, state);
+    if(!ex || ex.src !== 's') continue;  // only count stretches for MEV/MAV/MRV
+    if(ex.primary && out.hasOwnProperty(ex.primary)) out[ex.primary] += holdMin;
+    for(const sec of (ex.secondary||[])){
+      if(out.hasOwnProperty(sec)) out[sec] += holdMin * 0.5;
+    }
   }
   for(const m of MUSCLE_ORDER) out[m] *= 7;
   return out;
@@ -393,33 +585,47 @@ function classifyVolume(min, lm){
 }
 const VOL_LABEL = {"under":"Below MEV","mev":"At MEV","mav":"In MAV","over-mav":"Above MAV","over":"Past MRV"};
 
-// ---------- POSE / ILLUSTRATION SYSTEM ----------
-// Joint-based stick figures. Each pose declares named joints, bones connecting
-// them, optional head, and which bones are highlighted (the stretched muscle).
-//
-// Coordinate system: viewBox 0 0 240 200. Floor at y=190.
-//
-// Bone color codes: 'b' = black (default), 'o' = orange (stretched/highlighted).
-// Joints: small white circles with black ring at every kink. Head: solid black
-// circle with a small white "facing" dot.
+// Mobility "this week" stats.
+function mobilityWeekStats(state){
+  const today = todayStr();
+  let sessions = 0, totalMin = 0;
+  const jointSec = {shoulder:0, spine:0, hip:0, ankle:0};
+  const seenDate = new Set();
+  for(const s of getSessions(state)){
+    if(s.mode !== 'mobility') continue;
+    const gap = daysBetween(s.date, today);
+    if(gap < 0 || gap > 6) continue;
+    if(!seenDate.has(s.date)){ sessions++; seenDate.add(s.date); }
+    for(const c of (s.completed||[])){
+      const ex = resolveItem(c.ref, state);
+      if(!ex) continue;
+      totalMin += (c.sec||0)/60;
+      const j = ex.joint || (ex.src === 'm' && MOBILITY[c.ref.slice(2)]?.joint);
+      if(j && jointSec.hasOwnProperty(j)) jointSec[j] += c.sec||0;
+    }
+  }
+  return {sessions, totalMin, jointMin: Object.fromEntries(Object.entries(jointSec).map(([k,v])=>[k, v/60]))};
+}
 
+function fmtMin(m){
+  if(m >= 10) return Math.round(m).toString();
+  return (Math.round(m*10)/10).toFixed(1);
+}
+
+// ---------- POSE / ILLUSTRATION ----------
+// Joint-based stick figures with explicit joint markers at every kink.
 function pose(spec){
-  const j = spec.j;          // {name: [x,y]}
-  const bones = spec.b;      // [['fromName','toName','b'|'o'], ...]
-  const head = spec.h;       // ['jointName', facingDx, facingDy]  (head positioned at joint, facing dot offset)
-  const label = spec.l;      // {text, tx, ty, fx, fy}
-  const wall = spec.w;       // x coord of dashed wall
-  const tag = spec.tag;      // small text label for floor/wall ("FLOOR", "WALL")
-
+  const j = spec.j;
+  const bones = spec.b;
+  const head = spec.h;
+  const label = spec.l;
+  const wall = spec.w;
   let out = '';
-  // Floor (always)
   out += `<line x1="6" y1="190" x2="234" y2="190" stroke="#B8B8B8" stroke-width="2" stroke-linecap="round"/>`;
   out += `<line x1="10" y1="195" x2="230" y2="195" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="3,5"/>`;
-  // Wall (optional)
   if(wall !== undefined){
     out += `<line x1="${wall}" y1="10" x2="${wall}" y2="190" stroke="#B8B8B8" stroke-width="3" stroke-dasharray="6,5"/>`;
   }
-  // Bones — orange ones first so joints draw over orange/black equally
   for(const bn of bones){
     const [a, bj, c] = bn;
     const [x1,y1] = j[a], [x2,y2] = j[bj];
@@ -427,23 +633,19 @@ function pose(spec){
     const w = c === 'o' ? 9 : 7;
     out += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round"/>`;
   }
-  // Joints — drawn on top, at every name that appears in bones
   const seen = new Set();
   for(const bn of bones){ for(const k of [bn[0], bn[1]]) seen.add(k); }
-  // Skip the joint marker at the head joint (the head circle replaces it)
   if(head) seen.delete(head[0]);
   for(const name of seen){
     const [x,y] = j[name];
     out += `<circle cx="${x}" cy="${y}" r="4" fill="#FFF" stroke="#0a0a0a" stroke-width="1.8"/>`;
   }
-  // Head
   if(head){
     const [hn, dx, dy] = head;
     const [hx, hy] = j[hn];
     out += `<circle cx="${hx}" cy="${hy}" r="11" fill="#0a0a0a"/>`;
     out += `<circle cx="${hx + dx}" cy="${hy + dy}" r="2.2" fill="#FFF"/>`;
   }
-  // Label (orange callout box pointing at the highlighted area)
   if(label){
     const w = label.text.length * 7 + 12;
     const lx = label.tx, ly = label.ty;
@@ -451,18 +653,15 @@ function pose(spec){
     out += `<rect x="${lx-6}" y="${ly-16}" width="${w}" height="18" fill="#FFF" stroke="#FF3300" stroke-width="1.5" rx="3"/>`;
     out += `<text x="${lx}" y="${ly-3}" fill="#FF3300" font-family="Oswald,sans-serif" font-size="11" font-weight="700" letter-spacing="0.04em">${label.text}</text>`;
   }
-  if(tag){
-    out += `<text x="${tag.x}" y="${tag.y}" fill="#C8C8C8" font-family="Oswald,sans-serif" font-size="9" font-weight="700" letter-spacing="0.18em">${tag.t}</text>`;
-  }
   return `<svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FF3300"/></marker></defs>${out}</svg>`;
 }
 
-// Each pose stored by stretch name (L/R variants share the same pose).
+// Poses keyed by exercise name. L/R variants share the same illustration.
 const POSES = {
 "Standing Forward Fold": pose({
-  j: { ankleL:[100,188], kneeL:[102,140], hipL:[110,92], hipR:[130,92], kneeR:[138,140], ankleR:[140,188],
-       hip:[120,92], spine:[120,110], shoulderL:[110,128], shoulderR:[130,128],
-       elbowL:[102,150], elbowR:[138,150], handL:[100,176], handR:[140,176], head:[120,148] },
+  j: {ankleL:[100,188], kneeL:[102,140], hipL:[110,92], hipR:[130,92], kneeR:[138,140], ankleR:[140,188],
+      hip:[120,92], spine:[120,110], shoulderL:[110,128], shoulderR:[130,128],
+      elbowL:[102,150], elbowR:[138,150], handL:[100,176], handR:[140,176], head:[120,148]},
   b: [
     ['ankleL','kneeL','o'], ['kneeL','hipL','o'],
     ['ankleR','kneeR','o'], ['kneeR','hipR','o'],
@@ -472,14 +671,13 @@ const POSES = {
     ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', 0, 6],
-  l: { text:'HAMSTRING', tx:160, ty:135, fx:142, fy:122 }
+  l: {text:'HAMSTRING', tx:160, ty:135, fx:142, fy:122}
 }),
 
 "World's Greatest Stretch": pose({
-  // Deep lunge facing right. Front leg bent 90, back leg long.
-  j: { backAnkle:[40,188], backKnee:[78,150], hip:[120,118], frontKnee:[160,150], frontAnkle:[185,188],
-       shoulder:[130,90], elbowDown:[148,140], handDown:[160,168],
-       elbowUp:[150,55], handUp:[195,18], head:[130,72] },
+  j: {backAnkle:[40,188], backKnee:[78,150], hip:[120,118], frontKnee:[160,150], frontAnkle:[185,188],
+      shoulder:[130,90], elbowDown:[148,140], handDown:[160,168],
+      elbowUp:[150,55], handUp:[195,18], head:[130,72]},
   b: [
     ['backAnkle','backKnee','o'], ['backKnee','hip','o'],
     ['frontAnkle','frontKnee','b'], ['frontKnee','hip','b'],
@@ -488,14 +686,13 @@ const POSES = {
     ['shoulder','elbowUp','o'], ['elbowUp','handUp','o'],
   ],
   h: ['head', 6, 0],
-  l: { text:'HIP FLEXOR', tx:8, ty:170, fx:60, fy:165 }
+  l: {text:'HIP FLEXOR', tx:8, ty:170, fx:60, fy:165}
 }),
 
 "Couch Stretch": pose({
-  // Half-kneel against a wall (back foot up). Front foot planted, back leg vertical against wall.
-  j: { backFoot:[55,112], backKnee:[55,165], hip:[100,150], spine:[110,110], shoulder:[120,82],
-       elbowL:[100,108], handL:[88,138], elbowR:[140,108], handR:[152,138],
-       frontKnee:[150,148], frontAnkle:[180,188], head:[122,64] },
+  j: {backFoot:[55,112], backKnee:[55,165], hip:[100,150], spine:[110,110], shoulder:[120,82],
+      elbowL:[100,108], handL:[88,138], elbowR:[140,108], handR:[152,138],
+      frontKnee:[150,148], frontAnkle:[180,188], head:[122,64]},
   b: [
     ['backFoot','backKnee','o'], ['backKnee','hip','o'],
     ['frontKnee','hip','b'], ['frontKnee','frontAnkle','b'],
@@ -505,15 +702,13 @@ const POSES = {
   ],
   h: ['head', 6, 0],
   w: 42,
-  l: { text:'QUAD + HIP', tx:158, ty:90, fx:78, fy:140 }
+  l: {text:'QUAD + HIP', tx:158, ty:90, fx:78, fy:140}
 }),
 
 "90 / 90 Hip Switch": pose({
-  // Seated, both knees bent 90. Front leg out in front, back leg out to side.
-  // Top-down-ish view simplified to side view: hip in middle, two legs bent.
-  j: { frontFoot:[55,158], frontKnee:[115,140], hip:[135,140], backKnee:[185,140], backFoot:[195,108],
-       spine:[135,80], shoulder:[135,70], elbowL:[115,108], handL:[100,135], elbowR:[155,108], handR:[170,135],
-       head:[135,52] },
+  j: {frontFoot:[55,158], frontKnee:[115,140], hip:[135,140], backKnee:[185,140], backFoot:[195,108],
+      spine:[135,80], shoulder:[135,70], elbowL:[115,108], handL:[100,135], elbowR:[155,108], handR:[170,135],
+      head:[135,52]},
   b: [
     ['frontFoot','frontKnee','o'], ['frontKnee','hip','o'],
     ['hip','backKnee','o'], ['backKnee','backFoot','o'],
@@ -522,14 +717,13 @@ const POSES = {
     ['shoulder','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', 0, 6],
-  l: { text:'HIP ROTATORS', tx:60, ty:185, fx:120, fy:148 }
+  l: {text:'HIP ROTATORS', tx:60, ty:185, fx:120, fy:148}
 }),
 
 "Doorway Pec Stretch": pose({
-  // Standing in doorway. One arm up on the frame (orange), torso turning away.
-  j: { ankleL:[112,188], kneeL:[112,150], ankleR:[148,188], kneeR:[148,150], hip:[130,118],
-       spine:[130,80], shoulderL:[115,72], shoulderR:[145,72],
-       elbowL:[78,55], handL:[60,18], elbowR:[162,108], handR:[178,138], head:[130,52] },
+  j: {ankleL:[112,188], kneeL:[112,150], ankleR:[148,188], kneeR:[148,150], hip:[130,118],
+      spine:[130,80], shoulderL:[115,72], shoulderR:[145,72],
+      elbowL:[78,55], handL:[60,18], elbowR:[162,108], handR:[178,138], head:[130,52]},
   b: [
     ['ankleL','kneeL','b'], ['kneeL','hip','b'],
     ['ankleR','kneeR','b'], ['kneeR','hip','b'],
@@ -539,14 +733,13 @@ const POSES = {
   ],
   h: ['head', 6, 0],
   w: 55,
-  l: { text:'CHEST', tx:160, ty:50, fx:108, fy:62 }
+  l: {text:'CHEST', tx:160, ty:50, fx:108, fy:62}
 }),
 
 "Thread the Needle": pose({
-  // On hands and knees, one arm threaded under the body.
-  j: { kneeL:[150,168], kneeR:[200,168], hip:[180,135], spine:[160,128], shoulderR:[145,130],
-       elbowR:[125,138], handR:[105,150], shoulderL:[160,118],
-       elbowL:[120,150], handL:[55,160], head:[150,118] },
+  j: {kneeL:[150,168], kneeR:[200,168], hip:[180,135], spine:[160,128], shoulderR:[145,130],
+      elbowR:[125,138], handR:[105,150], shoulderL:[160,118],
+      elbowL:[120,150], handL:[55,160], head:[150,118]},
   b: [
     ['kneeL','hip','b'], ['kneeR','hip','b'],
     ['hip','spine','b'], ['spine','shoulderR','b'], ['spine','shoulderL','b'],
@@ -554,14 +747,13 @@ const POSES = {
     ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
   ],
   h: ['head', -6, 2],
-  l: { text:'T-SPINE', tx:170, ty:90, fx:160, fy:115 }
+  l: {text:'T-SPINE', tx:170, ty:90, fx:160, fy:115}
 }),
 
 "Child's Pose with Reach": pose({
-  // Hips at heels, arms long out front, head between arms.
-  j: { footL:[180,188], footR:[210,188], kneeL:[175,170], kneeR:[205,170],
-       hip:[195,162], spine:[160,150], shoulderL:[145,140], shoulderR:[160,140],
-       elbowL:[90,145], elbowR:[105,145], handL:[35,150], handR:[50,150], head:[140,150] },
+  j: {footL:[180,188], footR:[210,188], kneeL:[175,170], kneeR:[205,170],
+      hip:[195,162], spine:[160,150], shoulderL:[145,140], shoulderR:[160,140],
+      elbowL:[90,145], elbowR:[105,145], handL:[35,150], handR:[50,150], head:[140,150]},
   b: [
     ['footL','kneeL','b'], ['footR','kneeR','b'],
     ['kneeL','hip','b'], ['kneeR','hip','b'],
@@ -570,15 +762,14 @@ const POSES = {
     ['shoulderR','elbowR','o'], ['elbowR','handR','o'],
   ],
   h: ['head', -6, 0],
-  l: { text:'LATS', tx:155, ty:120, fx:120, fy:142 }
+  l: {text:'LATS', tx:155, ty:120, fx:120, fy:142}
 }),
 
 "Pigeon Pose": pose({
-  // Front shin across, back leg long out behind.
-  j: { frontFoot:[70,160], frontKnee:[100,158], hipFront:[135,150], hipBack:[150,150],
-       backKnee:[195,158], backFoot:[225,158],
-       spine:[140,115], shoulderL:[125,108], shoulderR:[155,108],
-       elbowL:[115,140], handL:[110,168], elbowR:[165,140], handR:[170,168], head:[140,90] },
+  j: {frontFoot:[70,160], frontKnee:[100,158], hipFront:[135,150], hipBack:[150,150],
+      backKnee:[195,158], backFoot:[225,158],
+      spine:[140,115], shoulderL:[125,108], shoulderR:[155,108],
+      elbowL:[115,140], handL:[110,168], elbowR:[165,140], handR:[170,168], head:[140,90]},
   b: [
     ['frontFoot','frontKnee','o'], ['frontKnee','hipFront','o'],
     ['hipBack','backKnee','b'], ['backKnee','backFoot','b'],
@@ -588,33 +779,38 @@ const POSES = {
     ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', 0, 6],
-  l: { text:'GLUTE', tx:30, ty:140, fx:95, fy:155 }
+  l: {text:'GLUTE', tx:30, ty:140, fx:95, fy:155}
 }),
 
+// LYING SPINAL TWIST — redrawn. Top-down view: person on back, head left,
+// arms wide on the floor, one leg straight, the other crossed across the body.
 "Lying Spinal Twist": pose({
-  // Lying on back, one knee crossed over to the opposite side.
-  j: { footStraight:[225,168], hipL:[145,162], hipR:[160,162],
-       kneeBent:[100,140], footBent:[60,150],
-       spine:[170,140], shoulderL:[180,130], shoulderR:[200,140],
-       elbowL:[155,108], handL:[130,90], elbowR:[225,118], handR:[235,90],
-       head:[210,118] },
+  j: {
+    head:[35,100],
+    neck:[58,100],
+    shoulderUp:[78,80], elbowUp:[78,50], handUp:[78,22],
+    shoulderDn:[78,120], elbowDn:[78,150], handDn:[78,178],
+    midSpine:[108,100],
+    hip:[140,100],
+    strKnee:[180,100], strAnkle:[218,100],
+    bentKnee:[158,138], bentFoot:[182,168],
+  },
   b: [
-    ['hipR','footStraight','b'],
-    ['hipL','kneeBent','o'], ['kneeBent','footBent','o'],
-    ['hipL','hipR','b'], ['hipR','spine','b'],
-    ['spine','shoulderL','b'], ['spine','shoulderR','b'],
-    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+    ['neck','shoulderUp','b'], ['neck','shoulderDn','b'],
+    ['shoulderUp','elbowUp','b'], ['elbowUp','handUp','b'],
+    ['shoulderDn','elbowDn','b'], ['elbowDn','handDn','b'],
+    ['neck','midSpine','o'], ['midSpine','hip','o'],
+    ['hip','strKnee','b'], ['strKnee','strAnkle','b'],
+    ['hip','bentKnee','b'], ['bentKnee','bentFoot','b'],
   ],
-  h: ['head', 4, -6],
-  l: { text:'T-SPINE', tx:8, ty:60, fx:130, fy:100 }
+  h: ['head', -6, 0],
+  l: {text:'T-SPINE', tx:130, ty:60, fx:104, fy:96}
 }),
 
 "Frog Pose": pose({
-  // On all fours, knees very wide, hips sinking back.
-  j: { kneeL:[55,168], kneeR:[185,168], footL:[35,188], footR:[205,188],
-       hip:[120,160], spine:[120,128], shoulderL:[100,118], shoulderR:[140,118],
-       elbowL:[90,150], handL:[80,178], elbowR:[150,150], handR:[160,178], head:[120,100] },
+  j: {kneeL:[55,168], kneeR:[185,168], footL:[35,188], footR:[205,188],
+      hip:[120,160], spine:[120,128], shoulderL:[100,118], shoulderR:[140,118],
+      elbowL:[90,150], handL:[80,178], elbowR:[150,150], handR:[160,178], head:[120,100]},
   b: [
     ['footL','kneeL','o'], ['footR','kneeR','o'],
     ['kneeL','hip','o'], ['kneeR','hip','o'],
@@ -623,14 +819,13 @@ const POSES = {
     ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', 0, -6],
-  l: { text:'ADDUCTOR', tx:14, ty:128, fx:78, fy:160 }
+  l: {text:'ADDUCTOR', tx:14, ty:128, fx:78, fy:160}
 }),
 
 "Wall Calf Stretch": pose({
-  // Standing facing a wall, ball of foot on wall, heel down. Body leaning in.
-  j: { backAnkle:[170,188], backKnee:[160,150], hip:[140,115], spine:[130,80], shoulder:[120,68],
-       elbowL:[100,90], handL:[80,108], elbowR:[105,80], handR:[78,72],
-       frontAnkle:[58,160], frontToe:[42,140], frontHeel:[68,188], head:[112,46] },
+  j: {backAnkle:[170,188], backKnee:[160,150], hip:[140,115], spine:[130,80], shoulder:[120,68],
+      elbowL:[100,90], handL:[80,108], elbowR:[105,80], handR:[78,72],
+      frontAnkle:[58,160], frontToe:[42,140], frontHeel:[68,188], head:[112,46]},
   b: [
     ['backAnkle','backKnee','b'], ['backKnee','hip','b'],
     ['hip','frontAnkle','o'], ['frontAnkle','frontToe','o'], ['frontAnkle','frontHeel','o'],
@@ -640,15 +835,14 @@ const POSES = {
   ],
   h: ['head', -5, 2],
   w: 36,
-  l: { text:'CALF', tx:160, ty:172, fx:75, fy:175 }
+  l: {text:'CALF', tx:160, ty:172, fx:75, fy:175}
 }),
 
 "Half Split": pose({
-  // Back knee down, front leg long out front, hinging back.
-  j: { frontHeel:[55,168], frontToe:[35,150], frontKnee:[105,160], hipFront:[140,138],
-       backKnee:[170,178], backFoot:[200,188],
-       spine:[150,100], shoulder:[148,82],
-       elbowL:[125,108], handL:[110,138], elbowR:[170,110], handR:[185,138], head:[150,64] },
+  j: {frontHeel:[55,168], frontToe:[35,150], frontKnee:[105,160], hipFront:[140,138],
+      backKnee:[170,178], backFoot:[200,188],
+      spine:[150,100], shoulder:[148,82],
+      elbowL:[125,108], handL:[110,138], elbowR:[170,110], handR:[185,138], head:[150,64]},
   b: [
     ['frontToe','frontHeel','o'], ['frontHeel','frontKnee','o'], ['frontKnee','hipFront','o'],
     ['backKnee','hipFront','b'], ['backKnee','backFoot','b'],
@@ -657,15 +851,14 @@ const POSES = {
     ['shoulder','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', -5, 2],
-  l: { text:'HAMSTRING', tx:18, ty:138, fx:85, fy:165 }
+  l: {text:'HAMSTRING', tx:18, ty:138, fx:85, fy:165}
 }),
 
 "Standing Quad Pull": pose({
-  // Standing on one leg, other foot pulled up to butt.
-  j: { ankle:[120,188], knee:[120,138], hip:[120,98], spine:[120,68], shoulderL:[108,60], shoulderR:[132,60],
-       elbowL:[92,90], handL:[80,118],
-       pullKnee:[138,142], pullAnkle:[148,98], elbowR:[152,82], handR:[152,108],
-       head:[120,42] },
+  j: {ankle:[120,188], knee:[120,138], hip:[120,98], spine:[120,68], shoulderL:[108,60], shoulderR:[132,60],
+      elbowL:[92,90], handL:[80,118],
+      pullKnee:[138,142], pullAnkle:[148,98], elbowR:[152,82], handR:[152,108],
+      head:[120,42]},
   b: [
     ['ankle','knee','b'], ['knee','hip','b'],
     ['hip','pullKnee','o'], ['pullKnee','pullAnkle','o'],
@@ -674,69 +867,277 @@ const POSES = {
     ['shoulderR','elbowR','b'], ['elbowR','handR','b'], ['handR','pullAnkle','b'],
   ],
   h: ['head', 0, -6],
-  l: { text:'QUAD', tx:170, ty:130, fx:144, fy:130 }
+  l: {text:'QUAD', tx:170, ty:130, fx:144, fy:130}
+}),
+
+// MOBILITY illustrations
+"Shoulder CARs": pose({
+  j: {ankleL:[108,188], ankleR:[140,188], kneeL:[110,150], kneeR:[138,150],
+      hip:[124,118], spine:[124,80], shoulderL:[108,72], shoulderR:[140,72],
+      elbowL:[88,108], handL:[80,150], elbowR:[180,55], handR:[210,20], head:[124,52]},
+  b: [
+    ['ankleL','kneeL','b'], ['kneeL','hip','b'], ['ankleR','kneeR','b'], ['kneeR','hip','b'],
+    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulderR','elbowR','o'], ['elbowR','handR','o'],
+  ],
+  h: ['head', 4, 0],
+  l: {text:'SHOULDER', tx:80, ty:42, fx:142, fy:74}
+}),
+
+"Hip CARs": pose({
+  j: {handL:[60,168], handR:[100,168], kneeL:[140,168], kneeR:[180,168],
+      hip:[160,140], spine:[110,138], shoulderL:[80,138], shoulderR:[100,138],
+      elbowL:[60,150], elbowR:[100,150],
+      // lifted leg: knee out and up
+      liftKnee:[210,108], liftAnkle:[228,68], head:[60,128]},
+  b: [
+    ['handL','elbowL','b'], ['elbowL','shoulderL','b'],
+    ['handR','elbowR','b'], ['elbowR','shoulderR','b'],
+    ['shoulderL','spine','b'], ['shoulderR','spine','b'],
+    ['spine','hip','b'],
+    ['kneeL','hip','b'], ['kneeL','handL','b'],   // (visual scaffold)
+    ['kneeR','hip','b'],
+    ['hip','liftKnee','o'], ['liftKnee','liftAnkle','o'],
+  ],
+  h: ['head', -5, 0],
+  l: {text:'HIP', tx:175, ty:158, fx:170, fy:142}
+}),
+
+"Cat–Cow": pose({
+  j: {handL:[55,168], handR:[88,168], kneeL:[160,168], kneeR:[195,168],
+      hip:[178,148], midSpine:[120,128], neck:[78,140], head:[58,138],
+      shoulderL:[75,140], shoulderR:[88,140]},
+  b: [
+    ['handL','shoulderL','b'], ['handR','shoulderR','b'],
+    ['kneeL','hip','b'], ['kneeR','hip','b'],
+    ['hip','midSpine','o'], ['midSpine','neck','o'],
+    ['neck','shoulderL','b'], ['neck','shoulderR','b'],
+  ],
+  h: ['head', -6, 0],
+  l: {text:'SPINE', tx:80, ty:100, fx:120, fy:124}
+}),
+
+"Quadruped T-Spine Rotation": pose({
+  j: {handPlanted:[60,168], kneeL:[140,168], kneeR:[180,168], hip:[160,148],
+      spine:[110,135], shoulderPivot:[75,128],
+      // elbow rotating up toward ceiling, hand behind head
+      elbowUp:[55,85], handBehind:[80,72], head:[80,108], shoulderL:[75,128]},
+  b: [
+    ['handPlanted','shoulderPivot','b'],
+    ['kneeL','hip','b'], ['kneeR','hip','b'],
+    ['hip','spine','b'], ['spine','shoulderPivot','o'],
+    ['shoulderPivot','elbowUp','o'], ['elbowUp','handBehind','o'],
+  ],
+  h: ['head', -3, -5],
+  l: {text:'T-SPINE', tx:120, ty:50, fx:78, fy:122}
+}),
+
+"World's Greatest Flow": pose({
+  // Same base position as World's Greatest Stretch — flow variant.
+  j: {backAnkle:[40,188], backKnee:[78,150], hip:[120,118], frontKnee:[160,150], frontAnkle:[185,188],
+      shoulder:[130,90], elbowDown:[148,140], handDown:[160,168],
+      elbowUp:[150,55], handUp:[195,18], head:[130,72]},
+  b: [
+    ['backAnkle','backKnee','o'], ['backKnee','hip','o'],
+    ['frontAnkle','frontKnee','b'], ['frontKnee','hip','b'],
+    ['hip','shoulder','o'],
+    ['shoulder','elbowDown','b'], ['elbowDown','handDown','b'],
+    ['shoulder','elbowUp','o'], ['elbowUp','handUp','o'],
+  ],
+  h: ['head', 6, 0],
+  l: {text:'FLOW', tx:8, ty:60, fx:140, fy:75}
+}),
+
+"90/90 Transition Flow": pose({
+  // Mid-transition: hips lifted, in motion between sides.
+  j: {frontFoot:[55,180], frontKnee:[105,158], hip:[140,138], backKnee:[180,158], backFoot:[218,180],
+      spine:[140,90], shoulder:[140,72], elbowL:[120,108], handL:[110,138], elbowR:[160,108], handR:[170,138],
+      head:[140,52]},
+  b: [
+    ['frontFoot','frontKnee','o'], ['frontKnee','hip','o'],
+    ['hip','backKnee','o'], ['backKnee','backFoot','o'],
+    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 0, 6],
+  l: {text:'HIP FLOW', tx:55, ty:185, fx:120, fy:148}
+}),
+
+"Deep Squat to Stand": pose({
+  // Bottom of squat position.
+  j: {footL:[78,188], footR:[162,188], kneeL:[60,140], kneeR:[180,140], hip:[120,138],
+      spine:[120,108], shoulder:[120,82], elbowL:[100,108], handL:[88,138], elbowR:[140,108], handR:[152,138],
+      head:[120,62]},
+  b: [
+    ['footL','kneeL','o'], ['kneeL','hip','o'],
+    ['footR','kneeR','o'], ['kneeR','hip','o'],
+    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 0, -6],
+  l: {text:'HIPS + ANKLES', tx:140, ty:140, fx:122, fy:140}
+}),
+
+"Ankle CARs": pose({
+  // Seated, leg out, ankle drawing circle.
+  j: {hip:[80,162], thigh:[140,162], knee:[170,162], shin:[200,162], ankle:[218,162],
+      spine:[80,128], shoulder:[80,108], head:[80,88],
+      elbowL:[55,140], handL:[45,168], elbowR:[100,140], handR:[110,168],
+      toe:[235,140]},
+  b: [
+    ['hip','knee','b'], ['knee','ankle','b'],
+    ['ankle','toe','o'],
+    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
+  ],
+  h: ['head', 6, 0],
+  l: {text:'ANKLE', tx:160, ty:130, fx:218, fy:158}
+}),
+
+"Scapular Wall Slides": pose({
+  // Back against wall on the left, arms in a Y overhead.
+  j: {ankleL:[80,188], ankleR:[105,188], kneeL:[80,148], kneeR:[105,148], hip:[92,118], spine:[92,80], shoulderL:[78,72], shoulderR:[106,72],
+      elbowL:[55,42], handL:[40,18], elbowR:[140,42], handR:[170,18], head:[92,52]},
+  b: [
+    ['ankleL','kneeL','b'], ['kneeL','hip','b'],
+    ['ankleR','kneeR','b'], ['kneeR','hip','b'],
+    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
+    ['shoulderR','elbowR','o'], ['elbowR','handR','o'],
+  ],
+  h: ['head', 4, 0],
+  w: 28,
+  l: {text:'SCAPULA', tx:150, ty:90, fx:120, fy:76}
 }),
 };
+
+// ---------- MODE + ROUTINE SELECTION ----------
+function setMode(mode){
+  const state = loadState();
+  state.mode = mode;
+  saveState(state);
+  document.body.setAttribute('data-mode', mode);
+  document.querySelectorAll('.mode-tab').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  document.querySelectorAll('.slide').forEach(s => s.classList.toggle('active', s.dataset.slide === mode));
+  document.getElementById('logo-mode').textContent = mode.toUpperCase();
+  renderHome();
+}
+
+function activeRoutine(state){
+  const mode = state.mode || 'stretch';
+  const liftDay = getLiftDay();
+  if(mode === 'stretch'){
+    const liftRec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
+    let key = state.stretchRoutine;
+    if(liftRec && (!key || state.stretchFollowLift !== false)) key = liftRec;
+    if(!key) key = "rest";
+    return {routine: getRoutine(key, 'stretch'), liftRec, liftDay};
+  } else {
+    const liftRec = liftDay ? recommendMobilityFromLiftDay(liftDay.name) : null;
+    let key = state.mobilityRoutine;
+    if(liftRec && (!key || state.mobilityFollowLift !== false)) key = liftRec;
+    if(!key) key = "full";
+    return {routine: getRoutine(key, 'mobility'), liftRec, liftDay};
+  }
+}
+
+function pickRoutine(key, mode){
+  const state = loadState();
+  if(mode === 'stretch'){
+    state.stretchRoutine = key;
+    const liftDay = getLiftDay();
+    const rec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
+    state.stretchFollowLift = (rec === key);
+  } else {
+    state.mobilityRoutine = key;
+    const liftDay = getLiftDay();
+    const rec = liftDay ? recommendMobilityFromLiftDay(liftDay.name) : null;
+    state.mobilityFollowLift = (rec === key);
+  }
+  saveState(state);
+  renderHome();
+}
+
+// Remove a user-added item from the active routine.
+function rmFromRoutine(ref){
+  const state = loadState();
+  const {routine} = activeRoutine(state);
+  const m = routine.mode;
+  state.routineAdds = state.routineAdds || {};
+  state.routineAdds[m] = state.routineAdds[m] || {};
+  state.routineAdds[m][routine.key] = (state.routineAdds[m][routine.key] || []).filter(r => r !== ref);
+  saveState(state);
+  renderHome();
+}
 
 // ---------- HOME RENDER ----------
 function renderHome(){
   const state = loadState();
+  const mode = state.mode || 'stretch';
+  document.body.setAttribute('data-mode', mode);
 
-  // 1. Decide today's routine. Priority: explicit user pick → lift pairing → rest day.
-  const liftDay = getLiftDay();
-  const liftRec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
-  // Auto-follow LIFT unless the user has explicitly overridden today.
-  let routineKey = state.routine;
-  let following = false;
-  if(liftRec && (!routineKey || state.followLift !== false)){
-    routineKey = liftRec; following = true;
-  }
-  if(!routineKey) routineKey = "rest";
-  const routine = getRoutine(routineKey);
+  // Sync tabs + slides + logo (in case render is called outside setMode)
+  document.querySelectorAll('.mode-tab').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  document.querySelectorAll('.slide').forEach(s => s.classList.toggle('active', s.dataset.slide === mode));
+  document.getElementById('logo-mode').textContent = mode.toUpperCase();
 
-  // 2. Title + subtitle
-  document.getElementById('home-title-main').textContent = routine.titleMain;
-  document.getElementById('home-title-accent').textContent = routine.titleAccent;
-  const eyebrow = following ? `TODAY · PAIRED WITH ${liftDay.name.toUpperCase()}` : "TODAY";
-  document.getElementById('home-eyebrow').textContent = eyebrow;
-  const holdSec = routineHoldSec(routine);
-  const totalMin = Math.round(routine.indices.length * holdSec / 60);
-  document.getElementById('home-subtitle').textContent = `${routine.indices.length} stretches · ${totalMin} min`;
-
-  // 3. Streak
   const streak = computeStreak(state);
   const chip = document.getElementById('streak-chip');
   chip.querySelector('.num').textContent = streak;
   chip.classList.toggle('zero', streak === 0);
 
-  // 4. Chips
-  const $chips = document.getElementById('r-chips');
-  $chips.innerHTML = ROUTINES.map(r => {
+  const {routine, liftRec, liftDay} = activeRoutine(state);
+  const holdSec = routineHoldSec(routine);
+  const items = routineItems(routine, state);
+  const totalMin = Math.round(items.length * holdSec / 60);
+
+  if(mode === 'stretch') renderStretchSlide(state, routine, liftRec, liftDay, items, holdSec, totalMin);
+  else renderMobilitySlide(state, routine, liftRec, liftDay, items, holdSec, totalMin);
+}
+
+function renderStretchSlide(state, routine, liftRec, liftDay, items, holdSec, totalMin){
+  const following = liftRec && state.stretchFollowLift !== false && routine.key === liftRec;
+  document.getElementById('s-title-main').textContent = routine.titleMain;
+  document.getElementById('s-title-accent').textContent = routine.titleAccent;
+  document.getElementById('s-eyebrow').textContent = following ? `TODAY · PAIRED WITH ${liftDay.name.toUpperCase()}` : 'TODAY';
+  document.getElementById('s-subtitle').textContent = `${items.length} stretches · ${totalMin} min`;
+  document.getElementById('s-head-name').textContent = `${routine.titleMain} ${routine.titleAccent}`;
+  document.getElementById('s-head-time').textContent = `${totalMin} MIN`;
+
+  const stretchRoutines = ROUTINES.filter(r => r.mode === 'stretch');
+  const customRoutines = (state.customRoutines || []).filter(r => r.mode === 'stretch');
+  document.getElementById('s-chips').innerHTML = [...stretchRoutines, ...customRoutines].map(r => {
     const active = r.key === routine.key ? 'active' : '';
     const rec = (r.key === liftRec && r.key !== routine.key) ? 'recommend' : '';
-    return `<button class="r-chip ${active} ${rec}" onclick="pickRoutine('${r.key}')">${r.titleMain} ${r.titleAccent}</button>`;
+    const custom = r.custom ? 'custom' : '';
+    return `<button class="r-chip ${active} ${rec} ${custom}" onclick="pickRoutine('${r.key}','stretch')">${r.titleMain} ${r.titleAccent}</button>`;
   }).join('');
 
-  // 5. Routine list
-  document.getElementById('routine-head-name').textContent = `${routine.titleMain} ${routine.titleAccent}`;
-  document.getElementById('routine-head-time').textContent = `${totalMin} MIN`;
-  const $list = document.getElementById('routine-list');
-  $list.innerHTML = routine.indices.map((idx, n) => {
-    const s = STRETCHES[idx];
-    const side = s.side ? `<span class="side">${s.side[0]}</span>` : '';
-    return `<div class="routine-item"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${s.name}${side}</span><span class="t">${holdSec}s</span></div>`;
+  const adds = new Set((state.routineAdds?.stretch?.[routine.key]) || []);
+  document.getElementById('s-list').innerHTML = items.map((ref, n) => {
+    const ex = resolveItem(ref, state);
+    if(!ex) return '';
+    const side = ex.side ? `<span class="side">${ex.side[0]}</span>` : '';
+    const tag = ex.src === 'm' ? '<span class="tag">MOBILITY</span>' : ex.src === 'c' ? '<span class="tag">CUSTOM</span>' : '';
+    const isAdd = adds.has(ref);
+    const rm = isAdd ? `<button class="rm" onclick="rmFromRoutine('${ref}')">✕</button>` : '';
+    return `<div class="routine-item ${isAdd?'added':''}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
   }).join('');
 
-  // 6. Volume cards
-  const minutes = plannedMuscleMinutes(routine);
+  // Volume
+  const minutes = plannedMuscleMinutes(routine, state);
   const muscleSet = new Set();
-  for(const idx of routine.indices){
-    const s = STRETCHES[idx]; if(!s) continue;
-    if(s.primary) muscleSet.add(s.primary);
-    for(const sec of (s.secondary||[])) muscleSet.add(sec);
+  for(const ref of items){
+    const ex = resolveItem(ref, state);
+    if(!ex || ex.src !== 's') continue;
+    if(ex.primary) muscleSet.add(ex.primary);
+    for(const sec of (ex.secondary||[])) muscleSet.add(sec);
   }
   const orderedMuscles = MUSCLE_ORDER.filter(m => muscleSet.has(m));
-
   let mevCount = 0, mavCount = 0, missCount = 0;
   for(const m of orderedMuscles){
     const cls = classifyVolume(minutes[m]||0, MUSCLE_LANDMARKS[m]);
@@ -744,10 +1145,8 @@ function renderHome(){
     else if(cls === 'mev') mevCount++;
     else if(cls === 'under') missCount++;
   }
-  document.getElementById('vol-summary').innerHTML =
-    `<span><b>${mavCount}</b>IN MAV</span><span><b>${mevCount}</b>AT MEV</span><span><b>${missCount}</b>UNDER</span>`;
-
-  document.getElementById('vol-cards').innerHTML = orderedMuscles.map(m => {
+  document.getElementById('s-vol-summary').innerHTML = `<span><b>${mavCount}</b>IN MAV</span><span><b>${mevCount}</b>AT MEV</span><span><b>${missCount}</b>UNDER</span>`;
+  document.getElementById('s-vol-cards').innerHTML = orderedMuscles.map(m => {
     const lm = MUSCLE_LANDMARKS[m];
     const min = minutes[m] || 0;
     const cls = classifyVolume(min, lm);
@@ -757,114 +1156,134 @@ function renderHome(){
     const tickMavLow = (lm.mav[0] / maxScale) * 100;
     const tickMavHigh = (lm.mav[1] / maxScale) * 100;
     const tickMrv = (lm.mrv / maxScale) * 100;
-    return `
-      <div class="vol-card ${cls}">
-        <div class="vol-head"><div class="name">${MUSCLE_NAMES[m]}</div><div class="sets">${fmtMin(min)}<span class="unit">MIN/WK</span></div></div>
-        <div class="vol-bar">
-          <div class="fill" style="width:${pct}%"></div>
-          <div class="tick" style="left:${tickMev}%"></div>
-          <div class="tick" style="left:${tickMavLow}%"></div>
-          <div class="tick" style="left:${tickMavHigh}%"></div>
-          <div class="tick" style="left:${tickMrv}%"></div>
-        </div>
-        <div class="vol-foot"><span>MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv}</span><span class="status ${cls}">${VOL_LABEL[cls]}</span></div>
-      </div>`;
+    return `<div class="vol-card ${cls}">
+      <div class="vol-head"><div class="name">${MUSCLE_NAMES[m]}</div><div class="sets">${fmtMin(min)}<span class="unit">MIN/WK</span></div></div>
+      <div class="vol-bar"><div class="fill" style="width:${pct}%"></div>
+        <div class="tick" style="left:${tickMev}%"></div><div class="tick" style="left:${tickMavLow}%"></div>
+        <div class="tick" style="left:${tickMavHigh}%"></div><div class="tick" style="left:${tickMrv}%"></div></div>
+      <div class="vol-foot"><span>MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv}</span><span class="status ${cls}">${VOL_LABEL[cls]}</span></div>
+    </div>`;
   }).join('');
 }
 
-function fmtMin(m){
-  if(m >= 10) return Math.round(m).toString();
-  return (Math.round(m*10)/10).toFixed(1);
-}
+function renderMobilitySlide(state, routine, liftRec, liftDay, items, holdSec, totalMin){
+  const following = liftRec && state.mobilityFollowLift !== false && routine.key === liftRec;
+  document.getElementById('m-title-main').textContent = routine.titleMain;
+  document.getElementById('m-title-accent').textContent = routine.titleAccent;
+  document.getElementById('m-eyebrow').textContent = following ? `TODAY · PAIRED WITH ${liftDay.name.toUpperCase()}` : 'TODAY';
+  document.getElementById('m-subtitle').textContent = `${items.length} moves · ${totalMin} min`;
+  document.getElementById('m-head-name').textContent = `${routine.titleMain} ${routine.titleAccent}`;
+  document.getElementById('m-head-time').textContent = `${totalMin} MIN`;
 
-function pickRoutine(key){
-  const state = loadState();
-  state.routine = key;
-  // If user manually picks a routine that differs from lift recommendation, turn off auto-follow.
-  const liftDay = getLiftDay();
-  const liftRec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
-  state.followLift = (liftRec === key);
-  saveState(state);
-  renderHome();
+  const mobRoutines = ROUTINES.filter(r => r.mode === 'mobility');
+  const customRoutines = (state.customRoutines || []).filter(r => r.mode === 'mobility');
+  document.getElementById('m-chips').innerHTML = [...mobRoutines, ...customRoutines].map(r => {
+    const active = r.key === routine.key ? 'active' : '';
+    const rec = (r.key === liftRec && r.key !== routine.key) ? 'recommend' : '';
+    const custom = r.custom ? 'custom' : '';
+    return `<button class="r-chip ${active} ${rec} ${custom}" onclick="pickRoutine('${r.key}','mobility')">${r.titleMain} ${r.titleAccent}</button>`;
+  }).join('');
+
+  const adds = new Set((state.routineAdds?.mobility?.[routine.key]) || []);
+  document.getElementById('m-list').innerHTML = items.map((ref, n) => {
+    const ex = resolveItem(ref, state);
+    if(!ex) return '';
+    const side = ex.side ? `<span class="side">${ex.side[0]}</span>` : '';
+    const tag = ex.src === 's' ? '<span class="tag">HOLD</span>' : ex.src === 'c' ? '<span class="tag">CUSTOM</span>' : '';
+    const isAdd = adds.has(ref);
+    const rm = isAdd ? `<button class="rm" onclick="rmFromRoutine('${ref}')">✕</button>` : '';
+    return `<div class="routine-item ${isAdd?'added':''}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
+  }).join('');
+
+  // This-week stats
+  const stats = mobilityWeekStats(state);
+  document.getElementById('m-stats').innerHTML = `
+    <div class="mob-stat"><div class="l">SESSIONS</div><div class="v">${stats.sessions}<span class="unit">/7d</span></div></div>
+    <div class="mob-stat"><div class="l">TOTAL</div><div class="v">${fmtMin(stats.totalMin)}<span class="unit">MIN</span></div></div>
+    <div class="mob-stat"><div class="l">STREAK</div><div class="v">${computeStreak(state)}<span class="unit">D</span></div></div>
+  `;
+  document.getElementById('m-joints').innerHTML = MOBILITY_JOINTS.map(j => `
+    <div class="mob-joint"><span class="nm">${JOINT_NAMES[j]}</span><span class="v">${fmtMin(stats.jointMin[j]||0)}<span class="unit">MIN/WK</span></span></div>
+  `).join('');
 }
 
 // ---------- SCREEN SWITCHING ----------
 function showScreen(id){
-  // ONE source of truth: every .screen toggled via the same class. No inline styles.
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   if(el) el.classList.add('active');
   window.scrollTo(0, 0);
 }
-
-// On bfcache restore (iOS PWA), ensure we land on home in a clean state.
 window.addEventListener('pageshow', () => {
   if(R){ cleanupRoutine(); }
   R = null;
+  closeOverlay();
   showScreen('home');
   renderHome();
 });
 
 // ---------- ROUTINE ENGINE ----------
 let R = null;
-
 function startRoutine(){
   const state = loadState();
-  const liftDay = getLiftDay();
-  const liftRec = liftDay ? recommendFromLiftDay(liftDay.name) : null;
-  let routineKey = state.routine;
-  if(liftRec && (!routineKey || state.followLift !== false)) routineKey = liftRec;
-  if(!routineKey) routineKey = "rest";
-  const routine = getRoutine(routineKey);
+  const {routine} = activeRoutine(state);
   const holdSec = routineHoldSec(routine);
+  const items = routineItems(routine, state);
+  const list = items.map(ref => ({ref, ex: resolveItem(ref, state)})).filter(x => x.ex);
+  if(!list.length) return;
 
   R = {
     i: 0,
     holdSec,
-    secLeft: holdSec,
+    secLeft: list[0].ex.sec || holdSec,
     paused: false,
     ticker: null,
     wakeLock: null,
-    list: routine.indices.map(idx => ({ ...STRETCHES[idx], masterIdx: idx })),
+    list,
     completed: [],
+    mode: routine.mode,
     routineKey: routine.key,
   };
 
-  // Segment bar
-  document.getElementById('r-bar').innerHTML =
-    R.list.map((_, i) => `<div class="seg" data-i="${i}"><div class="fill"></div></div>`).join('');
-
-  // Wake lock (best effort)
-  try{
-    if('wakeLock' in navigator){
-      navigator.wakeLock.request('screen').then(w => { R.wakeLock = w; }).catch(()=>{});
-    }
-  }catch(e){}
+  document.getElementById('r-bar').innerHTML = list.map((_,i) => `<div class="seg" data-i="${i}"><div class="fill"></div></div>`).join('');
+  try{ if('wakeLock' in navigator) navigator.wakeLock.request('screen').then(w=>{R.wakeLock=w;}).catch(()=>{}); }catch(e){}
 
   document.getElementById('r-pause').textContent = 'PAUSE';
-  showStretch(0);
+  showItem(0);
   showScreen('routine');
   startTicker();
 }
 
-function showStretch(i){
-  const s = R.list[i];
-  document.getElementById('r-counter').textContent = `${i+1} / ${R.list.length}`;
-  document.getElementById('r-eyebrow').textContent = `Stretch ${i+1} of ${R.list.length}`;
-  const side = s.side ? ` <span class="r-side">${s.side}</span>` : '';
-  document.getElementById('r-name').innerHTML = s.name + side;
-  document.getElementById('r-area').textContent = s.area;
-  document.getElementById('r-cue').textContent = s.cue;
-  document.getElementById('r-figure').innerHTML = POSES[s.name] || '';
+function currentSec(){
+  const cur = R.list[R.i].ex;
+  return cur.sec || R.holdSec;
+}
 
-  // Segment bar reset
+function showItem(i){
+  const {ex} = R.list[i];
+  document.getElementById('r-counter').textContent = `${i+1} / ${R.list.length}`;
+  document.getElementById('r-eyebrow').textContent = `${R.mode === 'mobility' ? 'Movement' : 'Stretch'} ${i+1} of ${R.list.length}`;
+  const side = ex.side ? ` <span class="r-side">${ex.side}</span>` : '';
+  const tag = (ex.src === 'm' && R.mode === 'stretch') ? ' <span class="r-tag">MOBILITY</span>' :
+              (ex.src === 's' && R.mode === 'mobility') ? ' <span class="r-tag">HOLD</span>' :
+              (ex.src === 'c') ? ' <span class="r-tag">CUSTOM</span>' : '';
+  document.getElementById('r-name').innerHTML = ex.name + side + tag;
+  document.getElementById('r-area').textContent = ex.area || '';
+  document.getElementById('r-cue').textContent = ex.cue || '';
+  const $fig = document.getElementById('r-figure');
+  const svg = POSES[ex.name];
+  if(svg){ $fig.innerHTML = svg; $fig.classList.remove('placeholder'); }
+  else { $fig.innerHTML = (ex.src === 'c' ? 'CUSTOM EXERCISE' : 'NO ILLUSTRATION'); $fig.classList.add('placeholder'); }
+  document.getElementById('r-timer-label').textContent =
+    ex.type === 'reps' ? 'SLOW REPS' :
+    ex.type === 'flow' ? 'SLOW FLOW' : 'SECONDS';
+
   document.querySelectorAll('#r-bar .seg').forEach((seg, idx) => {
     const fill = seg.querySelector('.fill');
     if(idx < i){ seg.classList.add('done'); fill.style.width = '100%'; }
     else { seg.classList.remove('done'); fill.style.width = '0%'; }
   });
-
-  R.secLeft = R.holdSec;
+  R.secLeft = currentSec();
   updateTimer();
 }
 
@@ -874,8 +1293,8 @@ function updateTimer(){
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){
     const fill = seg.querySelector('.fill');
-    const pct = ((R.holdSec - R.secLeft) / R.holdSec) * 100;
-    fill.style.width = pct + '%';
+    const total = currentSec();
+    fill.style.width = (((total - R.secLeft) / total) * 100) + '%';
   }
 }
 
@@ -885,21 +1304,15 @@ function startTicker(){
     if(!R || R.paused) return;
     R.secLeft--;
     if(R.secLeft <= 0){
-      R.completed.push({ i: R.list[R.i].masterIdx, sec: R.holdSec });
+      R.completed.push({ref: R.list[R.i].ref, sec: currentSec()});
       const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
       if(seg){ seg.classList.add('done'); seg.querySelector('.fill').style.width = '100%'; }
-      if(R.i + 1 >= R.list.length){
-        finishRoutine();
-        return;
-      }
-      R.i++;
-      showStretch(R.i);
+      if(R.i + 1 >= R.list.length){ finishRoutine(); return; }
+      R.i++; showItem(R.i);
       try{ if(navigator.vibrate) navigator.vibrate(40); }catch(e){}
     } else {
       updateTimer();
-      if(R.secLeft <= 3){
-        try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){}
-      }
+      if(R.secLeft <= 3){ try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){} }
     }
   }, 1000);
 }
@@ -909,21 +1322,16 @@ function togglePause(){
   R.paused = !R.paused;
   document.getElementById('r-pause').textContent = R.paused ? 'RESUME' : 'PAUSE';
 }
-
 function skipStretch(){
   if(!R) return;
-  const held = Math.max(0, R.holdSec - R.secLeft);
-  R.completed.push({ i: R.list[R.i].masterIdx, sec: held });
+  const total = currentSec();
+  const held = Math.max(0, total - R.secLeft);
+  R.completed.push({ref: R.list[R.i].ref, sec: held});
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){ seg.classList.add('done'); seg.querySelector('.fill').style.width = '100%'; }
-  if(R.i + 1 >= R.list.length){
-    finishRoutine();
-    return;
-  }
-  R.i++;
-  showStretch(R.i);
+  if(R.i + 1 >= R.list.length){ finishRoutine(); return; }
+  R.i++; showItem(R.i);
 }
-
 function quitRoutine(){
   if(!confirm("Quit this session? Today won't count.")) return;
   cleanupRoutine();
@@ -931,21 +1339,19 @@ function quitRoutine(){
   showScreen('home');
   renderHome();
 }
-
 function cleanupRoutine(){
   if(!R) return;
   if(R.ticker){ clearInterval(R.ticker); R.ticker = null; }
   if(R.wakeLock){ try{ R.wakeLock.release(); }catch(e){} R.wakeLock = null; }
 }
-
 function finishRoutine(){
   cleanupRoutine();
   const state = loadState();
   state.sessions = state.sessions || [];
   const t = todayStr();
-  state.sessions = state.sessions.filter(s => s.date !== t);
-  state.sessions.push({ date: t, completed: R.completed.slice() });
-  state.sessions = state.sessions.slice(-90);
+  state.sessions = state.sessions.filter(s => !(s.date === t && s.mode === R.mode));
+  state.sessions.push({date: t, mode: R.mode, routineKey: R.routineKey, completed: R.completed.slice()});
+  state.sessions = state.sessions.slice(-180);
   state.log = state.log || [];
   if(!state.log.includes(t)) state.log.push(t);
   state.log = state.log.slice(-365);
@@ -956,18 +1362,11 @@ function finishRoutine(){
   const day = Math.floor((new Date() - new Date(new Date().getFullYear(),0,0)) / 86400000);
   const q = QUOTES[day % QUOTES.length];
   document.getElementById('done-quote').innerHTML = `"${q[0]}"<span class="author">— ${q[1]}</span>`;
-
   R = null;
   showScreen('done');
   try{ if(navigator.vibrate) navigator.vibrate([50,80,120]); }catch(e){}
 }
-
-function backHome(){
-  showScreen('home');
-  renderHome();
-}
-
-// Pause if tab/window hidden during routine.
+function backHome(){ showScreen('home'); renderHome(); }
 document.addEventListener('visibilitychange', () => {
   if(document.hidden && R && !R.paused){
     R.paused = true;
@@ -976,7 +1375,171 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-renderHome();
+// ---------- ADD OVERLAY ----------
+let addTab = 'library';
+function openAdd(){
+  const state = loadState();
+  const mode = state.mode || 'stretch';
+  document.getElementById('ov-eyebrow').textContent = `ADD TO ${mode.toUpperCase()}`;
+  document.getElementById('ov-title-2').textContent = 'ADD';
+  document.getElementById('ov-sub').textContent = "Joins today's routine. Pick from library, your saved routines, or type a new one.";
+  document.getElementById('ov-add').classList.add('active');
+  setAddTab('library');
+}
+function closeOverlay(){ document.getElementById('ov-add').classList.remove('active'); renderHome(); }
+function setAddTab(tab){
+  addTab = tab;
+  document.querySelectorAll('.ov-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  if(tab === 'library') renderLibraryTab();
+  else if(tab === 'routines') renderRoutinesTab();
+  else if(tab === 'new') renderNewTab();
+}
+function renderLibraryTab(){
+  const state = loadState();
+  const {routine} = activeRoutine(state);
+  const current = new Set(routineItems(routine, state));
+  const mode = state.mode || 'stretch';
+
+  let html = '';
+  if(mode === 'stretch'){
+    html += '<div class="form-label" style="padding-top:14px">Stretches</div>';
+    html += STRETCHES.map((s, i) => libRow('s:'+i, s.name, s.area, s.side, current)).join('');
+    html += '<div class="form-label" style="padding-top:14px">Mobility moves</div>';
+    html += Object.entries(MOBILITY).map(([id,m]) => libRow('m:'+id, m.name, m.area, m.side, current)).join('');
+  } else {
+    html += '<div class="form-label" style="padding-top:14px">Mobility moves</div>';
+    html += Object.entries(MOBILITY).map(([id,m]) => libRow('m:'+id, m.name, m.area, m.side, current)).join('');
+    html += '<div class="form-label" style="padding-top:14px">Stretches</div>';
+    html += STRETCHES.map((s, i) => libRow('s:'+i, s.name, s.area, s.side, current)).join('');
+  }
+  // Custom exercises
+  const customs = state.customExercises || [];
+  if(customs.length){
+    html += '<div class="form-label" style="padding-top:14px">Your custom exercises</div>';
+    html += customs.map(c => libRow('c:'+c.id, c.name, c.area || 'Custom', null, current)).join('');
+  }
+  document.getElementById('ov-body').innerHTML = html;
+}
+function libRow(ref, name, area, side, current){
+  const inc = current.has(ref);
+  const sideTag = side ? `<span class="side">${side[0]}</span>` : '';
+  return `<div class="ov-row ${inc?'included':''}" onclick="addToRoutine('${ref}')"><div class="info"><div class="nm">${name}${sideTag}</div><div class="area">${area||''}</div></div><button class="add">ADD</button></div>`;
+}
+function addToRoutine(ref){
+  const state = loadState();
+  const {routine} = activeRoutine(state);
+  const m = routine.mode;
+  state.routineAdds = state.routineAdds || {};
+  state.routineAdds[m] = state.routineAdds[m] || {};
+  state.routineAdds[m][routine.key] = state.routineAdds[m][routine.key] || [];
+  if(!state.routineAdds[m][routine.key].includes(ref) && !routine.items.includes(ref)){
+    state.routineAdds[m][routine.key].push(ref);
+  }
+  saveState(state);
+  renderLibraryTab();
+}
+
+function renderRoutinesTab(){
+  const state = loadState();
+  const mode = state.mode || 'stretch';
+  const customs = (state.customRoutines || []).filter(r => r.mode === mode);
+  let html = '<div class="form-section">';
+  html += `<div class="form-label">Your saved ${mode} routines</div>`;
+  if(!customs.length){
+    html += '<div class="empty">No saved routines yet</div>';
+  } else {
+    html += customs.map(r => `<div class="ov-row" onclick="useCustomRoutine('${r.key}')"><div class="info"><div class="nm">${r.titleMain} ${r.titleAccent}</div><div class="area">${r.items.length} moves</div></div><button class="add">USE</button></div>`).join('');
+    html += '<div style="margin-top:10px"></div>';
+  }
+  html += `<button class="btn-secondary" onclick="startNewCustomRoutine()" style="margin-top:14px">+ Create new routine</button>`;
+  html += `</div>`;
+  document.getElementById('ov-body').innerHTML = html;
+}
+function useCustomRoutine(key){
+  const state = loadState();
+  if(state.mode === 'stretch'){ state.stretchRoutine = key; state.stretchFollowLift = false; }
+  else { state.mobilityRoutine = key; state.mobilityFollowLift = false; }
+  saveState(state);
+  closeOverlay();
+  renderHome();
+}
+function startNewCustomRoutine(){
+  const name = prompt('Name your routine (e.g. "My morning")');
+  if(!name) return;
+  const state = loadState();
+  const mode = state.mode || 'stretch';
+  const key = 'c-' + uid();
+  // Seed with currently-selected routine's items so you have a starting point.
+  const {routine} = activeRoutine(state);
+  state.customRoutines = state.customRoutines || [];
+  state.customRoutines.push({
+    key, mode, custom: true,
+    name, titleMain: name.toUpperCase().split(' ')[0].slice(0,8), titleAccent: name.toUpperCase().split(' ').slice(1).join(' ').slice(0,10) || 'CUSTOM',
+    items: routine.items.slice(),
+  });
+  // Switch to it immediately so adds land on it.
+  if(mode === 'stretch'){ state.stretchRoutine = key; state.stretchFollowLift = false; }
+  else { state.mobilityRoutine = key; state.mobilityFollowLift = false; }
+  saveState(state);
+  setAddTab('library');
+}
+
+function renderNewTab(){
+  const html = `
+    <div class="form-section">
+      <label class="form-label">Exercise name</label>
+      <input id="new-name" class="form-input" placeholder="Foam roll quads">
+      <div class="form-row">
+        <div>
+          <label class="form-label">Seconds</label>
+          <input id="new-sec" class="form-input" type="number" value="30" min="5" max="300">
+        </div>
+        <div>
+          <label class="form-label">Type</label>
+          <select id="new-type" class="form-input">
+            <option value="hold">Hold (static)</option>
+            <option value="reps">Slow reps</option>
+            <option value="flow">Flow / movement</option>
+          </select>
+        </div>
+      </div>
+      <label class="form-label">Cue (optional)</label>
+      <input id="new-cue" class="form-input" placeholder="Slow, controlled, full range">
+      <label class="form-label">Area / body part</label>
+      <input id="new-area" class="form-input" placeholder="Quads · IT band">
+      <div class="form-error" id="new-error"></div>
+      <button class="btn-primary" onclick="saveNewExercise()" style="margin-top:6px">SAVE + ADD TO ROUTINE</button>
+    </div>
+  `;
+  document.getElementById('ov-body').innerHTML = html;
+}
+function saveNewExercise(){
+  const name = document.getElementById('new-name').value.trim();
+  const secNum = parseInt(document.getElementById('new-sec').value, 10);
+  const type = document.getElementById('new-type').value;
+  const cue = document.getElementById('new-cue').value.trim();
+  const area = document.getElementById('new-area').value.trim();
+  const err = document.getElementById('new-error');
+  if(!name){ err.textContent = 'Name required'; return; }
+  if(!secNum || secNum < 5 || secNum > 300){ err.textContent = 'Seconds must be 5–300'; return; }
+  const state = loadState();
+  state.customExercises = state.customExercises || [];
+  const id = uid();
+  state.customExercises.push({id, name, type, sec:secNum, cue, area});
+  saveState(state);
+  addToRoutine('c:'+id);
+  setAddTab('library');
+}
+
+// ---------- INIT ----------
+function init(){
+  const state = loadState();
+  if(!state.mode) state.mode = 'stretch';
+  saveState(state);
+  document.body.setAttribute('data-mode', state.mode);
+  renderHome();
+}
+init();
 </script>
 </body>
 </html>
