@@ -657,129 +657,176 @@ function pose(spec){
 }
 
 // Poses keyed by exercise name. L/R variants share the same illustration.
+// Convention: side view facing right unless noted. Floor at y=190.
 const POSES = {
 "Standing Forward Fold": pose({
-  j: {ankleL:[100,188], kneeL:[102,140], hipL:[110,92], hipR:[130,92], kneeR:[138,140], ankleR:[140,188],
-      hip:[120,92], spine:[120,110], shoulderL:[110,128], shoulderR:[130,128],
-      elbowL:[102,150], elbowR:[138,150], handL:[100,176], handR:[140,176], head:[120,148]},
+  // Side view. Person facing right, hinged at hip, head dangling forward.
+  j: {
+    ankle:[148,188], knee:[140,150], hip:[132,108],
+    midSpine:[108,124], shoulder:[78,138],
+    elbow:[78,162], hand:[78,184],
+    head:[60,148],
+  },
   b: [
-    ['ankleL','kneeL','o'], ['kneeL','hipL','o'],
-    ['ankleR','kneeR','o'], ['kneeR','hipR','o'],
-    ['hipL','hip','b'], ['hipR','hip','b'],
-    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
-    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+    ['ankle','knee','o'], ['knee','hip','o'],
+    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
+    ['shoulder','elbow','b'], ['elbow','hand','b'],
   ],
-  h: ['head', 0, 6],
-  l: {text:'HAMSTRING', tx:160, ty:135, fx:142, fy:122}
+  h: ['head', -6, 0],
+  l: {text:'HAMSTRING', tx:165, ty:135, fx:144, fy:128}
 }),
 
 "World's Greatest Stretch": pose({
-  j: {backAnkle:[40,188], backKnee:[78,150], hip:[120,118], frontKnee:[160,150], frontAnkle:[185,188],
-      shoulder:[130,90], elbowDown:[148,140], handDown:[160,168],
-      elbowUp:[150,55], handUp:[195,18], head:[130,72]},
+  // Side view, facing right, deep lunge with top arm reaching up.
+  j: {
+    backFoot:[25,188], backKnee:[72,150], hip:[118,118], frontKnee:[158,150], frontFoot:[193,188],
+    midSpine:[122,88], shoulder:[126,68],
+    elbowDn:[145,108], handDn:[158,138],
+    elbowUp:[148,34], handUp:[188,8],
+    head:[132,48],
+  },
   b: [
-    ['backAnkle','backKnee','o'], ['backKnee','hip','o'],
-    ['frontAnkle','frontKnee','b'], ['frontKnee','hip','b'],
-    ['hip','shoulder','b'],
-    ['shoulder','elbowDown','b'], ['elbowDown','handDown','b'],
+    ['backFoot','backKnee','o'], ['backKnee','hip','o'],
+    ['frontFoot','frontKnee','b'], ['frontKnee','hip','b'],
+    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
+    ['shoulder','elbowDn','b'], ['elbowDn','handDn','b'],
     ['shoulder','elbowUp','o'], ['elbowUp','handUp','o'],
   ],
   h: ['head', 6, 0],
-  l: {text:'HIP FLEXOR', tx:8, ty:170, fx:60, fy:165}
+  l: {text:'HIP FLEXOR', tx:8, ty:175, fx:48, fy:170}
 }),
 
 "Couch Stretch": pose({
-  j: {backFoot:[55,112], backKnee:[55,165], hip:[100,150], spine:[110,110], shoulder:[120,82],
-      elbowL:[100,108], handL:[88,138], elbowR:[140,108], handR:[152,138],
-      frontKnee:[150,148], frontAnkle:[180,188], head:[122,64]},
+  // Side view, wall on left. Back leg's shin pressed UP against wall.
+  j: {
+    backFoot:[40,90], backKnee:[42,178], hipBack:[98,162],
+    frontKnee:[160,170], frontFoot:[205,188],
+    midSpine:[104,118], shoulder:[108,78],
+    elbowL:[82,108], handL:[68,138],
+    elbowR:[132,108], handR:[148,138],
+    head:[108,56],
+  },
   b: [
-    ['backFoot','backKnee','o'], ['backKnee','hip','o'],
-    ['frontKnee','hip','b'], ['frontKnee','frontAnkle','b'],
-    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['backFoot','backKnee','o'], ['backKnee','hipBack','o'],
+    ['hipBack','frontKnee','b'], ['frontKnee','frontFoot','b'],
+    ['hipBack','midSpine','b'], ['midSpine','shoulder','b'],
     ['shoulder','elbowL','b'], ['elbowL','handL','b'],
     ['shoulder','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', 6, 0],
-  w: 42,
-  l: {text:'QUAD + HIP', tx:158, ty:90, fx:78, fy:140}
+  w: 30,
+  l: {text:'QUAD + HIP', tx:120, ty:158, fx:65, fy:130}
 }),
 
 "90 / 90 Hip Switch": pose({
-  j: {frontFoot:[55,158], frontKnee:[115,140], hip:[135,140], backKnee:[185,140], backFoot:[195,108],
-      spine:[135,80], shoulder:[135,70], elbowL:[115,108], handL:[100,135], elbowR:[155,108], handR:[170,135],
-      head:[135,52]},
+  // Top-down view of a seated person. Front leg bent 90° in front,
+  // back leg bent 90° to the side (the back foot sticks "up" off the
+  // floor in the top-down projection, i.e. away from the body line).
+  j: {
+    frontFoot:[28,168], frontKnee:[88,160], hip:[128,158],
+    backKnee:[178,158], backFoot:[178,108],
+    midSpine:[128,108], shoulder:[128,72],
+    elbowL:[100,98], handL:[78,128],
+    elbowR:[156,98], handR:[178,128],
+    head:[128,48],
+  },
   b: [
     ['frontFoot','frontKnee','o'], ['frontKnee','hip','o'],
     ['hip','backKnee','o'], ['backKnee','backFoot','o'],
-    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
     ['shoulder','elbowL','b'], ['elbowL','handL','b'],
     ['shoulder','elbowR','b'], ['elbowR','handR','b'],
   ],
-  h: ['head', 0, 6],
-  l: {text:'HIP ROTATORS', tx:60, ty:185, fx:120, fy:148}
+  h: ['head', 0, -6],
+  l: {text:'HIP ROTATORS', tx:18, ty:184, fx:88, fy:166}
 }),
 
 "Doorway Pec Stretch": pose({
-  j: {ankleL:[112,188], kneeL:[112,150], ankleR:[148,188], kneeR:[148,150], hip:[130,118],
-      spine:[130,80], shoulderL:[115,72], shoulderR:[145,72],
-      elbowL:[78,55], handL:[60,18], elbowR:[162,108], handR:[178,138], head:[130,52]},
+  // Front view, person stepping through doorway. The doorframe is the dashed
+  // line on the left. The left arm is pressed against the frame (orange).
+  j: {
+    ankleL:[105,188], ankleR:[155,188],
+    kneeL:[108,150], kneeR:[152,150],
+    hip:[130,118],
+    midSpine:[130,82], shoulderL:[112,70], shoulderR:[148,70],
+    elbowL:[78,52], handL:[58,28],
+    elbowR:[178,82], handR:[195,118],
+    head:[130,50],
+  },
   b: [
     ['ankleL','kneeL','b'], ['kneeL','hip','b'],
     ['ankleR','kneeR','b'], ['kneeR','hip','b'],
-    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['hip','midSpine','b'],
+    ['midSpine','shoulderL','o'], ['midSpine','shoulderR','b'],
     ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
     ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
   ],
-  h: ['head', 6, 0],
-  w: 55,
-  l: {text:'CHEST', tx:160, ty:50, fx:108, fy:62}
+  h: ['head', 4, 0],
+  w: 50,
+  l: {text:'CHEST', tx:148, ty:50, fx:122, fy:74}
 }),
 
 "Thread the Needle": pose({
-  j: {kneeL:[150,168], kneeR:[200,168], hip:[180,135], spine:[160,128], shoulderR:[145,130],
-      elbowR:[125,138], handR:[105,150], shoulderL:[160,118],
-      elbowL:[120,150], handL:[55,160], head:[150,118]},
+  // Side view, on hands and knees. One arm threaded under, the same-side
+  // shoulder dropped toward the floor.
+  j: {
+    handPlanted:[210,168],
+    kneeBack:[160,168], kneeFront:[195,168],
+    hip:[178,140],
+    midSpine:[140,140], shoulderHigh:[110,135], shoulderLow:[100,165],
+    elbowThread:[60,170], handThread:[20,175],
+    head:[122,170],
+  },
   b: [
-    ['kneeL','hip','b'], ['kneeR','hip','b'],
-    ['hip','spine','b'], ['spine','shoulderR','b'], ['spine','shoulderL','b'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
-    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
+    ['handPlanted','shoulderHigh','b'],
+    ['kneeBack','hip','b'], ['kneeFront','hip','b'],
+    ['hip','midSpine','b'], ['midSpine','shoulderHigh','b'],
+    ['shoulderHigh','shoulderLow','o'],
+    ['shoulderLow','elbowThread','o'], ['elbowThread','handThread','o'],
   ],
-  h: ['head', -6, 2],
-  l: {text:'T-SPINE', tx:170, ty:90, fx:160, fy:115}
+  h: ['head', -5, 0],
+  l: {text:'T-SPINE · SHOULDER', tx:80, ty:120, fx:108, fy:144}
 }),
 
 "Child's Pose with Reach": pose({
-  j: {footL:[180,188], footR:[210,188], kneeL:[175,170], kneeR:[205,170],
-      hip:[195,162], spine:[160,150], shoulderL:[145,140], shoulderR:[160,140],
-      elbowL:[90,145], elbowR:[105,145], handL:[35,150], handR:[50,150], head:[140,150]},
+  // Side view, kneeling with butt on heels, torso folded forward, arms long out front.
+  // Hip is HIGH above the heels — spine arcs DOWN toward the floor where arms reach out.
+  j: {
+    heel:[215,188], knee:[170,188],     // shins flat on floor
+    hip:[170,145],                       // butt resting on heels (high)
+    midSpine:[120,160],                  // spine arcs forward and down
+    shoulder:[65,178],                   // shoulder close to floor (forward fold)
+    elbow:[32,184], hand:[8,188],        // arms extending out along the floor
+    head:[88,172],                       // head between shoulder and floor
+  },
   b: [
-    ['footL','kneeL','b'], ['footR','kneeR','b'],
-    ['kneeL','hip','b'], ['kneeR','hip','b'],
-    ['hip','spine','o'], ['spine','shoulderL','o'], ['spine','shoulderR','o'],
-    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
-    ['shoulderR','elbowR','o'], ['elbowR','handR','o'],
+    ['heel','knee','b'], ['knee','hip','b'],
+    ['hip','midSpine','o'], ['midSpine','shoulder','o'],
+    ['shoulder','elbow','o'], ['elbow','hand','o'],
   ],
-  h: ['head', -6, 0],
-  l: {text:'LATS', tx:155, ty:120, fx:120, fy:142}
+  h: ['head', -6, 2],
+  l: {text:'LATS', tx:130, ty:115, fx:118, fy:152}
 }),
 
 "Pigeon Pose": pose({
-  j: {frontFoot:[70,160], frontKnee:[100,158], hipFront:[135,150], hipBack:[150,150],
-      backKnee:[195,158], backFoot:[225,158],
-      spine:[140,115], shoulderL:[125,108], shoulderR:[155,108],
-      elbowL:[115,140], handL:[110,168], elbowR:[165,140], handR:[170,168], head:[140,90]},
+  // Side view. Front leg's shin folded across in front of body, back leg long out behind.
+  j: {
+    frontFoot:[35,150], frontKnee:[75,158], hipFront:[112,148],
+    backKnee:[170,158], backFoot:[218,170],
+    midSpine:[112,108], shoulder:[112,72],
+    elbowL:[88,98], handL:[72,128],
+    elbowR:[138,98], handR:[152,128],
+    head:[112,48],
+  },
   b: [
-    ['frontFoot','frontKnee','o'], ['frontKnee','hipFront','o'],
-    ['hipBack','backKnee','b'], ['backKnee','backFoot','b'],
-    ['hipFront','hipBack','b'], ['hipFront','spine','b'],
-    ['spine','shoulderL','b'], ['spine','shoulderR','b'],
-    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
+    ['frontFoot','frontKnee','b'], ['frontKnee','hipFront','o'],
+    ['hipFront','backKnee','b'], ['backKnee','backFoot','b'],
+    ['hipFront','midSpine','b'], ['midSpine','shoulder','b'],
+    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
+    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
   ],
-  h: ['head', 0, 6],
-  l: {text:'GLUTE', tx:30, ty:140, fx:95, fy:155}
+  h: ['head', 0, -6],
+  l: {text:'GLUTE', tx:18, ty:128, fx:100, fy:148}
 }),
 
 // LYING SPINAL TWIST — redrawn. Top-down view: person on back, head left,
@@ -808,66 +855,92 @@ const POSES = {
 }),
 
 "Frog Pose": pose({
-  j: {kneeL:[55,168], kneeR:[185,168], footL:[35,188], footR:[205,188],
-      hip:[120,160], spine:[120,128], shoulderL:[100,118], shoulderR:[140,118],
-      elbowL:[90,150], handL:[80,178], elbowR:[150,150], handR:[160,178], head:[120,100]},
+  // Front view, on all fours, knees pulled WIDE to either side.
+  j: {
+    footL:[28,188], footR:[212,188],
+    kneeL:[55,160], kneeR:[185,160],
+    hip:[120,150],
+    midSpine:[120,118], shoulderL:[98,108], shoulderR:[142,108],
+    elbowL:[78,140], handL:[68,180],
+    elbowR:[162,140], handR:[172,180],
+    head:[120,80],
+  },
   b: [
-    ['footL','kneeL','o'], ['footR','kneeR','o'],
-    ['kneeL','hip','o'], ['kneeR','hip','o'],
-    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['footL','kneeL','o'], ['kneeL','hip','o'],
+    ['footR','kneeR','o'], ['kneeR','hip','o'],
+    ['hip','midSpine','b'], ['midSpine','shoulderL','b'], ['midSpine','shoulderR','b'],
     ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
     ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', 0, -6],
-  l: {text:'ADDUCTOR', tx:14, ty:128, fx:78, fy:160}
+  l: {text:'ADDUCTOR', tx:18, ty:142, fx:62, fy:158}
 }),
 
 "Wall Calf Stretch": pose({
-  j: {backAnkle:[170,188], backKnee:[160,150], hip:[140,115], spine:[130,80], shoulder:[120,68],
-      elbowL:[100,90], handL:[80,108], elbowR:[105,80], handR:[78,72],
-      frontAnkle:[58,160], frontToe:[42,140], frontHeel:[68,188], head:[112,46]},
+  // Side view, wall on the right. Front foot's ball is up on the wall, heel down.
+  j: {
+    frontHeel:[200,188], frontAnkle:[210,168], frontToe:[222,148],
+    frontKnee:[182,138], hip:[155,115],
+    backKnee:[105,148], backAnkle:[78,188],
+    midSpine:[140,80], shoulder:[152,58],
+    elbowL:[178,82], handL:[200,98],
+    elbowR:[175,52], handR:[200,42],
+    head:[148,40],
+  },
   b: [
     ['backAnkle','backKnee','b'], ['backKnee','hip','b'],
-    ['hip','frontAnkle','o'], ['frontAnkle','frontToe','o'], ['frontAnkle','frontHeel','o'],
-    ['hip','spine','b'], ['spine','shoulder','b'],
+    ['hip','frontKnee','b'], ['frontKnee','frontAnkle','o'],
+    ['frontAnkle','frontHeel','o'], ['frontAnkle','frontToe','o'],
+    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
     ['shoulder','elbowL','b'], ['elbowL','handL','b'],
     ['shoulder','elbowR','b'], ['elbowR','handR','b'],
   ],
-  h: ['head', -5, 2],
-  w: 36,
-  l: {text:'CALF', tx:160, ty:172, fx:75, fy:175}
+  h: ['head', 5, 0],
+  w: 232,
+  l: {text:'CALF', tx:128, ty:185, fx:210, fy:175}
 }),
 
 "Half Split": pose({
-  j: {frontHeel:[55,168], frontToe:[35,150], frontKnee:[105,160], hipFront:[140,138],
-      backKnee:[170,178], backFoot:[200,188],
-      spine:[150,100], shoulder:[148,82],
-      elbowL:[125,108], handL:[110,138], elbowR:[170,110], handR:[185,138], head:[150,64]},
+  // Side view. Front leg long out (toes flexed up), back knee on floor, hips back over heel.
+  j: {
+    frontToe:[20,140], frontHeel:[45,178], frontKnee:[90,170], hipFront:[130,150],
+    backKnee:[162,180], backFoot:[200,188],
+    midSpine:[132,112], shoulder:[135,78],
+    elbowL:[112,108], handL:[98,138],
+    elbowR:[158,108], handR:[172,138],
+    head:[135,55],
+  },
   b: [
     ['frontToe','frontHeel','o'], ['frontHeel','frontKnee','o'], ['frontKnee','hipFront','o'],
-    ['backKnee','hipFront','b'], ['backKnee','backFoot','b'],
-    ['hipFront','spine','b'], ['spine','shoulder','b'],
+    ['hipFront','backKnee','b'], ['backKnee','backFoot','b'],
+    ['hipFront','midSpine','b'], ['midSpine','shoulder','b'],
     ['shoulder','elbowL','b'], ['elbowL','handL','b'],
     ['shoulder','elbowR','b'], ['elbowR','handR','b'],
   ],
-  h: ['head', -5, 2],
-  l: {text:'HAMSTRING', tx:18, ty:138, fx:85, fy:165}
+  h: ['head', -5, 0],
+  l: {text:'HAMSTRING', tx:14, ty:130, fx:60, fy:158}
 }),
 
 "Standing Quad Pull": pose({
-  j: {ankle:[120,188], knee:[120,138], hip:[120,98], spine:[120,68], shoulderL:[108,60], shoulderR:[132,60],
-      elbowL:[92,90], handL:[80,118],
-      pullKnee:[138,142], pullAnkle:[148,98], elbowR:[152,82], handR:[152,108],
-      head:[120,42]},
+  // Front view, standing on one leg, opposite leg pulled up behind to butt.
+  j: {
+    standAnkle:[115,188], standKnee:[115,148], hip:[115,108],
+    midSpine:[115,80], shoulderL:[100,68], shoulderR:[130,68],
+    elbowL:[85,98], handL:[72,128],
+    // Pulled leg: knee bent BACK, foot up near butt
+    pullKnee:[148,128], pullAnkle:[148,98],
+    elbowR:[148,92], handR:[148,104],
+    head:[115,42],
+  },
   b: [
-    ['ankle','knee','b'], ['knee','hip','b'],
+    ['standAnkle','standKnee','b'], ['standKnee','hip','b'],
     ['hip','pullKnee','o'], ['pullKnee','pullAnkle','o'],
-    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
+    ['hip','midSpine','b'], ['midSpine','shoulderL','b'], ['midSpine','shoulderR','b'],
     ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'], ['handR','pullAnkle','b'],
+    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
   ],
   h: ['head', 0, -6],
-  l: {text:'QUAD', tx:170, ty:130, fx:144, fy:130}
+  l: {text:'QUAD', tx:172, ty:130, fx:148, fy:122}
 }),
 
 // MOBILITY illustrations
@@ -905,32 +978,40 @@ const POSES = {
 }),
 
 "Cat–Cow": pose({
-  j: {handL:[55,168], handR:[88,168], kneeL:[160,168], kneeR:[195,168],
-      hip:[178,148], midSpine:[120,128], neck:[78,140], head:[58,138],
-      shoulderL:[75,140], shoulderR:[88,140]},
+  // Side view, on hands and knees, "Cat" arched spine (the highlight is the visible arch).
+  j: {
+    hand:[40,170], shoulder:[50,142],
+    kneeBack:[170,170], kneeFront:[200,170], hip:[185,140],
+    // Spine arched UPWARD between shoulder and hip — that's the visible "cat" shape.
+    midSpine:[118,100],
+    head:[35,158],
+  },
   b: [
-    ['handL','shoulderL','b'], ['handR','shoulderR','b'],
-    ['kneeL','hip','b'], ['kneeR','hip','b'],
-    ['hip','midSpine','o'], ['midSpine','neck','o'],
-    ['neck','shoulderL','b'], ['neck','shoulderR','b'],
+    ['hand','shoulder','b'],
+    ['kneeBack','hip','b'], ['kneeFront','hip','b'],
+    ['shoulder','midSpine','o'], ['midSpine','hip','o'],
   ],
-  h: ['head', -6, 0],
-  l: {text:'SPINE', tx:80, ty:100, fx:120, fy:124}
+  h: ['head', -5, -2],
+  l: {text:'SPINE', tx:90, ty:75, fx:115, fy:96}
 }),
 
 "Quadruped T-Spine Rotation": pose({
-  j: {handPlanted:[60,168], kneeL:[140,168], kneeR:[180,168], hip:[160,148],
-      spine:[110,135], shoulderPivot:[75,128],
-      // elbow rotating up toward ceiling, hand behind head
-      elbowUp:[55,85], handBehind:[80,72], head:[80,108], shoulderL:[75,128]},
+  // Side view, on hands and knees, one hand behind the head, that elbow rotating UP.
+  j: {
+    handPlanted:[210,170],
+    kneeBack:[160,170], kneeFront:[195,170], hip:[180,140],
+    midSpine:[130,138], shoulderHigh:[88,138],
+    elbowUp:[52,80], handBehind:[88,68],
+    head:[105,108],
+  },
   b: [
-    ['handPlanted','shoulderPivot','b'],
-    ['kneeL','hip','b'], ['kneeR','hip','b'],
-    ['hip','spine','b'], ['spine','shoulderPivot','o'],
-    ['shoulderPivot','elbowUp','o'], ['elbowUp','handBehind','o'],
+    ['handPlanted','shoulderHigh','b'],
+    ['kneeBack','hip','b'], ['kneeFront','hip','b'],
+    ['hip','midSpine','b'], ['midSpine','shoulderHigh','o'],
+    ['shoulderHigh','elbowUp','o'], ['elbowUp','handBehind','o'],
   ],
   h: ['head', -3, -5],
-  l: {text:'T-SPINE', tx:120, ty:50, fx:78, fy:122}
+  l: {text:'T-SPINE', tx:135, ty:60, fx:90, fy:118}
 }),
 
 "World's Greatest Flow": pose({
