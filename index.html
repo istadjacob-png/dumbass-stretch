@@ -242,7 +242,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
         <polygon points="4.5,6.5 19.5,6.5 12,19.5" fill="#FFFFFF"/>
       </svg>
       <span>DUMBASS <span id="logo-mode" class="mode-label">STRETCH</span></span>
-      <span class="ver">V7.3</span>
+      <span class="ver">V7.4</span>
     </div>
     <div id="streak-chip" class="streak-chip zero"><span class="num">0</span><span>DAY</span></div>
   </div>
@@ -401,20 +401,20 @@ const JOINT_NAMES = {shoulder:"Shoulders", spine:"Spine", hip:"Hips", ankle:"Ank
 // ---------- ROUTINES ----------
 // Items are 'item refs': 's:<idx>' (stretch) | 'm:<id>' (mobility) | 'c:<id>' (custom).
 const ROUTINES = [
-  // STRETCH routines
-  {key:"leg",  mode:"stretch", name:"Leg day",   titleMain:"LEG",  titleAccent:"DAY",
+  // STRETCH routines — titled by the muscles they stretch, not by lift-day jargon
+  {key:"leg",  mode:"stretch", name:"Legs & hips",       titleMain:"LEGS", titleAccent:"& HIPS",
    items:['s:0','s:3','s:4','s:10','s:11','s:15','s:16','s:14','s:17','s:18']},
-  {key:"push", mode:"stretch", name:"Push day",  titleMain:"PUSH", titleAccent:"DAY",
+  {key:"push", mode:"stretch", name:"Chest & shoulders", titleMain:"CHEST",titleAccent:"& SHOULDERS",
    items:['s:6','s:7','s:8','s:12','s:13','s:9']},
-  {key:"pull", mode:"stretch", name:"Pull day",  titleMain:"PULL", titleAccent:"DAY",
+  {key:"pull", mode:"stretch", name:"Back & chest",      titleMain:"BACK", titleAccent:"& CHEST",
    items:['s:9','s:6','s:7','s:8','s:12','s:13']},
-  {key:"abs",  mode:"stretch", name:"Core day",  titleMain:"CORE", titleAccent:"DAY",
+  {key:"abs",  mode:"stretch", name:"Core & hips",       titleMain:"CORE", titleAccent:"& HIPS",
    items:['s:3','s:4','s:9','s:12','s:13','s:5']},
-  {key:"rest", mode:"stretch", name:"Rest day",  titleMain:"REST", titleAccent:"DAY",
+  {key:"rest", mode:"stretch", name:"Full body",         titleMain:"FULL", titleAccent:"BODY",
    items:['s:0','s:3','s:4','s:6','s:7','s:8','s:9','s:10','s:11','s:14','s:15','s:16','s:17','s:18']},
-  {key:"desk", mode:"stretch", name:"Desk reset",titleMain:"DESK", titleAccent:"RESET",
+  {key:"desk", mode:"stretch", name:"Desk fix",          titleMain:"DESK", titleAccent:"FIX",
    items:['s:6','s:1','s:2','s:7','s:8']},
-  {key:"deep", mode:"stretch", name:"Deep mobility hold", titleMain:"DEEP", titleAccent:"HOLD",
+  {key:"deep", mode:"stretch", name:"Deep stretch (60s holds)", titleMain:"DEEP", titleAccent:"STRETCH",
    items:['s:3','s:4','s:14','s:17','s:18'], holdSec:60},
 
   // MOBILITY routines
