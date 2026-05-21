@@ -82,14 +82,15 @@ body[data-mode="mobility"] .mode-tabs::before{transform:translateX(100%)}
 .btn-add{width:100%;background:#FFF;color:var(--text);border:1px dashed var(--text);padding:12px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;margin-top:6px}
 .btn-add:active{background:var(--text);color:#FFF}
 
-/* Routine chips */
-.r-chips{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-20px;margin-right:-20px;padding:0 20px 4px}
-.r-chips::-webkit-scrollbar{display:none}
-.r-chip{flex:0 0 auto;background:#FFF;color:var(--text);border:1px solid var(--border);padding:8px 12px;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;transition:background .12s,color .12s}
-.r-chip:active{transform:scale(.96)}
-.r-chip.active{background:var(--text);color:#FFF}
-.r-chip.recommend::before{content:"";display:inline-block;width:6px;height:6px;background:var(--accent);border-radius:50%;margin-right:6px;vertical-align:middle}
-.r-chip.custom{border-style:dashed}
+/* PAIR button — connects today's routine to today's lift day */
+.pair-btn{width:100%;background:#FFF;color:var(--text);border:1.5px solid var(--accent);padding:14px 0;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px;transition:transform .12s,background .15s}
+.pair-btn:active{transform:scale(.98);background:var(--steel)}
+.pair-btn .dot{width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;box-shadow:0 0 6px var(--accent-glow)}
+.pair-btn.paired{background:var(--text);color:#FFF;border-color:var(--text)}
+.pair-btn.paired .dot{background:var(--accent)}
+.pair-btn.unavailable{border-style:dashed;color:var(--text-dim);border-color:var(--border-soft)}
+.pair-btn.unavailable .dot{background:var(--text-faint);box-shadow:none}
+.pair-btn .lbl-day{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;opacity:.85;font-weight:400;text-transform:none}
 
 /* Section heads */
 .section-head{display:flex;justify-content:space-between;align-items:baseline;margin:14px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
@@ -258,7 +259,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
     <div class="subtitle" id="s-subtitle">14 stretches · 7 min</div>
     <button class="btn-primary" onclick="startRoutine()">BEGIN ROUTINE</button>
 
-    <div class="r-chips" id="s-chips"></div>
+    <button id="s-pair" class="pair-btn" onclick="pairWithLift('stretch')"><span class="dot"></span><span id="s-pair-label">PAIR WITH LIFT</span></button>
 
     <div class="section-head"><div class="t" id="s-head-name">REST DAY</div><div class="c" id="s-head-time">7 MIN</div></div>
     <div class="routine-list" id="s-list"></div>
@@ -277,7 +278,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
     <div class="subtitle" id="m-subtitle">8 moves · 4 min</div>
     <button class="btn-primary" onclick="startRoutine()">BEGIN MOBILITY</button>
 
-    <div class="r-chips" id="m-chips"></div>
+    <button id="m-pair" class="pair-btn" onclick="pairWithLift('mobility')"><span class="dot"></span><span id="m-pair-label">PAIR WITH LIFT</span></button>
 
     <div class="section-head"><div class="t" id="m-head-name">FULL BODY</div><div class="c" id="m-head-time">4 MIN</div></div>
     <div class="routine-list" id="m-list"></div>
@@ -1135,6 +1136,48 @@ function activeRoutine(state){
   }
 }
 
+// Render the PAIR button. Three states: paired (lift day matched + active),
+// pair-ready (lift day present but not yet applied), unavailable (no lift data).
+function renderPairButton(prefix, mode, state, liftDay, liftRec, routine, following){
+  const btn = document.getElementById(prefix + '-pair');
+  const lbl = document.getElementById(prefix + '-pair-label');
+  if(!btn || !lbl) return;
+  btn.classList.remove('paired', 'unavailable');
+
+  if(!liftDay || !liftDay.name){
+    btn.classList.add('unavailable');
+    lbl.innerHTML = `NO LIFT DAY <span class="lbl-day">— open DUMBASS LIFT</span>`;
+    return;
+  }
+  if(following){
+    btn.classList.add('paired');
+    lbl.innerHTML = `✓ PAIRED <span class="lbl-day">· ${liftDay.name}</span>`;
+    return;
+  }
+  // Lift day exists but user is on a different routine.
+  lbl.innerHTML = `PAIR WITH LIFT <span class="lbl-day">· ${liftDay.name}</span>`;
+}
+
+function pairWithLift(mode){
+  const liftDay = getLiftDay();
+  if(!liftDay || !liftDay.name){
+    alert("Open DUMBASS LIFT and pick today's day first — then come back.");
+    return;
+  }
+  const state = loadState();
+  if(mode === 'stretch'){
+    const rec = recommendFromLiftDay(liftDay.name);
+    state.stretchRoutine = rec || 'rest';
+    state.stretchFollowLift = true;
+  } else {
+    const rec = recommendMobilityFromLiftDay(liftDay.name);
+    state.mobilityRoutine = rec || 'full';
+    state.mobilityFollowLift = true;
+  }
+  saveState(state);
+  renderHome();
+}
+
 function pickRoutine(key, mode){
   const state = loadState();
   if(mode === 'stretch'){
@@ -1198,14 +1241,7 @@ function renderStretchSlide(state, routine, liftRec, liftDay, items, holdSec, to
   document.getElementById('s-head-name').textContent = `${routine.titleMain} ${routine.titleAccent}`;
   document.getElementById('s-head-time').textContent = `${totalMin} MIN`;
 
-  const stretchRoutines = ROUTINES.filter(r => r.mode === 'stretch');
-  const customRoutines = (state.customRoutines || []).filter(r => r.mode === 'stretch');
-  document.getElementById('s-chips').innerHTML = [...stretchRoutines, ...customRoutines].map(r => {
-    const active = r.key === routine.key ? 'active' : '';
-    const rec = (r.key === liftRec && r.key !== routine.key) ? 'recommend' : '';
-    const custom = r.custom ? 'custom' : '';
-    return `<button class="r-chip ${active} ${rec} ${custom}" onclick="pickRoutine('${r.key}','stretch')">${r.titleMain} ${r.titleAccent}</button>`;
-  }).join('');
+  renderPairButton('s', 'stretch', state, liftDay, liftRec, routine, following);
 
   const adds = new Set((state.routineAdds?.stretch?.[routine.key]) || []);
   document.getElementById('s-list').innerHTML = items.map((ref, n) => {
@@ -1265,14 +1301,7 @@ function renderMobilitySlide(state, routine, liftRec, liftDay, items, holdSec, t
   document.getElementById('m-head-name').textContent = `${routine.titleMain} ${routine.titleAccent}`;
   document.getElementById('m-head-time').textContent = `${totalMin} MIN`;
 
-  const mobRoutines = ROUTINES.filter(r => r.mode === 'mobility');
-  const customRoutines = (state.customRoutines || []).filter(r => r.mode === 'mobility');
-  document.getElementById('m-chips').innerHTML = [...mobRoutines, ...customRoutines].map(r => {
-    const active = r.key === routine.key ? 'active' : '';
-    const rec = (r.key === liftRec && r.key !== routine.key) ? 'recommend' : '';
-    const custom = r.custom ? 'custom' : '';
-    return `<button class="r-chip ${active} ${rec} ${custom}" onclick="pickRoutine('${r.key}','mobility')">${r.titleMain} ${r.titleAccent}</button>`;
-  }).join('');
+  renderPairButton('m', 'mobility', state, liftDay, liftRec, routine, following);
 
   const adds = new Set((state.routineAdds?.mobility?.[routine.key]) || []);
   document.getElementById('m-list').innerHTML = items.map((ref, n) => {
