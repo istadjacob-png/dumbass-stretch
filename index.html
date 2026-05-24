@@ -109,6 +109,12 @@ body[data-mode="mobility"] .mode-tabs::before{transform:translateX(100%)}
 .routine-item.added{background:rgba(255,51,0,.04)}
 .routine-item.added .rm{display:inline-flex}
 body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
+.routine-item{position:relative;touch-action:pan-y}
+.routine-item.dragging{z-index:20;background:#FFF;box-shadow:0 8px 24px rgba(0,0,0,.18),0 0 0 1px var(--accent);transform:scale(1.02);transition:none}
+.routine-list.reorder-on .routine-item:not(.dragging){transition:transform .18s cubic-bezier(.2,.8,.2,1)}
+.routine-list.reorder-on .routine-item .rm{pointer-events:none}
+.reorder-hint-stretch{position:fixed;left:50%;bottom:60px;transform:translateX(-50%);background:#000;color:#FFF;font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.3em;padding:8px 16px;border:1px solid var(--accent);z-index:60;pointer-events:none;text-transform:uppercase;opacity:0;transition:opacity .2s}
+.reorder-hint-stretch.show{opacity:1}
 
 /* Volume cards */
 .vol-summary{display:flex;font-family:'Oswald',sans-serif;font-size:10px;color:var(--text-dim);letter-spacing:.18em;text-transform:uppercase;font-weight:600;margin-bottom:10px;gap:14px}
@@ -169,9 +175,18 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
 .r-side{display:inline-block;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.18em;background:var(--text);color:#FFF;padding:3px 8px;vertical-align:middle;margin-left:8px;font-weight:700}
 .r-tag{display:inline-block;font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.18em;background:var(--accent);color:#FFF;padding:3px 8px;vertical-align:middle;margin-left:8px;font-weight:700;text-transform:uppercase}
 .r-area{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;font-weight:600;margin-bottom:12px}
-.r-figure{background:var(--steel);border:1px solid var(--border-soft);padding:14px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;max-height:260px}
-.r-figure svg{width:100%;max-width:340px;height:auto;display:block}
-.r-figure.placeholder{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;color:var(--text-faint);text-transform:uppercase;font-weight:700;min-height:140px}
+/* Real-photo figure container. Hidden when no photo. */
+.r-figure{background:#000;border:1px solid var(--border);margin-bottom:14px;aspect-ratio:4/3;overflow:hidden;position:relative;display:block}
+.r-figure img{width:100%;height:100%;object-fit:cover;display:block;background:#000}
+.r-figure .ph-tag{position:absolute;bottom:8px;right:10px;font-family:'Oswald',sans-serif;font-size:8px;letter-spacing:.18em;color:rgba(255,255,255,.55);text-transform:uppercase;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.r-figure.empty{display:none}
+/* When no photo: a calm typographic frame replaces it. Big and confident. */
+.r-typo{background:var(--steel);border:1px solid var(--border);padding:24px 18px;margin-bottom:14px;text-align:center;display:none}
+.r-typo.show{display:block}
+.r-typo .label{font-family:'Oswald',sans-serif;font-size:9px;letter-spacing:.32em;color:var(--text-faint);text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.r-typo .big{font-family:'Bebas Neue',sans-serif;font-size:46px;line-height:.92;letter-spacing:-.01em;color:var(--text);margin-bottom:6px;text-wrap:balance}
+.r-typo .big .accent{color:var(--accent)}
+.r-typo .sub{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.22em;color:var(--text-dim);text-transform:uppercase;font-weight:600}
 .r-cue{font-size:14px;line-height:1.5;color:var(--text-mid);margin-bottom:14px;text-wrap:pretty;min-height:42px}
 .r-timer-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px 0 12px}
 .r-timer{font-family:'Bebas Neue',sans-serif;font-size:110px;line-height:1;letter-spacing:-.02em;color:var(--text);font-variant-numeric:tabular-nums}
@@ -242,7 +257,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
         <polygon points="4.5,6.5 19.5,6.5 12,19.5" fill="#FFFFFF"/>
       </svg>
       <span>DUMBASS <span id="logo-mode" class="mode-label">STRETCH</span></span>
-      <span class="ver">V7.4</span>
+      <span class="ver">V7.5</span>
     </div>
     <div id="streak-chip" class="streak-chip zero"><span class="num">0</span><span>DAY</span></div>
   </div>
@@ -304,7 +319,8 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
     <div class="r-eyebrow" id="r-eyebrow">Stretch 1 of 10</div>
     <div class="r-name" id="r-name">Standing Forward Fold</div>
     <div class="r-area" id="r-area">Hamstrings · Low back</div>
-    <div class="r-figure" id="r-figure"></div>
+    <div class="r-figure empty" id="r-figure"></div>
+    <div class="r-typo" id="r-typo"></div>
     <div class="r-cue" id="r-cue">Cue text</div>
     <div class="r-timer-wrap">
       <div class="r-timer" id="r-timer">30</div>
@@ -374,6 +390,30 @@ const STRETCHES = [
   /* 18 */ {name:"Half Split",             cue:"Switch. Front foot flexed — toes pulled up to the shin.",                                       area:"Hamstrings (deep)",     side:"RIGHT",primary:"hamstrings",  secondary:["calves"]},
   /* 19 */ {name:"Standing Quad Pull",     cue:"Stand tall. Grab one ankle. Knees together. Squeeze the glute.",                                area:"Quads · Hip flexor",    side:"LEFT", primary:"quads",       secondary:["hip-flexors"]},
   /* 20 */ {name:"Standing Quad Pull",     cue:"Switch. Don't lean back to fake it — drive the hip forward with the glute.",                    area:"Quads · Hip flexor",    side:"RIGHT",primary:"quads",       secondary:["hip-flexors"]},
+  // === EXPANSION ===
+  /* 21 */ {name:"Seated Forward Fold",    cue:"Legs straight out. Hinge from the hips, not the spine. Reach for the toes — go where the body lets you.", area:"Hamstrings · Low back", side:null,   primary:"hamstrings",  secondary:["lower-back","calves"]},
+  /* 22 */ {name:"Butterfly Pose",         cue:"Soles together, knees fall wide. Sit tall, hinge forward from the hips. Let knees sink with breath.",     area:"Adductors · Hips",      side:null,   primary:"adductors",   secondary:["hip-rotators","glutes"]},
+  /* 23 */ {name:"Lizard Lunge",           cue:"Deep lunge. Both forearms down inside the front foot. Sink the back hip toward the floor.",              area:"Hip flexor · Adductor", side:"LEFT", primary:"hip-flexors", secondary:["adductors","hamstrings"]},
+  /* 24 */ {name:"Lizard Lunge",           cue:"Switch. Breathe long. Don't fight the depth — let the hip release into it.",                              area:"Hip flexor · Adductor", side:"RIGHT",primary:"hip-flexors", secondary:["adductors","hamstrings"]},
+  /* 25 */ {name:"Supine Figure-4",        cue:"On your back. Ankle on opposite thigh. Pull the bottom knee in. Keep the head down.",                    area:"Glutes · Hip rotators", side:"LEFT", primary:"glutes",      secondary:["hip-rotators"]},
+  /* 26 */ {name:"Supine Figure-4",        cue:"Switch. Flex the top foot to protect the knee. Slow breath into the stretch.",                            area:"Glutes · Hip rotators", side:"RIGHT",primary:"glutes",      secondary:["hip-rotators"]},
+  /* 27 */ {name:"Cobra Pose",             cue:"Lying face down. Hands under shoulders. Press chest up — elbows soft, hips on the floor.",                area:"Abs · Hip flexors",     side:null,   primary:"hip-flexors", secondary:["chest"]},
+  /* 28 */ {name:"Camel Pose",             cue:"Kneeling, tops of feet down. Hips forward, hands to heels, chest open to the ceiling.",                   area:"Hip flexors · Chest",   side:null,   primary:"hip-flexors", secondary:["chest","t-spine"]},
+  /* 29 */ {name:"Neck Side Tilt",         cue:"Stand tall. Ear to shoulder. Opposite hand reaches down. Don't pull — let gravity do the work.",          area:"Neck · Upper trap",     side:"LEFT", primary:"shoulders",   secondary:[]},
+  /* 30 */ {name:"Neck Side Tilt",         cue:"Switch. Long exhale on each side. Stay tall — don't shrug the working shoulder up.",                      area:"Neck · Upper trap",     side:"RIGHT",primary:"shoulders",   secondary:[]},
+  /* 31 */ {name:"Wrist Flexor Stretch",   cue:"Arm forward, palm up. Other hand pulls fingers back toward the body. Elbow stays straight.",              area:"Forearm flexors",       side:null,   primary:"shoulders",   secondary:[]},
+  /* 32 */ {name:"Wrist Extensor Stretch", cue:"Arm forward, palm down. Other hand pulls fingers down and back. Long, gentle pressure.",                  area:"Forearm extensors",     side:null,   primary:"shoulders",   secondary:[]},
+  /* 33 */ {name:"Cross-Body Shoulder",    cue:"Arm across the chest. Opposite hand cradles the elbow and pulls. Don't roll the shoulder forward.",       area:"Rear delt · Scap",      side:"LEFT", primary:"shoulders",   secondary:["lats"]},
+  /* 34 */ {name:"Cross-Body Shoulder",    cue:"Switch. Ribs DOWN. Stretch lives in the back of the shoulder, not the front.",                            area:"Rear delt · Scap",      side:"RIGHT",primary:"shoulders",   secondary:["lats"]},
+  /* 35 */ {name:"Behind-Back Triceps",    cue:"Arm overhead, hand down spine. Opposite hand pulls the elbow back and behind. Long, easy breaths.",       area:"Tricep · Lat",          side:"LEFT", primary:"shoulders",   secondary:["lats"]},
+  /* 36 */ {name:"Behind-Back Triceps",    cue:"Switch. Stay tall — ribs over hips. Don't crunch sideways to fake more range.",                            area:"Tricep · Lat",          side:"RIGHT",primary:"shoulders",   secondary:["lats"]},
+  /* 37 */ {name:"Standing Side Bend",     cue:"Stand tall. Top arm reaches over the head. Long ribcage, soft knees. Stretch from hip to fingertips.",   area:"Lats · Obliques",       side:"LEFT", primary:"lats",        secondary:["shoulders"]},
+  /* 38 */ {name:"Standing Side Bend",     cue:"Switch. Don't collapse forward — bend purely to the side. Hip stays under the shoulder.",                area:"Lats · Obliques",       side:"RIGHT",primary:"lats",        secondary:["shoulders"]},
+  /* 39 */ {name:"Happy Baby",             cue:"On back, knees wide to the armpits. Grab the outside edges of the feet. Rock side to side slowly.",      area:"Hips · Low back",       side:null,   primary:"hip-rotators",secondary:["lower-back","glutes"]},
+  /* 40 */ {name:"Puppy Pose",             cue:"Knees down, walk hands forward. Chest sinks toward the floor. Hips stay over the knees.",                 area:"Lats · Shoulders",      side:null,   primary:"lats",        secondary:["shoulders","t-spine"]},
+  /* 41 */ {name:"Deep Squat Hold",        cue:"Feet flat, sit into the deepest squat you can. Elbows press knees out. Chest stays tall.",                area:"Hips · Ankles",         side:null,   primary:"hip-rotators",secondary:["adductors","calves"]},
+  /* 42 */ {name:"Standing IT-Band Stretch",cue:"Cross one ankle behind the other. Same-side arm reaches up and over. Push hip OUT to the side.",         area:"IT band · Hip",         side:"LEFT", primary:"hip-rotators",secondary:["lats"]},
+  /* 43 */ {name:"Standing IT-Band Stretch",cue:"Switch. Subtle — drive the hip wide to find the line of tension from heel to fingertip.",                area:"IT band · Hip",         side:"RIGHT",primary:"hip-rotators",secondary:["lats"]},
 ];
 const HOLD_SECONDS = 30;
 
@@ -394,6 +434,19 @@ const MOBILITY = {
   "ankle-cars-l":{name:"Ankle CARs",            cue:"Sit or stand. Big slow circles with the foot. Heel stays put — only the foot moves.",        area:"Ankle · Calf",            side:"LEFT", type:"reps", sec:30, joint:"ankle"},
   "ankle-cars-r":{name:"Ankle CARs",            cue:"Switch. Reverse direction halfway through. Edges of the circle are where the ROM lives.",    area:"Ankle · Calf",            side:"RIGHT",type:"reps", sec:30, joint:"ankle"},
   "scap-slides":{name:"Scapular Wall Slides",   cue:"Back, hips, hands against a wall. Slide arms up to a Y, down to a W. Slow, full contact.",   area:"Scapula · Shoulders",     side:null,   type:"reps", sec:30, joint:"shoulder"},
+  // === EXPANSION ===
+  "wrist-cars-l":{name:"Wrist CARs",            cue:"Arm extended forward. Make the biggest slow circle with the hand. Forearm stays still.",       area:"Wrist · Forearm",         side:"LEFT", type:"reps", sec:30, joint:"shoulder"},
+  "wrist-cars-r":{name:"Wrist CARs",            cue:"Switch. Reverse direction halfway through. Big slow circles only.",                             area:"Wrist · Forearm",         side:"RIGHT",type:"reps", sec:30, joint:"shoulder"},
+  "neck-cars":   {name:"Neck CARs",             cue:"Slow head circle. Chin → ear → back → other ear. Body still. Stop short if anything pinches.",  area:"Neck · Cervical spine",   side:null,   type:"reps", sec:30, joint:"spine"},
+  "bird-dog":    {name:"Bird Dog",              cue:"Quadruped. Opposite arm and leg reach long. Tighten the core. Pause, switch sides slowly.",      area:"Core · Spine stability",  side:null,   type:"reps", sec:30, joint:"spine"},
+  "open-book-l": {name:"Side-Lying Open Book",  cue:"Lying on the side, knees stacked and bent 90°. Top arm rotates open to the other side. Eyes follow.", area:"Thoracic spine",      side:"LEFT", type:"reps", sec:30, joint:"spine"},
+  "open-book-r": {name:"Side-Lying Open Book",  cue:"Switch. Sink the opening shoulder toward the floor each rep. Hips stay stacked.",               area:"Thoracic spine",          side:"RIGHT",type:"reps", sec:30, joint:"spine"},
+  "pull-aparts": {name:"Band Pull-Aparts",      cue:"Band straight out at shoulder height. Pull it apart, squeeze the shoulder blades. Slow return.", area:"Scapula · Rear delt",     side:null,   type:"reps", sec:30, joint:"shoulder"},
+  "knee-cars-l": {name:"Knee CARs",             cue:"Stand on one leg. Other leg lifts, knee draws slow circles in the air. Hips stay square.",       area:"Knee · Hip stability",    side:"LEFT", type:"reps", sec:30, joint:"hip"},
+  "knee-cars-r": {name:"Knee CARs",             cue:"Switch. If balance breaks, hold a wall — but keep the circles smooth.",                          area:"Knee · Hip stability",    side:"RIGHT",type:"reps", sec:30, joint:"hip"},
+  "spine-roll":  {name:"Spine Segmental Roll",  cue:"Stand tall. Chin to chest, then peel the spine down one vertebra at a time. Reverse on the way up.", area:"Spine · Mobility",     side:null,   type:"flow", sec:30, joint:"spine"},
+  "prone-press": {name:"Prone Press-Up Flow",   cue:"Lying face down, hands under shoulders. Press chest up, lower back relaxed. Flow up and down slowly.", area:"Spine extension",      side:null,   type:"flow", sec:30, joint:"spine"},
+  "elbow-cars":  {name:"Elbow CARs",            cue:"One arm out, bend at the elbow only. Rotate fully — palm up, palm down. Other arm stays heavy.", area:"Elbow · Forearm",         side:null,   type:"reps", sec:30, joint:"shoulder"},
 };
 const MOBILITY_JOINTS = ["shoulder","spine","hip","ankle"];
 const JOINT_NAMES = {shoulder:"Shoulders", spine:"Spine", hip:"Hips", ankle:"Ankles"};
@@ -403,19 +456,23 @@ const JOINT_NAMES = {shoulder:"Shoulders", spine:"Spine", hip:"Hips", ankle:"Ank
 const ROUTINES = [
   // STRETCH routines — titled by the muscles they stretch, not by lift-day jargon
   {key:"leg",  mode:"stretch", name:"Legs & hips",       titleMain:"LEGS", titleAccent:"& HIPS",
-   items:['s:0','s:3','s:4','s:10','s:11','s:15','s:16','s:14','s:17','s:18']},
+   items:['s:0','s:3','s:4','s:10','s:11','s:15','s:16','s:14','s:17','s:18','s:23','s:24','s:41']},
   {key:"push", mode:"stretch", name:"Chest & shoulders", titleMain:"CHEST",titleAccent:"& SHOULDERS",
-   items:['s:6','s:7','s:8','s:12','s:13','s:9']},
+   items:['s:6','s:7','s:8','s:12','s:13','s:9','s:33','s:34','s:35','s:36']},
   {key:"pull", mode:"stretch", name:"Back & chest",      titleMain:"BACK", titleAccent:"& CHEST",
-   items:['s:9','s:6','s:7','s:8','s:12','s:13']},
+   items:['s:9','s:6','s:7','s:8','s:12','s:13','s:40','s:37','s:38']},
   {key:"abs",  mode:"stretch", name:"Core & hips",       titleMain:"CORE", titleAccent:"& HIPS",
-   items:['s:3','s:4','s:9','s:12','s:13','s:5']},
+   items:['s:3','s:4','s:9','s:12','s:13','s:5','s:27','s:39']},
   {key:"rest", mode:"stretch", name:"Full body",         titleMain:"FULL", titleAccent:"BODY",
-   items:['s:0','s:3','s:4','s:6','s:7','s:8','s:9','s:10','s:11','s:14','s:15','s:16','s:17','s:18']},
+   items:['s:0','s:3','s:4','s:6','s:7','s:8','s:9','s:10','s:11','s:14','s:15','s:16','s:17','s:18','s:21','s:39']},
   {key:"desk", mode:"stretch", name:"Desk fix",          titleMain:"DESK", titleAccent:"FIX",
-   items:['s:6','s:1','s:2','s:7','s:8']},
+   items:['s:6','s:1','s:2','s:7','s:8','s:29','s:30','s:33','s:34','s:31','s:32']},
   {key:"deep", mode:"stretch", name:"Deep stretch (60s holds)", titleMain:"DEEP", titleAccent:"STRETCH",
-   items:['s:3','s:4','s:14','s:17','s:18'], holdSec:60},
+   items:['s:3','s:4','s:14','s:17','s:18','s:23','s:24'], holdSec:60},
+  {key:"neck", mode:"stretch", name:"Neck & shoulders",  titleMain:"NECK", titleAccent:"& SHOULDERS",
+   items:['s:29','s:30','s:33','s:34','s:6','s:35','s:36','s:37','s:38']},
+  {key:"lifter", mode:"stretch", name:"Post-lift recovery", titleMain:"POST",titleAccent:"-LIFT",
+   items:['s:0','s:3','s:4','s:6','s:7','s:8','s:35','s:36','s:31','s:32','s:23','s:24']},
 
   // MOBILITY routines
   {key:"full", mode:"mobility", name:"Full body warmup", titleMain:"FULL", titleAccent:"BODY",
@@ -428,6 +485,14 @@ const ROUTINES = [
    items:['m:cat-cow','m:thx-rot-l','m:thx-rot-r','m:wgs-flow']},
   {key:"mflow",mode:"mobility", name:"Full flow",        titleMain:"FULL",titleAccent:"FLOW",
    items:['m:cat-cow','m:wgs-flow','m:90-90-flow','m:squat-stand','m:scap-slides'], holdSec:45},
+  {key:"lifter-warm",mode:"mobility", name:"Pre-lift warmup", titleMain:"PRE",titleAccent:"-LIFT",
+   items:['m:cat-cow','m:wrist-cars-l','m:wrist-cars-r','m:sh-cars-l','m:sh-cars-r','m:hip-cars-l','m:hip-cars-r','m:thx-rot-l','m:thx-rot-r','m:pull-aparts']},
+  {key:"core", mode:"mobility", name:"Core & spine",     titleMain:"CORE",titleAccent:"& SPINE",
+   items:['m:cat-cow','m:bird-dog','m:spine-roll','m:prone-press','m:open-book-l','m:open-book-r']},
+  {key:"wrist",mode:"mobility", name:"Wrist & elbow",    titleMain:"WRIST",titleAccent:"& ELBOW",
+   items:['m:wrist-cars-l','m:wrist-cars-r','m:elbow-cars','m:scap-slides','m:pull-aparts']},
+  {key:"neck-mob",mode:"mobility", name:"Neck mobility", titleMain:"NECK",titleAccent:"FLOW",
+   items:['m:neck-cars','m:cat-cow','m:thx-rot-l','m:thx-rot-r','m:open-book-l','m:open-book-r']},
 ];
 function getRoutine(key, mode){
   return ROUTINES.find(r => r.key === key && r.mode === mode) || ROUTINES.find(r => r.mode === mode);
@@ -485,12 +550,20 @@ function recommendMobilityFromLiftDay(name){
   if(n.includes("PUSH") || n.includes("PULL") || n.includes("UPPER") || n.includes("CHEST") || n.includes("BACK") || n.includes("SHOULDER") || n.includes("ARM")) return "upper";
   return "full";
 }
+// Read LIFT's state and resolve TODAY's lift day from the active program's schedule
+// using today's actual weekday — not LIFT's stale `state.today` (only updated when
+// LIFT is opened). Mon=0 … Sun=6 to match LIFT's `todayScheduleIdx()`.
 function getLiftDay(){
   try{
     const raw = localStorage.getItem("dumbass_state");
     if(!raw) return null;
     const lift = JSON.parse(raw);
-    if(lift && lift.today && lift.today.name) return {name: lift.today.name};
+    if(!lift) return null;
+    const idx = (new Date().getDay() + 6) % 7;
+    const id = lift.activeProgramId;
+    const sched = id && lift.programs && lift.programs[id];
+    if(Array.isArray(sched) && sched[idx] && sched[idx].name) return {name: sched[idx].name};
+    if(lift.today && lift.today.name) return {name: lift.today.name};
     return null;
   } catch(e){ return null; }
 }
@@ -560,14 +633,33 @@ function resolveItem(ref, state){
   return null;
 }
 
-// All items currently in a routine (defaults + user-added).
+// All items currently in a routine (defaults + user-added + user-reordered).
 function routineItems(routine, state){
   const m = routine.mode;
   const customAdds = (state.routineAdds && state.routineAdds[m] && state.routineAdds[m][routine.key]) || [];
   const defaults = routine.items;
-  // De-dup: an add that already appears in the default list is ignored.
   const dedup = customAdds.filter(r => !defaults.includes(r));
-  return [...defaults, ...dedup];
+  let combined = [...defaults, ...dedup];
+  // Apply user reordering (long-press drag). New refs that weren't in the saved
+  // order yet get appended at the end so nothing disappears.
+  const order = state.routineOrder && state.routineOrder[m] && state.routineOrder[m][routine.key];
+  if(Array.isArray(order) && order.length){
+    const set = new Set(combined);
+    const ordered = order.filter(r => set.has(r));
+    const newOnes = combined.filter(r => !order.includes(r));
+    combined = [...ordered, ...newOnes];
+  }
+  return combined;
+}
+
+// Persist a custom order from the user dragging items.
+function setRoutineOrder(mode, key, newOrder){
+  const state = loadState();
+  state.routineOrder = state.routineOrder || {};
+  state.routineOrder[mode] = state.routineOrder[mode] || {};
+  state.routineOrder[mode][key] = newOrder;
+  saveState(state);
+  renderHome();
 }
 
 // Volume planning (stretch mode): minutes/wk per muscle if routine done daily.
@@ -622,488 +714,28 @@ function fmtMin(m){
   return (Math.round(m*10)/10).toFixed(1);
 }
 
-// ---------- POSE / ILLUSTRATION ----------
-// Joint-based stick figures with explicit joint markers at every kink.
-function pose(spec){
-  const j = spec.j;
-  const bones = spec.b;
-  const head = spec.h;
-  const label = spec.l;
-  const wall = spec.w;
-  let out = '';
-  out += `<line x1="6" y1="190" x2="234" y2="190" stroke="#B8B8B8" stroke-width="2" stroke-linecap="round"/>`;
-  out += `<line x1="10" y1="195" x2="230" y2="195" stroke="#E0E0E0" stroke-width="1" stroke-dasharray="3,5"/>`;
-  if(wall !== undefined){
-    out += `<line x1="${wall}" y1="10" x2="${wall}" y2="190" stroke="#B8B8B8" stroke-width="3" stroke-dasharray="6,5"/>`;
-  }
-  for(const bn of bones){
-    const [a, bj, c] = bn;
-    const [x1,y1] = j[a], [x2,y2] = j[bj];
-    const stroke = c === 'o' ? '#FF6B00' : '#0a0a0a';
-    const w = c === 'o' ? 9 : 7;
-    out += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${w}" stroke-linecap="round"/>`;
-  }
-  const seen = new Set();
-  for(const bn of bones){ for(const k of [bn[0], bn[1]]) seen.add(k); }
-  if(head) seen.delete(head[0]);
-  for(const name of seen){
-    const [x,y] = j[name];
-    out += `<circle cx="${x}" cy="${y}" r="4" fill="#FFF" stroke="#0a0a0a" stroke-width="1.8"/>`;
-  }
-  if(head){
-    const [hn, dx, dy] = head;
-    const [hx, hy] = j[hn];
-    out += `<circle cx="${hx}" cy="${hy}" r="11" fill="#0a0a0a"/>`;
-    out += `<circle cx="${hx + dx}" cy="${hy + dy}" r="2.2" fill="#FFF"/>`;
-  }
-  if(label){
-    const w = label.text.length * 7 + 12;
-    const lx = label.tx, ly = label.ty;
-    out += `<line x1="${lx + w/2}" y1="${ly - 7}" x2="${label.fx}" y2="${label.fy}" stroke="#FF6B00" stroke-width="1.8" marker-end="url(#arr)"/>`;
-    out += `<rect x="${lx-6}" y="${ly-16}" width="${w}" height="18" fill="#FFF" stroke="#FF6B00" stroke-width="1.5" rx="3"/>`;
-    out += `<text x="${lx}" y="${ly-3}" fill="#FF6B00" font-family="Oswald,sans-serif" font-size="11" font-weight="700" letter-spacing="0.04em">${label.text}</text>`;
-  }
-  return `<svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FF6B00"/></marker></defs>${out}</svg>`;
-}
-
-// Poses keyed by exercise name. L/R variants share the same illustration.
-// Convention: side view facing right unless noted. Floor at y=190.
-const POSES = {
-"Standing Forward Fold": pose({
-  // Side view. Person facing right, hinged at hip, head dangling forward.
-  j: {
-    ankle:[148,188], knee:[140,150], hip:[132,108],
-    midSpine:[108,124], shoulder:[78,138],
-    elbow:[78,162], hand:[78,184],
-    head:[60,148],
-  },
-  b: [
-    ['ankle','knee','o'], ['knee','hip','o'],
-    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
-    ['shoulder','elbow','b'], ['elbow','hand','b'],
-  ],
-  h: ['head', -6, 0],
-  l: {text:'HAMSTRING', tx:165, ty:135, fx:144, fy:128}
-}),
-
-"World's Greatest Stretch": pose({
-  // Side view, facing right, deep lunge with top arm reaching up.
-  j: {
-    backFoot:[25,188], backKnee:[72,150], hip:[118,118], frontKnee:[158,150], frontFoot:[193,188],
-    midSpine:[122,88], shoulder:[126,68],
-    elbowDn:[145,108], handDn:[158,138],
-    elbowUp:[148,34], handUp:[188,8],
-    head:[132,48],
-  },
-  b: [
-    ['backFoot','backKnee','o'], ['backKnee','hip','o'],
-    ['frontFoot','frontKnee','b'], ['frontKnee','hip','b'],
-    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
-    ['shoulder','elbowDn','b'], ['elbowDn','handDn','b'],
-    ['shoulder','elbowUp','o'], ['elbowUp','handUp','o'],
-  ],
-  h: ['head', 6, 0],
-  l: {text:'HIP FLEXOR', tx:8, ty:175, fx:48, fy:170}
-}),
-
-"Couch Stretch": pose({
-  // Side view, wall on left. Back leg's shin pressed UP against wall.
-  j: {
-    backFoot:[40,90], backKnee:[42,178], hipBack:[98,162],
-    frontKnee:[160,170], frontFoot:[205,188],
-    midSpine:[104,118], shoulder:[108,78],
-    elbowL:[82,108], handL:[68,138],
-    elbowR:[132,108], handR:[148,138],
-    head:[108,56],
-  },
-  b: [
-    ['backFoot','backKnee','o'], ['backKnee','hipBack','o'],
-    ['hipBack','frontKnee','b'], ['frontKnee','frontFoot','b'],
-    ['hipBack','midSpine','b'], ['midSpine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 6, 0],
-  w: 30,
-  l: {text:'QUAD + HIP', tx:120, ty:158, fx:65, fy:130}
-}),
-
-"90 / 90 Hip Switch": pose({
-  // Top-down view of a seated person. Front leg bent 90° in front,
-  // back leg bent 90° to the side (the back foot sticks "up" off the
-  // floor in the top-down projection, i.e. away from the body line).
-  j: {
-    frontFoot:[28,168], frontKnee:[88,160], hip:[128,158],
-    backKnee:[178,158], backFoot:[178,108],
-    midSpine:[128,108], shoulder:[128,72],
-    elbowL:[100,98], handL:[78,128],
-    elbowR:[156,98], handR:[178,128],
-    head:[128,48],
-  },
-  b: [
-    ['frontFoot','frontKnee','o'], ['frontKnee','hip','o'],
-    ['hip','backKnee','o'], ['backKnee','backFoot','o'],
-    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 0, -6],
-  l: {text:'HIP ROTATORS', tx:18, ty:184, fx:88, fy:166}
-}),
-
-"Doorway Pec Stretch": pose({
-  // Front view, person stepping through doorway. The doorframe is the dashed
-  // line on the left. The left arm is pressed against the frame (orange).
-  j: {
-    ankleL:[105,188], ankleR:[155,188],
-    kneeL:[108,150], kneeR:[152,150],
-    hip:[130,118],
-    midSpine:[130,82], shoulderL:[112,70], shoulderR:[148,70],
-    elbowL:[78,52], handL:[58,28],
-    elbowR:[178,82], handR:[195,118],
-    head:[130,50],
-  },
-  b: [
-    ['ankleL','kneeL','b'], ['kneeL','hip','b'],
-    ['ankleR','kneeR','b'], ['kneeR','hip','b'],
-    ['hip','midSpine','b'],
-    ['midSpine','shoulderL','o'], ['midSpine','shoulderR','b'],
-    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 4, 0],
-  w: 50,
-  l: {text:'CHEST', tx:148, ty:50, fx:122, fy:74}
-}),
-
-"Thread the Needle": pose({
-  // Side view, on hands and knees. One arm threaded under, the same-side
-  // shoulder dropped toward the floor.
-  j: {
-    handPlanted:[210,168],
-    kneeBack:[160,168], kneeFront:[195,168],
-    hip:[178,140],
-    midSpine:[140,140], shoulderHigh:[110,135], shoulderLow:[100,165],
-    elbowThread:[60,170], handThread:[20,175],
-    head:[122,170],
-  },
-  b: [
-    ['handPlanted','shoulderHigh','b'],
-    ['kneeBack','hip','b'], ['kneeFront','hip','b'],
-    ['hip','midSpine','b'], ['midSpine','shoulderHigh','b'],
-    ['shoulderHigh','shoulderLow','o'],
-    ['shoulderLow','elbowThread','o'], ['elbowThread','handThread','o'],
-  ],
-  h: ['head', -5, 0],
-  l: {text:'T-SPINE · SHOULDER', tx:80, ty:120, fx:108, fy:144}
-}),
-
-"Child's Pose with Reach": pose({
-  // Side view, kneeling with butt on heels, torso folded forward, arms long out front.
-  // Hip is HIGH above the heels — spine arcs DOWN toward the floor where arms reach out.
-  j: {
-    heel:[215,188], knee:[170,188],     // shins flat on floor
-    hip:[170,145],                       // butt resting on heels (high)
-    midSpine:[120,160],                  // spine arcs forward and down
-    shoulder:[65,178],                   // shoulder close to floor (forward fold)
-    elbow:[32,184], hand:[8,188],        // arms extending out along the floor
-    head:[88,172],                       // head between shoulder and floor
-  },
-  b: [
-    ['heel','knee','b'], ['knee','hip','b'],
-    ['hip','midSpine','o'], ['midSpine','shoulder','o'],
-    ['shoulder','elbow','o'], ['elbow','hand','o'],
-  ],
-  h: ['head', -6, 2],
-  l: {text:'LATS', tx:130, ty:115, fx:118, fy:152}
-}),
-
-"Pigeon Pose": pose({
-  // Side view. Front leg's shin folded across in front of body, back leg long out behind.
-  j: {
-    frontFoot:[35,150], frontKnee:[75,158], hipFront:[112,148],
-    backKnee:[170,158], backFoot:[218,170],
-    midSpine:[112,108], shoulder:[112,72],
-    elbowL:[88,98], handL:[72,128],
-    elbowR:[138,98], handR:[152,128],
-    head:[112,48],
-  },
-  b: [
-    ['frontFoot','frontKnee','b'], ['frontKnee','hipFront','o'],
-    ['hipFront','backKnee','b'], ['backKnee','backFoot','b'],
-    ['hipFront','midSpine','b'], ['midSpine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 0, -6],
-  l: {text:'GLUTE', tx:18, ty:128, fx:100, fy:148}
-}),
-
-// LYING SPINAL TWIST — redrawn. Top-down view: person on back, head left,
-// arms wide on the floor, one leg straight, the other crossed across the body.
-"Lying Spinal Twist": pose({
-  j: {
-    head:[35,100],
-    neck:[58,100],
-    shoulderUp:[78,80], elbowUp:[78,50], handUp:[78,22],
-    shoulderDn:[78,120], elbowDn:[78,150], handDn:[78,178],
-    midSpine:[108,100],
-    hip:[140,100],
-    strKnee:[180,100], strAnkle:[218,100],
-    bentKnee:[158,138], bentFoot:[182,168],
-  },
-  b: [
-    ['neck','shoulderUp','b'], ['neck','shoulderDn','b'],
-    ['shoulderUp','elbowUp','b'], ['elbowUp','handUp','b'],
-    ['shoulderDn','elbowDn','b'], ['elbowDn','handDn','b'],
-    ['neck','midSpine','o'], ['midSpine','hip','o'],
-    ['hip','strKnee','b'], ['strKnee','strAnkle','b'],
-    ['hip','bentKnee','b'], ['bentKnee','bentFoot','b'],
-  ],
-  h: ['head', -6, 0],
-  l: {text:'T-SPINE', tx:130, ty:60, fx:104, fy:96}
-}),
-
-"Frog Pose": pose({
-  // Front view, on all fours, knees pulled WIDE to either side.
-  j: {
-    footL:[28,188], footR:[212,188],
-    kneeL:[55,160], kneeR:[185,160],
-    hip:[120,150],
-    midSpine:[120,118], shoulderL:[98,108], shoulderR:[142,108],
-    elbowL:[78,140], handL:[68,180],
-    elbowR:[162,140], handR:[172,180],
-    head:[120,80],
-  },
-  b: [
-    ['footL','kneeL','o'], ['kneeL','hip','o'],
-    ['footR','kneeR','o'], ['kneeR','hip','o'],
-    ['hip','midSpine','b'], ['midSpine','shoulderL','b'], ['midSpine','shoulderR','b'],
-    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 0, -6],
-  l: {text:'ADDUCTOR', tx:18, ty:142, fx:62, fy:158}
-}),
-
-"Wall Calf Stretch": pose({
-  // Side view, wall on the right. Front foot's ball is up on the wall, heel down.
-  j: {
-    frontHeel:[200,188], frontAnkle:[210,168], frontToe:[222,148],
-    frontKnee:[182,138], hip:[155,115],
-    backKnee:[105,148], backAnkle:[78,188],
-    midSpine:[140,80], shoulder:[152,58],
-    elbowL:[178,82], handL:[200,98],
-    elbowR:[175,52], handR:[200,42],
-    head:[148,40],
-  },
-  b: [
-    ['backAnkle','backKnee','b'], ['backKnee','hip','b'],
-    ['hip','frontKnee','b'], ['frontKnee','frontAnkle','o'],
-    ['frontAnkle','frontHeel','o'], ['frontAnkle','frontToe','o'],
-    ['hip','midSpine','b'], ['midSpine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 5, 0],
-  w: 232,
-  l: {text:'CALF', tx:128, ty:185, fx:210, fy:175}
-}),
-
-"Half Split": pose({
-  // Side view. Front leg long out (toes flexed up), back knee on floor, hips back over heel.
-  j: {
-    frontToe:[20,140], frontHeel:[45,178], frontKnee:[90,170], hipFront:[130,150],
-    backKnee:[162,180], backFoot:[200,188],
-    midSpine:[132,112], shoulder:[135,78],
-    elbowL:[112,108], handL:[98,138],
-    elbowR:[158,108], handR:[172,138],
-    head:[135,55],
-  },
-  b: [
-    ['frontToe','frontHeel','o'], ['frontHeel','frontKnee','o'], ['frontKnee','hipFront','o'],
-    ['hipFront','backKnee','b'], ['backKnee','backFoot','b'],
-    ['hipFront','midSpine','b'], ['midSpine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', -5, 0],
-  l: {text:'HAMSTRING', tx:14, ty:130, fx:60, fy:158}
-}),
-
-"Standing Quad Pull": pose({
-  // Front view, standing on one leg, opposite leg pulled up behind to butt.
-  j: {
-    standAnkle:[115,188], standKnee:[115,148], hip:[115,108],
-    midSpine:[115,80], shoulderL:[100,68], shoulderR:[130,68],
-    elbowL:[85,98], handL:[72,128],
-    // Pulled leg: knee bent BACK, foot up near butt
-    pullKnee:[148,128], pullAnkle:[148,98],
-    elbowR:[148,92], handR:[148,104],
-    head:[115,42],
-  },
-  b: [
-    ['standAnkle','standKnee','b'], ['standKnee','hip','b'],
-    ['hip','pullKnee','o'], ['pullKnee','pullAnkle','o'],
-    ['hip','midSpine','b'], ['midSpine','shoulderL','b'], ['midSpine','shoulderR','b'],
-    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulderR','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 0, -6],
-  l: {text:'QUAD', tx:172, ty:130, fx:148, fy:122}
-}),
-
-// MOBILITY illustrations
-"Shoulder CARs": pose({
-  j: {ankleL:[108,188], ankleR:[140,188], kneeL:[110,150], kneeR:[138,150],
-      hip:[124,118], spine:[124,80], shoulderL:[108,72], shoulderR:[140,72],
-      elbowL:[88,108], handL:[80,150], elbowR:[180,55], handR:[210,20], head:[124,52]},
-  b: [
-    ['ankleL','kneeL','b'], ['kneeL','hip','b'], ['ankleR','kneeR','b'], ['kneeR','hip','b'],
-    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
-    ['shoulderL','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulderR','elbowR','o'], ['elbowR','handR','o'],
-  ],
-  h: ['head', 4, 0],
-  l: {text:'SHOULDER', tx:80, ty:42, fx:142, fy:74}
-}),
-
-"Hip CARs": pose({
-  j: {handL:[60,168], handR:[100,168], kneeL:[140,168], kneeR:[180,168],
-      hip:[160,140], spine:[110,138], shoulderL:[80,138], shoulderR:[100,138],
-      elbowL:[60,150], elbowR:[100,150],
-      // lifted leg: knee out and up
-      liftKnee:[210,108], liftAnkle:[228,68], head:[60,128]},
-  b: [
-    ['handL','elbowL','b'], ['elbowL','shoulderL','b'],
-    ['handR','elbowR','b'], ['elbowR','shoulderR','b'],
-    ['shoulderL','spine','b'], ['shoulderR','spine','b'],
-    ['spine','hip','b'],
-    ['kneeL','hip','b'], ['kneeL','handL','b'],   // (visual scaffold)
-    ['kneeR','hip','b'],
-    ['hip','liftKnee','o'], ['liftKnee','liftAnkle','o'],
-  ],
-  h: ['head', -5, 0],
-  l: {text:'HIP', tx:175, ty:158, fx:170, fy:142}
-}),
-
-"Cat–Cow": pose({
-  // Side view, on hands and knees, "Cat" arched spine (the highlight is the visible arch).
-  j: {
-    hand:[40,170], shoulder:[50,142],
-    kneeBack:[170,170], kneeFront:[200,170], hip:[185,140],
-    // Spine arched UPWARD between shoulder and hip — that's the visible "cat" shape.
-    midSpine:[118,100],
-    head:[35,158],
-  },
-  b: [
-    ['hand','shoulder','b'],
-    ['kneeBack','hip','b'], ['kneeFront','hip','b'],
-    ['shoulder','midSpine','o'], ['midSpine','hip','o'],
-  ],
-  h: ['head', -5, -2],
-  l: {text:'SPINE', tx:90, ty:75, fx:115, fy:96}
-}),
-
-"Quadruped T-Spine Rotation": pose({
-  // Side view, on hands and knees, one hand behind the head, that elbow rotating UP.
-  j: {
-    handPlanted:[210,170],
-    kneeBack:[160,170], kneeFront:[195,170], hip:[180,140],
-    midSpine:[130,138], shoulderHigh:[88,138],
-    elbowUp:[52,80], handBehind:[88,68],
-    head:[105,108],
-  },
-  b: [
-    ['handPlanted','shoulderHigh','b'],
-    ['kneeBack','hip','b'], ['kneeFront','hip','b'],
-    ['hip','midSpine','b'], ['midSpine','shoulderHigh','o'],
-    ['shoulderHigh','elbowUp','o'], ['elbowUp','handBehind','o'],
-  ],
-  h: ['head', -3, -5],
-  l: {text:'T-SPINE', tx:135, ty:60, fx:90, fy:118}
-}),
-
-"World's Greatest Flow": pose({
-  // Same base position as World's Greatest Stretch — flow variant.
-  j: {backAnkle:[40,188], backKnee:[78,150], hip:[120,118], frontKnee:[160,150], frontAnkle:[185,188],
-      shoulder:[130,90], elbowDown:[148,140], handDown:[160,168],
-      elbowUp:[150,55], handUp:[195,18], head:[130,72]},
-  b: [
-    ['backAnkle','backKnee','o'], ['backKnee','hip','o'],
-    ['frontAnkle','frontKnee','b'], ['frontKnee','hip','b'],
-    ['hip','shoulder','o'],
-    ['shoulder','elbowDown','b'], ['elbowDown','handDown','b'],
-    ['shoulder','elbowUp','o'], ['elbowUp','handUp','o'],
-  ],
-  h: ['head', 6, 0],
-  l: {text:'FLOW', tx:8, ty:60, fx:140, fy:75}
-}),
-
-"90/90 Transition Flow": pose({
-  // Mid-transition: hips lifted, in motion between sides.
-  j: {frontFoot:[55,180], frontKnee:[105,158], hip:[140,138], backKnee:[180,158], backFoot:[218,180],
-      spine:[140,90], shoulder:[140,72], elbowL:[120,108], handL:[110,138], elbowR:[160,108], handR:[170,138],
-      head:[140,52]},
-  b: [
-    ['frontFoot','frontKnee','o'], ['frontKnee','hip','o'],
-    ['hip','backKnee','o'], ['backKnee','backFoot','o'],
-    ['hip','spine','b'], ['spine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 0, 6],
-  l: {text:'HIP FLOW', tx:55, ty:185, fx:120, fy:148}
-}),
-
-"Deep Squat to Stand": pose({
-  // Bottom of squat position.
-  j: {footL:[78,188], footR:[162,188], kneeL:[60,140], kneeR:[180,140], hip:[120,138],
-      spine:[120,108], shoulder:[120,82], elbowL:[100,108], handL:[88,138], elbowR:[140,108], handR:[152,138],
-      head:[120,62]},
-  b: [
-    ['footL','kneeL','o'], ['kneeL','hip','o'],
-    ['footR','kneeR','o'], ['kneeR','hip','o'],
-    ['hip','spine','b'], ['spine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 0, -6],
-  l: {text:'HIPS + ANKLES', tx:140, ty:140, fx:122, fy:140}
-}),
-
-"Ankle CARs": pose({
-  // Seated, leg out, ankle drawing circle.
-  j: {hip:[80,162], thigh:[140,162], knee:[170,162], shin:[200,162], ankle:[218,162],
-      spine:[80,128], shoulder:[80,108], head:[80,88],
-      elbowL:[55,140], handL:[45,168], elbowR:[100,140], handR:[110,168],
-      toe:[235,140]},
-  b: [
-    ['hip','knee','b'], ['knee','ankle','b'],
-    ['ankle','toe','o'],
-    ['hip','spine','b'], ['spine','shoulder','b'],
-    ['shoulder','elbowL','b'], ['elbowL','handL','b'],
-    ['shoulder','elbowR','b'], ['elbowR','handR','b'],
-  ],
-  h: ['head', 6, 0],
-  l: {text:'ANKLE', tx:160, ty:130, fx:218, fy:158}
-}),
-
-"Scapular Wall Slides": pose({
-  // Back against wall on the left, arms in a Y overhead.
-  j: {ankleL:[80,188], ankleR:[105,188], kneeL:[80,148], kneeR:[105,148], hip:[92,118], spine:[92,80], shoulderL:[78,72], shoulderR:[106,72],
-      elbowL:[55,42], handL:[40,18], elbowR:[140,42], handR:[170,18], head:[92,52]},
-  b: [
-    ['ankleL','kneeL','b'], ['kneeL','hip','b'],
-    ['ankleR','kneeR','b'], ['kneeR','hip','b'],
-    ['hip','spine','b'], ['spine','shoulderL','b'], ['spine','shoulderR','b'],
-    ['shoulderL','elbowL','o'], ['elbowL','handL','o'],
-    ['shoulderR','elbowR','o'], ['elbowR','handR','o'],
-  ],
-  h: ['head', 4, 0],
-  w: 28,
-  l: {text:'SCAPULA', tx:150, ty:90, fx:120, fy:76}
-}),
+// ============================================================
+// REAL POSE PHOTOS  (replaces the old stick-figure system)
+// Keyed by exercise name. L/R variants share the same photo.
+// URLs go through Wikimedia's Special:FilePath redirect — stable and bandwidth-friendly.
+// To swap or add: drop a local image at /poses/your-pose.jpg
+// and set { url:'poses/your-pose.jpg', credit:'YOU' } below.
+// width=600 keeps download light while still being sharp on mobile.
+// Any pose name not in this map falls back to clean typographic display.
+// ============================================================
+function _wm(name){ return `https://commons.wikimedia.org/wiki/Special:FilePath/${name}?width=600`; }
+const POSE_PHOTOS = {
+  "Standing Forward Fold":   { url:_wm("Flickr_-_Nicholas_T_-_Uttanasana.jpg"),                                credit:"WIKIMEDIA" },
+  "Seated Forward Fold":     { url:_wm("Pascimothanāsana_◦_Sitting_Forward_Bend_I_yoga_āsana.jpg"),           credit:"WIKIMEDIA" },
+  "Child's Pose with Reach": { url:_wm("Hatha_yoga_child_pose.jpg"),                                          credit:"WIKIMEDIA" },
+  "Pigeon Pose":             { url:_wm("Eka_Pada_Raja_Kapotasana_by_Caroline_Klebl.jpg"),                     credit:"WIKIMEDIA" },
+  "Butterfly Pose":          { url:_wm("Baddha_konasana.jpg"),                                                credit:"WIKIMEDIA" },
+  "Cobra Pose":              { url:_wm("Bhujangasana1.JPG"),                                                  credit:"WIKIMEDIA" },
+  "Camel Pose":              { url:_wm("Ustrasana_-_Camel_Pose.jpg"),                                         credit:"WIKIMEDIA" },
+  "Deep Squat Hold":         { url:_wm("Mālāsana_heel_grab_side.jpg"),                                        credit:"WIKIMEDIA" },
+  "Frog Pose":               { url:_wm("Yagnesh_Uttanmandukasan.jpg"),                                        credit:"WIKIMEDIA" },
+  "Cat–Cow":                 { url:_wm("Bitilasana.png"),                                                     credit:"WIKIMEDIA" },
+  "Half Split":              { url:_wm("Hanumanasana_-_Monkey_Pose_-_Side_view.jpg"),                         credit:"WIKIMEDIA" },
 };
 
 // ---------- MODE + ROUTINE SELECTION ----------
@@ -1251,7 +883,7 @@ function renderStretchSlide(state, routine, liftRec, liftDay, items, holdSec, to
     const tag = ex.src === 'm' ? '<span class="tag">MOBILITY</span>' : ex.src === 'c' ? '<span class="tag">CUSTOM</span>' : '';
     const isAdd = adds.has(ref);
     const rm = isAdd ? `<button class="rm" onclick="rmFromRoutine('${ref}')">✕</button>` : '';
-    return `<div class="routine-item ${isAdd?'added':''}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
+    return `<div class="routine-item ${isAdd?'added':''}" data-ref="${ref}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
   }).join('');
 
   // Volume
@@ -1311,7 +943,7 @@ function renderMobilitySlide(state, routine, liftRec, liftDay, items, holdSec, t
     const tag = ex.src === 's' ? '<span class="tag">HOLD</span>' : ex.src === 'c' ? '<span class="tag">CUSTOM</span>' : '';
     const isAdd = adds.has(ref);
     const rm = isAdd ? `<button class="rm" onclick="rmFromRoutine('${ref}')">✕</button>` : '';
-    return `<div class="routine-item ${isAdd?'added':''}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
+    return `<div class="routine-item ${isAdd?'added':''}" data-ref="${ref}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
   }).join('');
 
   // This-week stats
@@ -1389,10 +1021,23 @@ function showItem(i){
   document.getElementById('r-name').innerHTML = ex.name + side + tag;
   document.getElementById('r-area').textContent = ex.area || '';
   document.getElementById('r-cue').textContent = ex.cue || '';
+  // Photo or clean typography. No more stick figures.
   const $fig = document.getElementById('r-figure');
-  const svg = POSES[ex.name];
-  if(svg){ $fig.innerHTML = svg; $fig.classList.remove('placeholder'); }
-  else { $fig.innerHTML = (ex.src === 'c' ? 'CUSTOM EXERCISE' : 'NO ILLUSTRATION'); $fig.classList.add('placeholder'); }
+  const $typo = document.getElementById('r-typo');
+  const photo = POSE_PHOTOS[ex.name];
+  if(photo){
+    $fig.classList.remove('empty');
+    $fig.innerHTML = `<img src="${photo.url}" alt="${ex.name}" loading="eager" decoding="async" onerror="this.parentElement.classList.add('empty');document.getElementById('r-typo').classList.add('show');">${photo.credit?`<span class="ph-tag">${photo.credit}</span>`:''}`;
+    $typo.classList.remove('show');
+  } else {
+    $fig.classList.add('empty');
+    $fig.innerHTML = '';
+    const nameParts = ex.name.split(' ');
+    const mid = Math.ceil(nameParts.length/2);
+    const big = `<span>${nameParts.slice(0,mid).join(' ')}</span> <span class="accent">${nameParts.slice(mid).join(' ')}</span>`;
+    $typo.innerHTML = `<div class="label">${R.mode==='mobility'?'Movement':'Stretch'} · ${ex.area||''}</div><div class="big">${big}</div><div class="sub">${ex.side||'BOTH SIDES'}</div>`;
+    $typo.classList.add('show');
+  }
   document.getElementById('r-timer-label').textContent =
     ex.type === 'reps' ? 'SLOW REPS' :
     ex.type === 'flow' ? 'SLOW FLOW' : 'SECONDS';
@@ -1659,6 +1304,140 @@ function init(){
   renderHome();
 }
 init();
+
+// ============================================================
+// LONG-PRESS DRAG-TO-REORDER · routine items
+// Same UX as DUMBASS LIFT. Hold ~350ms, drag up/down, drop.
+// ============================================================
+(function(){
+  const HOLD_MS = 350, MOVE_CANCEL_PX = 8;
+  let pointerId=null, holdTimer=null, dragItem=null, list=null,
+      startY=0, startX=0, startIdx=-1, currentIdx=-1,
+      itemHeight=0, hintEl=null, suppressClickUntil=0;
+
+  function showHint(msg){
+    if(!hintEl){hintEl=document.createElement('div');hintEl.className='reorder-hint-stretch';document.body.appendChild(hintEl);}
+    hintEl.textContent=msg;
+    requestAnimationFrame(()=>hintEl.classList.add('show'));
+  }
+  function hideHint(){if(hintEl)hintEl.classList.remove('show');}
+
+  function items(){ return Array.from(list.querySelectorAll('.routine-item')); }
+
+  function idxFromY(y){
+    const all = items();
+    let best=startIdx, bestD=Infinity;
+    for(let i=0;i<all.length;i++){
+      if(all[i]===dragItem)continue;
+      const r=all[i].getBoundingClientRect();
+      const mid=r.top+r.height/2;
+      const d=Math.abs(mid-y);
+      if(d<bestD){bestD=d; best=i;}
+    }
+    return best;
+  }
+  function applyShifts(){
+    const all = items();
+    all.forEach((c,i)=>{
+      if(c===dragItem){c.style.transform='';return;}
+      let shift=0;
+      if(startIdx<currentIdx && i>startIdx && i<=currentIdx) shift=-itemHeight;
+      else if(startIdx>currentIdx && i>=currentIdx && i<startIdx) shift=itemHeight;
+      c.style.transform=`translateY(${shift}px)`;
+    });
+  }
+  function clearShifts(){
+    if(!list)return;
+    items().forEach(c=>{c.style.transform='';});
+  }
+
+  function onPointerDown(e){
+    if(e.button!=null && e.button!==0)return;
+    const item = e.target.closest('.routine-item');
+    if(!item)return;
+    const parent = item.parentElement;
+    if(!parent || !parent.classList.contains('routine-list'))return;
+    if(e.target.closest('.rm'))return; // tapping the X button
+
+    list = parent;
+    dragItem = item;
+    startY = e.clientY; startX = e.clientX;
+    pointerId = e.pointerId;
+    startIdx = items().indexOf(item);
+    currentIdx = startIdx;
+
+    holdTimer = setTimeout(()=>{
+      holdTimer = null;
+      const rect = item.getBoundingClientRect();
+      itemHeight = rect.height;
+      item.classList.add('dragging');
+      list.classList.add('reorder-on');
+      try{item.setPointerCapture(pointerId);}catch(e){}
+      if(navigator.vibrate)try{navigator.vibrate(15);}catch(e){}
+      showHint('Drop to reorder');
+    }, HOLD_MS);
+  }
+
+  function onPointerMove(e){
+    if(!dragItem && holdTimer==null)return;
+    if(holdTimer){
+      if(Math.abs(e.clientY-startY)>MOVE_CANCEL_PX || Math.abs(e.clientX-startX)>MOVE_CANCEL_PX){
+        clearTimeout(holdTimer); holdTimer=null;
+        list=null; dragItem=null;
+      }
+      return;
+    }
+    if(!dragItem)return;
+    e.preventDefault();
+    const dy = e.clientY - startY;
+    dragItem.style.transform = `translateY(${dy}px) scale(1.02)`;
+    const newIdx = idxFromY(e.clientY);
+    if(newIdx !== currentIdx){
+      currentIdx = newIdx;
+      applyShifts();
+    }
+  }
+
+  function onPointerUp(e){
+    if(holdTimer){clearTimeout(holdTimer);holdTimer=null;dragItem=null;list=null;return;}
+    if(!dragItem)return;
+    suppressClickUntil = Date.now()+250;
+    const item = dragItem, fromIdx = startIdx, toIdx = currentIdx;
+    try{item.releasePointerCapture(pointerId);}catch(e){}
+    item.classList.remove('dragging');
+    item.style.transform = '';
+    clearShifts();
+    if(list)list.classList.remove('reorder-on');
+    hideHint();
+    const wasList = list;
+    dragItem=null; list=null; pointerId=null;
+
+    if(fromIdx !== toIdx){
+      // Build new order from current item refs (the list's logical order
+      // hasn't changed yet in state — we splice it here).
+      const refs = Array.from(wasList.querySelectorAll('.routine-item')).map(el=>el.dataset.ref);
+      const [moved] = refs.splice(fromIdx, 1);
+      refs.splice(toIdx, 0, moved);
+      // Figure out which routine this list belongs to
+      const state = loadState();
+      const mode = wasList.id === 's-list' ? 'stretch' : 'mobility';
+      const ar = activeRoutine(state);
+      if(ar && ar.routine && ar.routine.mode === mode){
+        setRoutineOrder(mode, ar.routine.key, refs);
+      }
+    }
+  }
+
+  function onClickCapture(e){
+    if(Date.now() < suppressClickUntil){e.stopPropagation();e.preventDefault();}
+  }
+
+  document.addEventListener('pointerdown', onPointerDown, true);
+  document.addEventListener('pointermove', onPointerMove, {passive:false});
+  document.addEventListener('pointerup', onPointerUp, true);
+  document.addEventListener('pointercancel', onPointerUp, true);
+  document.addEventListener('click', onClickCapture, true);
+})();
 </script>
 </body>
 </html>
