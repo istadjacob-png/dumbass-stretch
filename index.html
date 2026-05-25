@@ -57,6 +57,28 @@ body[data-mode="stretch"]{--accent:var(--red); --accent-glow:var(--red-glow);}
 .streak-chip .num{color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:.02em;line-height:1}
 .streak-chip.zero .num{color:var(--text-faint)}
 
+/* DUMBASS ACCOUNT (login overlay + banner) */
+.dba-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:600;display:none;align-items:center;justify-content:center;padding:20px}
+.dba-overlay.open{display:flex}
+.dba-card{background:var(--bg,#fff);border:1px solid var(--border,#ddd);border-radius:14px;padding:24px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.dba-card h2{font-family:'Bebas Neue','Oswald',sans-serif;font-size:34px;letter-spacing:.02em;color:var(--text,#000);margin-bottom:6px;line-height:1}
+.dba-card h2 span{color:var(--accent,#FF6B00)}
+.dba-sub{font-family:'JetBrains Mono','Inter',monospace;font-size:11px;color:var(--text-dim,#777);line-height:1.5;margin-bottom:18px}
+.dba-card input{width:100%;background:var(--steel,#f5f5f5);border:1px solid var(--border,#ddd);border-radius:8px;padding:14px;font-family:'JetBrains Mono','Inter',monospace;font-size:15px;color:var(--text,#000);margin-bottom:10px}
+.dba-card input:focus{outline:none;border-color:var(--accent,#FF6B00)}
+.dba-error{color:#E8341E;font-family:'JetBrains Mono','Inter',monospace;font-size:11px;line-height:1.4;margin-bottom:10px;min-height:14px}
+.dba-btn{width:100%;background:var(--accent,#FF6B00);color:#fff;border:none;border-radius:8px;padding:15px 0;font-family:'Oswald',sans-serif;font-size:12px;letter-spacing:.3em;text-transform:uppercase;font-weight:700;cursor:pointer}
+.dba-btn:disabled{opacity:.6}
+.dba-toggle{width:100%;background:none;border:none;color:var(--text-dim,#777);font-family:'Inter',sans-serif;font-size:13px;margin-top:14px;cursor:pointer}
+.dba-toggle b{color:var(--accent,#FF6B00)}
+.dba-banner{align-items:center;gap:12px;background:#FFF;border:1px solid var(--accent,#FF6B00);border-radius:10px;padding:12px 14px;margin:0 0 12px;cursor:pointer;display:flex}
+.dba-banner .i{font-size:19px;line-height:1}
+.dba-banner .tx{flex:1;min-width:0}
+.dba-banner .tt{font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--text,#000)}
+.dba-banner .ss{font-family:'Inter',sans-serif;font-size:11px;color:var(--text-dim,#777);line-height:1.4;margin-top:2px}
+.dba-banner .cta{font-family:'Oswald',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--accent,#FF6B00);border:1px solid var(--accent,#FF6B00);border-radius:6px;padding:6px 10px;flex-shrink:0}
+.dba-banner.on .cta{color:var(--text-dim,#777);border-color:var(--border,#ddd)}
+
 /* MODE TABS (slides) */
 .mode-tabs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:6px 0 14px;border:1px solid var(--border);background:#FFF;position:relative}
 .mode-tab{background:transparent;border:none;padding:14px 0;font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;color:var(--text-dim);text-align:center;position:relative;z-index:1;transition:color .2s}
@@ -262,6 +284,8 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
     <div id="streak-chip" class="streak-chip zero"><span class="num">0</span><span>DAY</span></div>
   </div>
 
+  <div class="dba-banner" id="dba-banner" style="display:none"></div>
+
   <div class="mode-tabs">
     <button class="mode-tab active" data-mode="stretch" onclick="setMode('stretch')">STRETCH</button>
     <button class="mode-tab" data-mode="mobility" onclick="setMode('mobility')">MOBILITY</button>
@@ -345,6 +369,19 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
 </section>
 
 <!-- ADD overlay -->
+<!-- DUMBASS account login -->
+<div class="dba-overlay" id="dba-overlay" onclick="if(event.target.id==='dba-overlay')dbaClose()">
+  <div class="dba-card">
+    <h2 id="dba-title">LOG <span>IN</span></h2>
+    <div class="dba-sub" id="dba-sub">One DUMBASS account — syncs across LIFT, STRETCH and FUEL.</div>
+    <input id="dba-email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" placeholder="email">
+    <input id="dba-pw" type="password" autocomplete="current-password" placeholder="password" onkeydown="if(event.key==='Enter')dbaSubmit()">
+    <div class="dba-error" id="dba-error"></div>
+    <button class="dba-btn" id="dba-submit" onclick="dbaSubmit()">LOG IN</button>
+    <button class="dba-toggle" id="dba-toggle" onclick="dbaToggle()">New here? <b>Create an account</b></button>
+  </div>
+</div>
+
 <div id="ov-add" class="overlay">
   <div class="ov-top">
     <div class="ov-eyebrow" id="ov-eyebrow">ADD TO STRETCH</div>
@@ -573,8 +610,11 @@ const KEY = "dumbass_stretch_v2";
 function loadState(){
   try{ return JSON.parse(localStorage.getItem(KEY)) || {}; } catch(e){ return {}; }
 }
+let _dbaSuppress=false;
 function saveState(s){
+  if(s && !_dbaSuppress) s._lastModified=Date.now();
   try{ localStorage.setItem(KEY, JSON.stringify(s)); }catch(e){}
+  if(!_dbaSuppress && typeof dbaPush==='function') dbaPush();
 }
 function todayStr(){ const d = new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 function daysBetween(a, b){ return Math.round((new Date(b+"T00:00:00") - new Date(a+"T00:00:00")) / 86400000); }
@@ -1305,6 +1345,140 @@ function init(){
 }
 init();
 
+/* ============================================================
+   DUMBASS ACCOUNT — one login across LIFT / STRETCH / FUEL.
+   Shared Firestore `accounts` collection, this app syncs the `stretch` field.
+   ============================================================ */
+const _FIELD='stretch';
+let _dbaSession=null, _dbaPushTimer=null, _dbaLastPush=0, _dbaMode='login';
+try{_dbaSession=JSON.parse(localStorage.getItem('dumbass_account')||'null');}catch(e){}
+function _dbaDevice(){let d=localStorage.getItem('dumbass_device_id');if(!d){d='d-'+Math.random().toString(36).slice(2,10);localStorage.setItem('dumbass_device_id',d);}return d;}
+function _dbaB64(b){let s='';for(const x of b)s+=String.fromCharCode(x);return btoa(s);}
+function _dbaB64url(b){return _dbaB64(b).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function _dbaSalt(){const s=new Uint8Array(16);crypto.getRandomValues(s);return _dbaB64(s);}
+async function _dbaEmailKey(email){const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('dumbass:'+email.trim().toLowerCase()));return _dbaB64url(new Uint8Array(h));}
+async function _dbaPbkdf2(pw,saltB64){const salt=Uint8Array.from(atob(saltB64),c=>c.charCodeAt(0));const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:200000,hash:'SHA-256'},km,256);return _dbaB64(new Uint8Array(bits));}
+function _dbaSaveSession(s){try{if(s)localStorage.setItem('dumbass_account',JSON.stringify(s));else localStorage.removeItem('dumbass_account');}catch(e){}}
+
+function _dbaAdopt(obj){
+  _dbaSuppress=true;
+  try{
+    localStorage.setItem(KEY, JSON.stringify(obj));
+    document.body.setAttribute('data-mode', obj.mode||'stretch');
+    renderHome();
+  }finally{_dbaSuppress=false;}
+}
+function dbaPush(){
+  if(_dbaSuppress||!_dbaSession||!window.__acct)return;
+  clearTimeout(_dbaPushTimer);
+  _dbaPushTimer=setTimeout(()=>{
+    const s=loadState();
+    window.__acct.writeState(_dbaSession.key, JSON.stringify(s), s._lastModified||Date.now())
+      .then(()=>{_dbaLastPush=Date.now();dbaRenderBanner();}).catch(()=>{});
+  },1500);
+}
+async function _dbaSyncFromAccount(key){
+  try{
+    const data=await window.__acct.read(key);
+    if(!data)return;
+    let rs=null; try{rs=JSON.parse(data[_FIELD]||'null');}catch(e){}
+    const local=loadState();
+    if(!rs){ await window.__acct.writeState(key, JSON.stringify(local), local._lastModified||Date.now()); _dbaLastPush=Date.now(); return; }
+    if((rs._lastModified||0) >= (local._lastModified||0)) _dbaAdopt(rs);
+    else await window.__acct.writeState(key, JSON.stringify(local), local._lastModified||0);
+    _dbaLastPush=Date.now();
+  }catch(e){ console.warn('[acct] sync', e); }
+}
+function _dbaSubscribe(key){
+  if(!window.__acct)return;
+  window.__acct.subscribe(key,(data)=>{
+    if(!data||!data[_FIELD])return;
+    if(data.deviceId===_dbaDevice())return;
+    let rs=null; try{rs=JSON.parse(data[_FIELD]);}catch(e){return;}
+    const local=loadState();
+    if(!rs||(rs._lastModified||0)<=(local._lastModified||0))return;
+    _dbaAdopt(rs); toast('Synced from cloud');
+  });
+}
+function _dbaFmtAgo(ms){ if(ms<60000)return'just now'; if(ms<3600000)return Math.floor(ms/60000)+' min ago'; if(ms<86400000)return Math.floor(ms/3600000)+' h ago'; return Math.floor(ms/86400000)+' d ago'; }
+function dbaRenderBanner(){
+  const el=document.getElementById('dba-banner'); if(!el)return;
+  if(!_dbaSession){
+    el.className='dba-banner'; el.style.display=''; el.onclick=dbaOpen;
+    el.innerHTML=`<div class="i">👤</div><div class="tx"><div class="tt">LOG IN</div><div class="ss">One DUMBASS account — syncs LIFT, STRETCH & FUEL.</div></div><div class="cta">LOG IN</div>`;
+  }else{
+    el.className='dba-banner on'; el.style.display=''; el.onclick=dbaPull;
+    el.innerHTML=`<div class="i">✓</div><div class="tx"><div class="tt">${_dbaSession.email}</div><div class="ss">Synced · ${_dbaLastPush?_dbaFmtAgo(Date.now()-_dbaLastPush):'syncing…'} · tap to pull</div></div><div class="cta">PULL</div>`;
+  }
+}
+async function dbaPull(){
+  if(!_dbaSession){dbaOpen();return;}
+  if(!window.__acct){toast('Cloud not ready');return;}
+  toast('Pulling…');
+  try{
+    const data=await window.__acct.read(_dbaSession.key);
+    if(!data||!data[_FIELD]){toast('No cloud data yet');return;}
+    let rs=null; try{rs=JSON.parse(data[_FIELD]);}catch(e){}
+    if(!rs){toast('Cloud data unreadable');return;}
+    if(data.deviceId===_dbaDevice()){toast('Already up to date');_dbaLastPush=Date.now();dbaRenderBanner();return;}
+    _dbaAdopt(rs); _dbaLastPush=Date.now(); dbaRenderBanner(); toast('Synced — latest pulled');
+  }catch(e){toast('Cloud reach failed');}
+}
+function dbaOpen(){ _dbaMode='login'; _dbaRenderModal(); document.getElementById('dba-overlay').classList.add('open'); setTimeout(()=>{const i=document.getElementById('dba-email');if(i)i.focus();},80); }
+function dbaClose(){ document.getElementById('dba-overlay').classList.remove('open'); }
+function dbaToggle(){ _dbaMode=_dbaMode==='signup'?'login':'signup'; _dbaRenderModal(); }
+function _dbaRenderModal(){
+  const su=_dbaMode==='signup';
+  document.getElementById('dba-title').innerHTML=su?'CREATE <span>ACCOUNT</span>':'LOG <span>IN</span>';
+  document.getElementById('dba-sub').textContent=su?'New account — syncs your routines across all DUMBASS apps.':'One DUMBASS account — syncs across LIFT, STRETCH and FUEL.';
+  document.getElementById('dba-submit').textContent=su?'CREATE ACCOUNT':'LOG IN';
+  document.getElementById('dba-toggle').innerHTML=su?'Have an account? <b>Log in</b>':'New here? <b>Create an account</b>';
+  document.getElementById('dba-error').textContent='';
+}
+function dbaLogout(){
+  if(!confirm('Log out? Your routines stay on this device and in the cloud.'))return;
+  if(window.__acct)window.__acct.unsubscribe();
+  _dbaSession=null; _dbaSaveSession(null); dbaRenderBanner();
+}
+async function dbaSubmit(){
+  const email=(document.getElementById('dba-email').value||'').trim();
+  const pw=document.getElementById('dba-pw').value||'';
+  const err=document.getElementById('dba-error'), btn=document.getElementById('dba-submit');
+  const su=_dbaMode==='signup';
+  if(!email||!pw){err.textContent='Enter email and password.';return;}
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){err.textContent='That email looks invalid.';return;}
+  if(su&&pw.length<6){err.textContent='Use at least 6 characters.';return;}
+  if(!window.__acct){err.textContent='Still loading — try again in a second.';return;}
+  btn.disabled=true; btn.textContent='…'; err.textContent='';
+  try{
+    const key=await _dbaEmailKey(email);
+    const existing=await window.__acct.read(key);
+    if(su){
+      if(existing) throw new Error('That email already has an account — log in instead.');
+      const salt=_dbaSalt(), pwHash=await _dbaPbkdf2(pw,salt);
+      const local=loadState(); local._lastModified=local._lastModified||Date.now(); saveState(local);
+      const fields={email:email.toLowerCase(),salt,pwHash,_lastModified:local._lastModified}; fields[_FIELD]=JSON.stringify(local);
+      await window.__acct.create(key,fields);
+      _dbaSession={key,email:email.toLowerCase()}; _dbaSaveSession(_dbaSession); _dbaLastPush=Date.now();
+      _dbaSubscribe(key); dbaClose(); toast('Account created');
+    }else{
+      if(!existing||!existing.salt) throw new Error('Wrong email or password.');
+      const pwHash=await _dbaPbkdf2(pw,existing.salt);
+      if(pwHash!==existing.pwHash) throw new Error('Wrong email or password.');
+      _dbaSession={key,email:email.toLowerCase()}; _dbaSaveSession(_dbaSession);
+      await _dbaSyncFromAccount(key); _dbaSubscribe(key); dbaClose(); toast('Logged in');
+    }
+    dbaRenderBanner();
+  }catch(e){ err.textContent=(e&&e.message)||'Something went wrong.'; }
+  finally{ btn.disabled=false; btn.textContent=(su?'CREATE ACCOUNT':'LOG IN'); }
+}
+function _dbaBoot(){
+  if(!window.__acct){ dbaRenderBanner(); return; }
+  if(_dbaSession){ _dbaSyncFromAccount(_dbaSession.key).then(()=>_dbaSubscribe(_dbaSession.key)); }
+  dbaRenderBanner();
+}
+if(window.__acct) _dbaBoot(); else window.addEventListener('dumbass:sync-ready', _dbaBoot);
+
 // ============================================================
 // LONG-PRESS DRAG-TO-REORDER · routine items
 // Same UX as DUMBASS LIFT. Hold ~350ms, drag up/down, drop.
@@ -1438,6 +1612,33 @@ init();
   document.addEventListener('pointercancel', onPointerUp, true);
   document.addEventListener('click', onClickCapture, true);
 })();
+</script>
+
+<!-- DUMBASS account · Firestore module (shared accounts collection, no Firebase Auth) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import { getFirestore, doc, setDoc, updateDoc, getDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyD8cBJlSucIESwRYruh55u15xX21YEMbyM",
+  authDomain: "poengliste-17mai-jacob.firebaseapp.com",
+  projectId: "poengliste-17mai-jacob",
+  storageBucket: "poengliste-17mai-jacob.firebasestorage.app",
+  messagingSenderId: "941172987533",
+  appId: "1:941172987533:web:dca8398f89afa9e59fb4c4"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const COLLECTION="accounts", FIELD="stretch";
+let unsub=null;
+function dev(){let d=localStorage.getItem('dumbass_device_id');if(!d){d='d-'+Math.random().toString(36).slice(2,10);localStorage.setItem('dumbass_device_id',d);}return d;}
+function refOf(k){return doc(db,COLLECTION,k);}
+async function read(k){const s=await getDoc(refOf(k));return s.exists()?(s.data()||null):null;}
+async function create(k,fields){await setDoc(refOf(k),{...fields,deviceId:dev(),updatedAt:serverTimestamp()});}
+async function writeState(k,json,mod){const u={deviceId:dev(),updatedAt:serverTimestamp()};u[FIELD]=json;u['_lastModified']=mod;await updateDoc(refOf(k),u);}
+function subscribe(k,cb){if(unsub){try{unsub();}catch(e){}}unsub=onSnapshot(refOf(k),s=>{if(s.exists())cb(s.data()||{});},e=>console.warn('[acct]',e));}
+function unsubscribe(){if(unsub){try{unsub();}catch(e){}unsub=null;}}
+window.__acct={read,create,writeState,subscribe,unsubscribe,getDeviceId:dev};
+window.dispatchEvent(new Event('dumbass:sync-ready'));
 </script>
 </body>
 </html>
