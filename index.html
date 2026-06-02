@@ -279,7 +279,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
         <polygon points="4.5,6.5 19.5,6.5 12,19.5" fill="#FFFFFF"/>
       </svg>
       <span>DUMBASS <span id="logo-mode" class="mode-label">STRETCH</span></span>
-      <span class="ver">V7.5</span>
+      <span class="ver">V7.6</span>
     </div>
     <div id="streak-chip" class="streak-chip zero"><span class="num">0</span><span>DAY</span></div>
   </div>
@@ -303,11 +303,6 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
     <div class="section-head"><div class="t" id="s-head-name">REST DAY</div><div class="c" id="s-head-time">7 MIN</div></div>
     <div class="routine-list" id="s-list"></div>
     <button class="btn-add" onclick="openAdd()">+ ADD STRETCH</button>
-
-    <div class="section-head"><div class="t">Weekly volume plan</div><div class="c">MEV · MAV · MRV</div></div>
-    <div class="vol-summary" id="s-vol-summary"></div>
-    <div id="s-vol-cards"></div>
-    <div class="vol-legend"><b>MEV</b> minimum to make ROM gains · <b>MAV</b> productive zone · <b>MRV</b> ceiling. Bars show what the week lands on if you do this routine daily.</div>
   </div>
 
   <!-- MOBILITY SLIDE -->
@@ -322,11 +317,6 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
     <div class="section-head"><div class="t" id="m-head-name">FULL BODY</div><div class="c" id="m-head-time">4 MIN</div></div>
     <div class="routine-list" id="m-list"></div>
     <button class="btn-add" onclick="openAdd()">+ ADD MOVEMENT</button>
-
-    <div class="section-head"><div class="t">This week</div><div class="c">JOINTS WORKED</div></div>
-    <div class="mob-stats" id="m-stats"></div>
-    <div id="m-joints"></div>
-    <div class="vol-legend"><b>Daily mobility</b> keeps joints healthy and unlocks range of motion. Aim for 3–5 sessions/week minimum.</div>
   </div>
 
   <div class="footer">DUMBASS STRETCH · STRETCH + MOBILITY · EVERY DAY</div>
@@ -398,7 +388,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
 </div>
 
 <script>
-const APP_BUILD='2026-05-25.1';  // bump on every deploy — drives auto-update
+const APP_BUILD='2026-06-02.1';  // bump on every deploy — drives auto-update
 // ============================================================
 // DUMBASS STRETCH v7.0 — stretch + mobility, custom exercises
 // ============================================================
@@ -947,43 +937,6 @@ function renderStretchSlide(state, routine, liftRec, liftDay, items, holdSec, to
     const rm = isAdd ? `<button class="rm" onclick="rmFromRoutine('${ref}')">✕</button>` : '';
     return `<div class="routine-item ${isAdd?'added':''}" data-ref="${ref}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
   }).join('');
-
-  // Volume
-  const minutes = plannedMuscleMinutes(routine, state);
-  const muscleSet = new Set();
-  for(const ref of items){
-    const ex = resolveItem(ref, state);
-    if(!ex || ex.src !== 's') continue;
-    if(ex.primary) muscleSet.add(ex.primary);
-    for(const sec of (ex.secondary||[])) muscleSet.add(sec);
-  }
-  const orderedMuscles = MUSCLE_ORDER.filter(m => muscleSet.has(m));
-  let mevCount = 0, mavCount = 0, missCount = 0;
-  for(const m of orderedMuscles){
-    const cls = classifyVolume(minutes[m]||0, MUSCLE_LANDMARKS[m]);
-    if(cls === 'mav' || cls === 'over-mav') mavCount++;
-    else if(cls === 'mev') mevCount++;
-    else if(cls === 'under') missCount++;
-  }
-  document.getElementById('s-vol-summary').innerHTML = `<span><b>${mavCount}</b>IN MAV</span><span><b>${mevCount}</b>AT MEV</span><span><b>${missCount}</b>UNDER</span>`;
-  document.getElementById('s-vol-cards').innerHTML = orderedMuscles.map(m => {
-    const lm = MUSCLE_LANDMARKS[m];
-    const min = minutes[m] || 0;
-    const cls = classifyVolume(min, lm);
-    const maxScale = lm.mrv * 1.2;
-    const pct = Math.min(100, (min / maxScale) * 100);
-    const tickMev = (lm.mev / maxScale) * 100;
-    const tickMavLow = (lm.mav[0] / maxScale) * 100;
-    const tickMavHigh = (lm.mav[1] / maxScale) * 100;
-    const tickMrv = (lm.mrv / maxScale) * 100;
-    return `<div class="vol-card ${cls}">
-      <div class="vol-head"><div class="name">${MUSCLE_NAMES[m]}</div><div class="sets">${fmtMin(min)}<span class="unit">MIN/WK</span></div></div>
-      <div class="vol-bar"><div class="fill" style="width:${pct}%"></div>
-        <div class="tick" style="left:${tickMev}%"></div><div class="tick" style="left:${tickMavLow}%"></div>
-        <div class="tick" style="left:${tickMavHigh}%"></div><div class="tick" style="left:${tickMrv}%"></div></div>
-      <div class="vol-foot"><span>MEV ${lm.mev} · MAV ${lm.mav[0]}–${lm.mav[1]} · MRV ${lm.mrv}</span><span class="status ${cls}">${VOL_LABEL[cls]}</span></div>
-    </div>`;
-  }).join('');
 }
 
 function renderMobilitySlide(state, routine, liftRec, liftDay, items, holdSec, totalMin){
@@ -1007,17 +960,6 @@ function renderMobilitySlide(state, routine, liftRec, liftDay, items, holdSec, t
     const rm = isAdd ? `<button class="rm" onclick="rmFromRoutine('${ref}')">✕</button>` : '';
     return `<div class="routine-item ${isAdd?'added':''}" data-ref="${ref}"><span class="n">${String(n+1).padStart(2,'0')}</span><span class="nm">${ex.name}${side}${tag}</span><span class="t">${ex.sec || holdSec}s</span>${rm}</div>`;
   }).join('');
-
-  // This-week stats
-  const stats = mobilityWeekStats(state);
-  document.getElementById('m-stats').innerHTML = `
-    <div class="mob-stat"><div class="l">SESSIONS</div><div class="v">${stats.sessions}<span class="unit">/7d</span></div></div>
-    <div class="mob-stat"><div class="l">TOTAL</div><div class="v">${fmtMin(stats.totalMin)}<span class="unit">MIN</span></div></div>
-    <div class="mob-stat"><div class="l">STREAK</div><div class="v">${computeStreak(state)}<span class="unit">D</span></div></div>
-  `;
-  document.getElementById('m-joints').innerHTML = MOBILITY_JOINTS.map(j => `
-    <div class="mob-joint"><span class="nm">${JOINT_NAMES[j]}</span><span class="v">${fmtMin(stats.jointMin[j]||0)}<span class="unit">MIN/WK</span></span></div>
-  `).join('');
 }
 
 // ---------- SCREEN SWITCHING ----------
