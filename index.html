@@ -280,7 +280,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
         <polygon points="4.5,6.5 19.5,6.5 12,19.5" fill="#FFFFFF"/>
       </svg>
       <span>DUMBASS <span id="logo-mode" class="mode-label">STRETCH</span></span>
-      <span class="ver">V7.7</span>
+      <span class="ver">V7.8</span>
     </div>
     <div id="streak-chip" class="streak-chip zero"><span class="num">0</span><span>DAY</span></div>
   </div>
@@ -389,7 +389,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
 </div>
 
 <script>
-const APP_BUILD='2026-06-02.3';  // bump on every deploy — drives auto-update
+const APP_BUILD='2026-06-02.4';  // bump on every deploy — drives auto-update
 // ============================================================
 // DUMBASS STRETCH v7.0 — stretch + mobility, custom exercises
 // ============================================================
@@ -1402,7 +1402,10 @@ function init(){
   document.body.setAttribute('data-mode', state.mode);
   renderHome();
 }
-init();
+// NOTE: init() is called at the very end of this script (after the account
+// module below), because saveState() -> dbaPush() reads `_dbaSession`, which
+// is declared further down. Calling init() here would hit its temporal dead
+// zone, throw, and silently break mode switching.
 
 /* ============================================================
    DUMBASS ACCOUNT — one login across LIFT / STRETCH / FUEL.
@@ -1537,6 +1540,9 @@ function _dbaBoot(){
   dbaRenderBanner();
 }
 if(window.__acct) _dbaBoot(); else window.addEventListener('dumbass:sync-ready', _dbaBoot);
+
+// Account state (_dbaSession etc.) is now initialized — safe to boot the app.
+init();
 
 // ============================================================
 // LONG-PRESS DRAG-TO-REORDER · routine items
