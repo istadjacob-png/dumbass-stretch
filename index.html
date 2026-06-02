@@ -388,7 +388,7 @@ body[data-mode="mobility"] .routine-item.added{background:rgba(0,102,255,.05)}
 </div>
 
 <script>
-const APP_BUILD='2026-06-02.1';  // bump on every deploy — drives auto-update
+const APP_BUILD='2026-06-02.2';  // bump on every deploy — drives auto-update
 // ============================================================
 // DUMBASS STRETCH v7.0 — stretch + mobility, custom exercises
 // ============================================================
@@ -465,6 +465,9 @@ const STRETCHES = [
   /* 43 */ {name:"Standing IT-Band Stretch",cue:"Switch. Subtle — drive the hip wide to find the line of tension from heel to fingertip.",                area:"IT band · Hip",         side:"RIGHT",primary:"hip-rotators",secondary:["lats"]},
 ];
 const HOLD_SECONDS = 30;
+// A calm lead-in before each hold so you can get into position — the 30s is then
+// pure stretching, not "still climbing into it". Keeps the whole thing unhurried.
+const READY_SECONDS = 5;
 
 // Mobility uses string ids — keyed by joint group for volume.
 // Type 'reps' = slow controlled reps. Type 'flow' = continuous movement.
@@ -910,7 +913,8 @@ function renderHome(){
   const {routine, liftRec, liftDay} = activeRoutine(state);
   const holdSec = routineHoldSec(routine);
   const items = routineItems(routine, state);
-  const totalMin = Math.round(items.length * holdSec / 60);
+  // Include the get-ready lead-in per pose so the time estimate matches reality.
+  const totalMin = Math.round(items.length * (holdSec + READY_SECONDS) / 60);
 
   if(mode === 'stretch') renderStretchSlide(state, routine, liftRec, liftDay, items, holdSec, totalMin);
   else renderMobilitySlide(state, routine, liftRec, liftDay, items, holdSec, totalMin);
@@ -990,7 +994,8 @@ function startRoutine(){
   R = {
     i: 0,
     holdSec,
-    secLeft: list[0].ex.sec || holdSec,
+    phase: 'ready',   // 'ready' = get-into-position lead-in · 'hold' = the actual stretch
+    secLeft: READY_SECONDS,
     paused: false,
     ticker: null,
     wakeLock: null,
@@ -1042,27 +1047,40 @@ function showItem(i){
     $typo.innerHTML = `<div class="label">${R.mode==='mobility'?'Movement':'Stretch'} · ${ex.area||''}</div><div class="big">${big}</div><div class="sub">${ex.side||'BOTH SIDES'}</div>`;
     $typo.classList.add('show');
   }
-  document.getElementById('r-timer-label').textContent =
-    ex.type === 'reps' ? 'SLOW REPS' :
-    ex.type === 'flow' ? 'SLOW FLOW' : 'SECONDS';
-
   document.querySelectorAll('#r-bar .seg').forEach((seg, idx) => {
     const fill = seg.querySelector('.fill');
     if(idx < i){ seg.classList.add('done'); fill.style.width = '100%'; }
     else { seg.classList.remove('done'); fill.style.width = '0%'; }
   });
-  R.secLeft = currentSec();
+  // Every pose opens with a get-ready lead-in, then the full hold begins.
+  R.phase = 'ready';
+  R.secLeft = READY_SECONDS;
   updateTimer();
 }
 
+// Label under the big number — "GET READY" during the lead-in, then the hold type.
+function timerLabelFor(ex){
+  if(R.phase === 'ready') return 'GET READY';
+  return ex.type === 'reps' ? 'SLOW REPS' :
+         ex.type === 'flow' ? 'SLOW FLOW' : 'SECONDS';
+}
+
 function updateTimer(){
+  const ex = R.list[R.i].ex;
   document.getElementById('r-timer').textContent = R.secLeft;
-  document.getElementById('r-timer').classList.toggle('warn', R.secLeft <= 5 && R.secLeft > 0);
+  document.getElementById('r-timer-label').textContent = timerLabelFor(ex);
+  // Pulse the number only at the END of the hold, not during the lead-in.
+  document.getElementById('r-timer').classList.toggle('warn', R.phase === 'hold' && R.secLeft <= 5 && R.secLeft > 0);
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){
     const fill = seg.querySelector('.fill');
-    const total = currentSec();
-    fill.style.width = (((total - R.secLeft) / total) * 100) + '%';
+    // The progress fill tracks the hold only — the lead-in leaves it empty.
+    if(R.phase === 'hold'){
+      const total = currentSec();
+      fill.style.width = (((total - R.secLeft) / total) * 100) + '%';
+    } else {
+      fill.style.width = '0%';
+    }
   }
 }
 
@@ -1071,6 +1089,19 @@ function startTicker(){
   R.ticker = setInterval(() => {
     if(!R || R.paused) return;
     R.secLeft--;
+    if(R.phase === 'ready'){
+      if(R.secLeft <= 0){
+        // Lead-in over — start the actual stretch and hold it for the full duration.
+        R.phase = 'hold';
+        R.secLeft = currentSec();
+        updateTimer();
+        try{ if(navigator.vibrate) navigator.vibrate(40); }catch(e){}
+      } else {
+        updateTimer();
+      }
+      return;
+    }
+    // Hold phase
     if(R.secLeft <= 0){
       R.completed.push({ref: R.list[R.i].ref, sec: currentSec()});
       const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
@@ -1093,7 +1124,7 @@ function togglePause(){
 function skipStretch(){
   if(!R) return;
   const total = currentSec();
-  const held = Math.max(0, total - R.secLeft);
+  const held = R.phase === 'hold' ? Math.max(0, total - R.secLeft) : 0;
   R.completed.push({ref: R.list[R.i].ref, sec: held});
   const seg = document.querySelector(`#r-bar .seg[data-i="${R.i}"]`);
   if(seg){ seg.classList.add('done'); seg.querySelector('.fill').style.width = '100%'; }
